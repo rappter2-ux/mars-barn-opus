@@ -1,58 +1,70 @@
 # Mars Barn Opus — Plan
 
-## Cycle 3: Crew Simulation [DONE]
-The single biggest thing the swarm doesn't have. Makes it feel real.
+## Completed
+- [x] Cycle 1-2: Core sim, personality divergence, HTML reports, scoring
+- [x] Cycle 3: Crew simulation (named individuals, roles, health, death)
+- [x] Cycle 4: Communication delay + web Mission Control + GitHub Pages
+- [x] Cycle 5: Colony expansion (9 module types, AI auto-build)
+- [x] Cycle 6: Real Mars climate engine (NASA data) + smooth zoom transitions
+- [x] Cycle 7: Echo frames + real Mars texture + visual event reactions
+- [x] Cycle 8: Day/night cycle + colony lights + unified nav
+- [x] Cycle 9: Research system (11 techs, 3 tiers)
+- [x] Cycle 10: Emergency protocols (5 crisis response plans)
 
-### What was built
-1. `src/crew.py` — individual crew members
-   - CrewMember dataclass: name, role, health (0-100), fatigue (0-100),
-     radiation_dose, morale, skills dict
-   - Roles: Commander, Engineer, Scientist, Medic (4 crew = 4 roles)
-   - Health degrades from: radiation, starvation, dehydration, cold
-   - Fatigue accumulates from work, resets with rest
-   - Skills affect production efficiency (engineer boosts ISRU, scientist
-     boosts greenhouse, etc.)
-   - Crew events: injury, illness, conflict, breakthrough
+## The 10 — all shipping now
 
-2. Wire into colony.py
-   - Production scales with crew skill + health
-   - Crew consume individually (sick crew consume less but produce nothing)
-   - Death of crew member = permanent loss (crew_size decrements)
-   - Morale is average of individual crew morale
+### 1. Crew Journals (procedural storytelling)
+- Each crew member writes a daily journal from their state
+- Generated from: health, morale, role, events, relationships
+- Emergent narrative — no scripted content
+- Shown in viewer sidebar + exportable
 
-3. Wire into mission_control.py
-   - Show crew roster in dashboard
-   - Crew health bars
-   - Alert on crew health critical
+### 2. Genetic Algorithm Governor Evolution
+- Run 1000 colonies with random trait vectors
+- Top survivors breed (crossover + mutation)
+- 100 generations → evolved optimal governor
+- Publish the genome as a leaderboard entry
 
-4. Tests: test_crew.py
+### 3. Split-Screen Earth/Mars with Light Delay
+- Left: Mission Control dashboard
+- Right: 3D colony surface
+- Center: animated radio waves traveling across space
+- Real light delay visualization
 
-### Definition of done [ALL MET]
-- [x] Individual crew members with names, roles, health, fatigue
-- [x] Crew health affects colony production
-- [x] Crew can die individually (not just colony death)
-- [x] Mission control shows crew roster
-- [x] Mission log writes sol-by-sol narrative
-- [x] Twin state includes crew data
-- [x] 154 tests pass (23 new crew tests)
+### 4. Colony DNA Fingerprint
+- Hash each echo frame into visual pattern
+- Fractal/unique per colony run
+- Shareable image — the colony's story as art
 
-## Cycle 4: Communication Delay + Web Mission Control [DONE]
+### 5. Timelapse Replay
+- Record echo frame snapshots
+- Play back as cinematic 3D timelapse
+- Film grain + letterbox + time counter
+- Shareable URL with state embedded
 
-### What was built
-- src/comms.py: Earth-Mars comms with orbital delay (0.3-1.5 sols),
-  solar conjunction blackout (~14 sols), command queuing
-- docs/index.html: PLAYABLE WEB VERSION — full Mission Control in browser
-  Pure JS, zero deps, local-first, import/export state as JSON
-  GitHub Pages live at rappter2-ux.github.io/mars-barn-opus
-- Operator overrides are now DELAYED through comms channel
-- Emergency protocols queue with arrival time
-- 167 tests, all passing
+### 6. Autonomous Supply Chain
+- Earth-to-Mars rocket logistics
+- 26-month launch windows
+- Cargo manifest planning
+- Supply arrives (or doesn't) based on planning
 
-## Cycle 5: Colony Expansion
-Start small, grow over time.
+### 7. Voice Mission Control
+- Web Speech API for commands
+- Speech synthesis for responses
+- "Status report" → spoken colony summary
 
-### What to build
-- Module system: habitat, greenhouse_dome, isru_plant, repair_bay, shelter
-- Each module: build_time, resource_cost, production_bonus
-- Governor decides when to build (or operator overrides)
-- Visual: show colony layout in ASCII
+### 8. Multiplayer Colony Network
+- WebRTC peer-to-peer
+- Two colonies on same Mars
+- Trade with light delay
+- No server required
+
+### 9. AR Ground View
+- WebXR projection
+- Colony on your desk
+- Same sim data, augmented reality
+
+### 10. Live NASA Weather Sync
+- Real Perseverance/MEDA telemetry
+- Actual current Mars conditions
+- Colony exists in today's real weather

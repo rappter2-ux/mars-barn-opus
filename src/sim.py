@@ -27,6 +27,7 @@ from world import World, create_world, run_world
 from report import generate_report
 from scoring import score_run, build_leaderboard, display_leaderboard
 from mission_control import run_mission_control
+from evolution import evolve, display_evolution_results
 
 
 def run_single(sols: int = DEFAULT_SOLS, seed: int = DEFAULT_SEED,
@@ -514,12 +515,20 @@ def main() -> None:
                         help="Simulation speed for mission control (sols/sec, 0=instant)")
     parser.add_argument("--twin-path", type=str, default="/tmp/mars-twin-state.json",
                         help="Path for digital twin state file")
+    parser.add_argument("--evolve", action="store_true",
+                        help="Run genetic algorithm to evolve optimal governor")
 
     args = parser.parse_args()
 
     start = time.time()
 
-    if args.mission_control:
+    if args.evolve:
+        print("\n  Running governor evolution...")
+        population = evolve(population_size=30, generations=15,
+                           max_sols=200, verbose=True)
+        display_evolution_results(population)
+        return
+    elif args.mission_control:
         run_mission_control(seed=args.seed, max_sols=args.sols,
                            archetype=args.archetype, speed=args.speed,
                            twin_path=args.twin_path)
