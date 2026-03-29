@@ -106,8 +106,20 @@ class Governor:
         r = colony.resources
         crisis_level = self._assess_crisis(colony)
 
-        if crisis_level > 0.7:
+        if crisis_level > 0.85:
             allocation = self._crisis_allocation(colony, crisis_level)
+        elif crisis_level > 0.5:
+            # Blend: personality still matters but crisis pulls toward survival
+            personal = self._personality_allocation(colony, crisis_level)
+            crisis = self._crisis_allocation(colony, crisis_level)
+            blend = (crisis_level - 0.5) / 0.35  # 0.0 at 0.5, 1.0 at 0.85
+            allocation = Allocation(
+                heating_fraction=personal.heating_fraction * (1 - blend) + crisis.heating_fraction * blend,
+                isru_fraction=personal.isru_fraction * (1 - blend) + crisis.isru_fraction * blend,
+                greenhouse_fraction=personal.greenhouse_fraction * (1 - blend) + crisis.greenhouse_fraction * blend,
+                food_ration=personal.food_ration * (1 - blend) + crisis.food_ration * blend,
+                repair_target=crisis.repair_target if blend > 0.5 else personal.repair_target,
+            )
         else:
             allocation = self._personality_allocation(colony, crisis_level)
 
@@ -226,50 +238,64 @@ class Governor:
         """Personality-shaped allocation for stable conditions.
 
         Each trait influences different allocation priorities.
+        Trait effects are amplified to create real divergence — a
+        survivalist and a wildcard should produce visibly different
+        resource curves over 500 sols.
         """
         t = self.traits
         r = colony.resources
 
-        # Base allocation
-        heating = 0.25
-        isru = 0.40
-        greenhouse = 0.35
-
-        # Risk tolerance: high risk -> less heating, more production
+        # Archetype-driven base allocation (not a single starting point)
         risk = t.get("risk_tolerance", 0.5)
-        heating -= 0.10 * risk
-        isru += 0.05 * risk
-        greenhouse += 0.05 * risk
-
-        # Efficiency focus: optimize the best-performing system
         eff = t.get("efficiency_focus", 0.5)
-        if colony.systems.isru_efficiency > colony.systems.greenhouse_efficiency:
-            isru += 0.08 * eff
-            greenhouse -= 0.08 * eff
-        else:
-            greenhouse += 0.08 * eff
-            isru -= 0.08 * eff
-
-        # Innovation drive: experiment with allocations (add noise)
         innovation = t.get("innovation_drive", 0.5)
-        if innovation > 0.7:
-            # Wildcards shift allocation randomly
-            shift = 0.05 * innovation
-            isru += shift * (0.5 - (colony.sol % 3) / 2.0)
-            greenhouse -= shift * (0.5 - (colony.sol % 3) / 2.0)
-
-        # Crisis aggression modulates how quickly we react
         aggression = t.get("crisis_aggression", 0.5)
-        if crisis_level > 0.3:
-            isru += 0.10 * aggression * crisis_level
-            heating -= 0.05 * aggression * crisis_level
+        trust = t.get("social_trust", 0.5)
 
-        # Food rationing based on personality
+        # Base: personality directly shapes the starting split
+        # High risk -> minimal heating, heavy production
+        # High efficiency -> favor the better-performing system
+        # High trust -> more greenhouse (feed people), less hoarding
+        heating = 0.30 - 0.20 * risk
+        isru = 0.30 + 0.15 * (1.0 - trust) + 0.10 * aggression
+        greenhouse = 0.40 + 0.15 * trust - 0.10 * aggression
+
+        # Efficiency focus: double down on the better system
+        if colony.systems.isru_efficiency > colony.systems.greenhouse_efficiency:
+            isru += 0.15 * eff
+            greenhouse -= 0.15 * eff
+        else:
+            greenhouse += 0.15 * eff
+            isru -= 0.15 * eff
+
+        # Innovation drive: cycle allocation on a longer period
+        # Creates strategy waves — some sols favor ISRU, some greenhouse
+        if innovation > 0.3:
+            import math
+            cycle_period = max(5, int(30 * (1.0 - innovation)))  # Faster cycles for more innovative
+            phase = math.sin(2 * math.pi * colony.sol / cycle_period)
+            shift = 0.12 * innovation * phase
+            isru += shift
+            greenhouse -= shift
+
+        # Crisis aggression: how quickly to shift toward crisis mode
+        if crisis_level > 0.2:
+            crisis_shift = 0.20 * aggression * crisis_level
+            isru += crisis_shift
+            heating -= crisis_shift * 0.5
+            greenhouse -= crisis_shift * 0.5
+
+        # Food rationing: trust determines willingness to ration
+        # Low trust governors ration early (protect reserves)
+        # High trust governors ration late (feed everyone)
         food_days = r.days_of("food")
-        if food_days < 20:
-            food_ration = 0.75 + 0.25 * t.get("social_trust", 0.5)
-        elif food_days < 30:
-            food_ration = 0.85 + 0.15 * t.get("social_trust", 0.5)
+        ration_threshold = 15 + 15 * trust  # 15-30 sol threshold
+        if food_days < ration_threshold * 0.3:
+            food_ration = 0.50 + 0.20 * trust
+        elif food_days < ration_threshold * 0.7:
+            food_ration = 0.75 + 0.15 * trust
+        elif food_days < ration_threshold:
+            food_ration = 0.90 + 0.10 * trust
         else:
             food_ration = 1.0
 
@@ -307,34 +333,56 @@ class Governor:
         This is where personality-driven governors diverge over time:
         same initial allocation + different history = different outcomes.
         """
-        if len(self.memory.entries) < 5:
+        if len(self.memory.entries) < 3:
             return allocation  # Not enough data yet
 
-        # Check for persistent declines
+        # Check for persistent declines — personality modulates reaction
         o2_trend = self.memory.resource_trend("o2")
         h2o_trend = self.memory.resource_trend("h2o")
         food_trend = self.memory.resource_trend("food")
 
+        # Reaction speed varies by personality
+        # High aggression = react faster, low = more tolerant of decline
+        aggression = self.traits.get("crisis_aggression", 0.5)
+        react_mult = 0.5 + aggression  # 0.5x to 1.5x reaction strength
+
         # Shift toward ISRU if O2 or H2O declining
-        if o2_trend < -0.5 or h2o_trend < -0.5:
-            shift = min(0.10, abs(min(o2_trend, h2o_trend)) * 0.05)
+        if o2_trend < -0.3 or h2o_trend < -0.3:
+            shift = min(0.15, abs(min(o2_trend, h2o_trend)) * 0.08 * react_mult)
             allocation.isru_fraction += shift
             allocation.greenhouse_fraction -= shift * 0.5
             allocation.heating_fraction -= shift * 0.5
 
         # Shift toward greenhouse if food declining
-        if food_trend < -500:
-            shift = min(0.10, abs(food_trend) * 0.00005)
+        if food_trend < -300:
+            shift = min(0.15, abs(food_trend) * 0.00008 * react_mult)
             allocation.greenhouse_fraction += shift
             allocation.isru_fraction -= shift * 0.5
             allocation.heating_fraction -= shift * 0.5
 
-        # Crisis frequency adjustment
+        # Crisis frequency adjustment — personality determines response
         crisis_freq = self.memory.crisis_frequency()
-        if crisis_freq > 0.3:
-            # Too many crises — become more conservative
-            conservatism = crisis_freq * self.traits.get("crisis_aggression", 0.5)
-            allocation.heating_fraction += 0.05 * conservatism
+        if crisis_freq > 0.2:
+            # High aggression governors get more aggressive in crises
+            # Low aggression governors get more conservative
+            if aggression > 0.5:
+                # Aggressive: double down on production
+                allocation.isru_fraction += 0.08 * crisis_freq * aggression
+                allocation.heating_fraction -= 0.04 * crisis_freq * aggression
+            else:
+                # Conservative: hunker down, protect heating
+                allocation.heating_fraction += 0.08 * crisis_freq * (1.0 - aggression)
+                allocation.isru_fraction -= 0.04 * crisis_freq * (1.0 - aggression)
+
+        # Innovation-driven adaptation: change strategy when current one isn't working
+        innovation = self.traits.get("innovation_drive", 0.5)
+        if innovation > 0.5 and len(self.memory.entries) >= 10:
+            recent_avg = self.memory.avg_allocation("isru_fraction", 10)
+            # If we've been doing the same thing and it's not working, try the opposite
+            if crisis_freq > 0.3 and abs(allocation.isru_fraction - recent_avg) < 0.05:
+                flip = 0.10 * innovation
+                allocation.isru_fraction -= flip
+                allocation.greenhouse_fraction += flip
 
         allocation.validate()
         return allocation
