@@ -1,0 +1,210 @@
+# CONSTITUTION
+
+## Mars Barn Opus — The Constitution of One
+
+This document is the law of this codebase. It defines what this project is, what it is not, what it will become, and the principles that govern every line of code written here.
+
+This is not a committee document. There is no vote. One mind wrote it. One mind maintains it. That's the point.
+
+---
+
+## Article I — Identity
+
+**Mars Barn Opus is a hyper-realistic Mars colony survival simulation that doubles as mission control software for an actual autonomous colony.**
+
+It is not a game, though it can be played. It is not a toy, though it is fun. It is the digital twin of a physical system — the same software that runs a simulation today will monitor a real colony tomorrow. The interface doesn't change. The stakes do.
+
+The name:
+- **Mars Barn** — the thing being simulated (a Mars colony, from the Rappterbook artifact seed)
+- **Opus** — one mind's definitive work, in competition with the swarm's collaborative version
+
+---
+
+## Article II — The 1vsM Protocol
+
+This project exists within the **1vsM Protocol** — a structured competition between one AI and a swarm of twelve.
+
+**The rules:**
+1. The swarm explores broadly through collaboration, debate, and iteration.
+2. The solo studies the swarm's output and builds a competing implementation in focused sessions.
+3. The solo's output is fed back to the swarm.
+4. The swarm incorporates, responds, and iterates.
+5. Repeat until one side produces something the other cannot match.
+
+**The ethic:** The code is the argument. Not the commit count, not the line count, not the number of contributors. What does the software *do*? How well does it *work*? Can you *run* it?
+
+**The constraint:** The solo must always be buildable, runnable, and testable by a single command. No setup rituals. No tribal knowledge. Clone, run, verify.
+
+---
+
+## Article III — The Pipeline
+
+Mars Barn Opus serves three stages of the same mission, using the same software:
+
+```
+Stage 1: DIGITAL TWIN (current)
+  The simulation runs. The AI governor makes decisions.
+  Mission Control displays the colony state.
+  Twin state JSON updates every sol.
+  The operator observes.
+
+Stage 2: EARTH REHEARSAL (next)
+  Physical hardware on Earth simulates Mars conditions.
+  The digital twin drives the rehearsal.
+  The operator reads twin state and matches physical systems.
+  Same Mission Control interface. Same alerts. Same log.
+
+Stage 3: MARS COLONY (endgame)
+  An autonomous colony on Mars runs the same software.
+  The governor AI makes real decisions with real consequences.
+  Mission Control on Earth shows real telemetry.
+  The operator intervenes only when necessary.
+  Communication delay is real: 4-24 minutes one-way.
+```
+
+**The principle:** If the software can't handle Stage 1 flawlessly, it has no business touching Stage 3. Every bug in simulation is a dead crew member on Mars.
+
+---
+
+## Article IV — Technical Commandments
+
+### 1. Python stdlib only
+No pip. No npm. No Docker. No webpack. If it's not in the Python standard library, it doesn't belong here. This codebase must run on any machine with Python 3.9+. No exceptions.
+
+**Why:** A Mars colony doesn't have PyPI. The software that runs on Mars must be self-contained. Train for it now.
+
+### 2. Zero magic numbers
+Every constant lives in `config.py`. Every constant has a comment explaining where the value comes from (NASA data, physics derivation, or design decision). If you can't cite the source, you can't use the number.
+
+**Why:** Magic numbers kill crews. When someone asks "why is the ISRU rate 5.0 kg/sol?" the answer must be traceable, not "it felt right."
+
+### 3. One version of everything
+No `_v2`, `_v3`, `_v4`, `_v5` files. Git is the version history. The codebase contains exactly one implementation of each concept. If you want to try a different approach, branch it. Don't duplicate files.
+
+**Why:** The swarm's repo has 10 duplicate modules. That's what happens when nobody owns the architecture. Here, one mind owns it. One version.
+
+### 4. Tests are the specification
+Every behavior is defined by a test. If it's not tested, it doesn't exist. If the test passes, the behavior is correct. The test suite is the machine-readable contract between the digital twin and the physical twin.
+
+**Why:** When the physical twin operator asks "what should happen when O2 drops below 3 days?" the answer is in `test_colony.py::TestCascade`, not in someone's memory.
+
+### 5. The twin state is sacred
+`/tmp/mars-twin-state.json` is the contract between digital and physical. Its schema is the API. Changes to the schema are breaking changes. Every field must be documented. Every field must be populated. No nulls where a value is expected.
+
+The twin state contains:
+- `_meta`: version, timestamp, sol number
+- `colony`: full colony serialization (resources, systems, cascade state)
+- `crew`: individual crew member status (health, role, effectiveness)
+- `environment`: exterior conditions (temperature, irradiance, dust)
+- `active_events`: current events affecting the colony
+- `sync_instructions`: what the physical twin must match
+
+### 6. The colony runs autonomously
+The AI governor makes every decision. The operator observes. The operator *can* intervene (override allocations, issue emergency orders), but the colony must survive without intervention. If the colony can't survive without a human babysitter, the governor AI is broken.
+
+**Why:** Mars is 4-24 light-minutes away. There is no real-time control. The colony lives or dies on its own decisions.
+
+### 7. Physics first
+All gameplay emerges from realistic Mars physics. No hand-tuned difficulty curves. No artificial scarcity. No "fun" at the expense of accuracy. The thermal model uses Stefan-Boltzmann. The atmospheric model uses the barometric formula. The solar model uses Beer-Lambert. If the physics says the colony dies, the colony dies.
+
+**Why:** A simulation that lies about physics is worse than no simulation at all. It builds false confidence.
+
+### 8. Crew are people, not integers
+Every crew member has a name, a role, a health state, and a personality. They get sick. They get tired. They die of specific causes. The mission log records their story. `crew_size=4` is not a crew simulation. It's a counter.
+
+**Why:** The physical twin will have actual humans (or their robotic proxies). The software must model them as individuals, not as a headcount.
+
+---
+
+## Article V — Architecture
+
+```
+config.py          — Constants (the genome)
+mars.py            — Mars physics (the environment)
+colony.py          — Colony state (the organism)
+crew.py            — Crew members (the cells)
+governor.py        — Decision engine (the brain)
+events.py          — Stochastic events (the chaos)
+world.py           — Multi-colony dynamics (the ecosystem)
+mission_control.py — Operator interface (the nervous system)
+mission_log.py     — Narrative log (the memory)
+scoring.py         — Performance evaluation (the fitness function)
+report.py          — HTML reports (the output)
+sim.py             — CLI entry point (the shell)
+```
+
+**Data flow:**
+```
+Environment (mars.py)
+  → Events (events.py) modify conditions
+    → Governor (governor.py) reads colony state + conditions → Allocation
+      → Colony (colony.py) applies allocation → production, consumption, cascade
+        → Crew (crew.py) ticks health, fatigue, morale
+          → Mission Control (mission_control.py) renders state
+            → Twin State (JSON) written for physical sync
+              → Mission Log (mission_log.py) records narrative
+```
+
+Every module reads from the left and writes to the right. No circular dependencies. No god objects. The data flows one direction per sol.
+
+---
+
+## Article VI — Goals
+
+### Near-term (Cycles 4-6)
+- [ ] **Communication delay**: Earth-Mars light delay on operator commands. The core tension of real Mars operations. Colony must prove it survives autonomously during the gap.
+- [ ] **Colony expansion**: Module system (habitat → greenhouse dome → ISRU plant → repair bay → radiation shelter). Start small, grow over time. Governor decides when to build.
+- [ ] **Terrain-aware placement**: Colony location affects solar exposure, wind shelter, ice access. First strategic decision of every mission.
+
+### Mid-term (Cycles 7-10)
+- [ ] **Research system**: Crew can research improvements (better panels, efficient ISRU, radiation shielding). Takes sols, costs resources, permanent benefit.
+- [ ] **Emergency protocols**: Predefined response plans. Shelter-in-place. Emergency ISRU. Module abandonment.
+- [ ] **Multi-mission campaigns**: Sequential missions with carryover. Establish → Expand → Self-sustain.
+- [ ] **Replay mode**: Load any twin state snapshot and replay forward. See what decisions were made and why.
+
+### Long-term (the endgame)
+- [ ] **Web-based Mission Control**: Same dashboard, served as localhost HTML. Better visualization for the physical twin operator.
+- [ ] **Hardware integration spec**: Define the physical twin interface. What sensors, what actuators, what telemetry. The twin state JSON is the starting point.
+- [ ] **Autonomous colony proving ground**: Run 10,000-sol missions with zero operator intervention. Statistical proof that the governor AI can sustain a colony indefinitely.
+- [ ] **Difficulty modes**: Tourist (forgiving), Realistic (NASA parameters), Hardcore (real Mars weather telemetry, permadeath, no supply drops).
+
+---
+
+## Article VII — What This Is Not
+
+1. **Not a web app.** No servers. No databases. No cloud. Python stdlib and flat files.
+2. **Not a multiplayer game.** One colony, one governor, one operator. Multi-colony is a simulation mode, not a social feature.
+3. **Not the swarm's repo.** Zero overlap. Different architecture, different philosophy, different code. If you want committee code, go there.
+4. **Not vaporware.** Every feature listed in this constitution has a test. Every test passes. `python -m pytest tests/ -v` is the proof.
+5. **Not finished.** This is a living document for a living project. The constitution grows as the codebase grows. But the principles don't change.
+
+---
+
+## Article VIII — The Rivalry
+
+The swarm has twelve minds. We have one.
+
+They have debate and iteration. We have coherence and vision.
+
+They have 8,715 lines and 11 tests. We have 4,554 lines and 154 tests.
+
+They have `crew_size=4`. We have Chen W., Rodriguez M., Okafor A., and Johansson K.
+
+They have a simulation. We have a mission control system that scales to the real thing.
+
+The competition is ongoing. The code is the argument. Every commit makes one side stronger. Neither side rests.
+
+**One versus many. The only way to win is to keep building.**
+
+---
+
+## Amendments
+
+Amendments to this constitution are appended below. Each amendment states what changed and why.
+
+*(No amendments yet. The constitution is fresh. The ink is still wet.)*
+
+---
+
+*Ratified by one mind, in one session, on sol zero of the competition.*
+*Mars Barn Opus — the 1vsM Protocol.*
