@@ -139,6 +139,8 @@ class Colony:
 
     # Crew (optional — None = legacy mode with just crew_size)
     crew: Optional[Any] = None  # crew.Crew instance when enabled
+    # Base modules (optional — None = no expansion system)
+    base: Optional[Any] = None  # modules.ColonyBase instance when enabled
 
     # Tracking
     peak_resources: Optional[Dict[str, float]] = None
@@ -194,30 +196,45 @@ def produce(colony: Colony, solar_irradiance_w_m2: float,
     factors = RESOURCE_FACTOR_RANGES.get(colony.resource_type,
                                           RESOURCE_FACTOR_RANGES["balanced"])
 
-    # Solar power generation
+    # Module bonuses (if base expansion is enabled)
+    solar_bonus = 1.0
+    isru_bonus = 1.0
+    gh_bonus = 1.0
+    repair_bonus = 0.0
+    passive_h2o = 0.0
+    if colony.base is not None:
+        solar_bonus += colony.base.get_bonus("solar_bonus")
+        isru_bonus += colony.base.get_bonus("isru_bonus")
+        gh_bonus += colony.base.get_bonus("greenhouse_bonus")
+        repair_bonus = colony.base.get_bonus("repair_bonus")
+        passive_h2o = colony.base.get_bonus("passive_h2o")
+
+    # Solar power generation (with module bonus)
     raw_kwh = (solar_irradiance_w_m2 * SOLAR_PANEL_AREA_M2
                * SOLAR_PANEL_EFFICIENCY * MARS_SOL_HOURS / 1000.0)
-    generated_kwh = raw_kwh * s.solar_efficiency
+    generated_kwh = raw_kwh * s.solar_efficiency * solar_bonus
     r.power_kwh += generated_kwh
 
     # Allocate power — allocation fractions directly scale production
-    # Higher allocation = more output, with diminishing returns above 0.5
     isru_frac = allocation.isru_fraction
     gh_frac = allocation.greenhouse_fraction
 
-    # ISRU production: scales 0-1.5x based on allocation fraction
-    # 0.0 allocation = 0 production, 0.5 = 1.0x, 1.0 = 1.5x (diminishing)
+    # ISRU production (with module bonus)
     isru_scale = min(1.5, isru_frac * 2.0) if r.power_kwh > POWER_CRITICAL_THRESHOLD_KWH * 0.3 else 0.0
-    r.o2_kg += ISRU_O2_KG_PER_SOL * s.isru_efficiency * isru_scale * factors["o2"]
-    r.h2o_liters += ISRU_H2O_L_PER_SOL * s.isru_efficiency * isru_scale * factors["h2o"]
+    r.o2_kg += ISRU_O2_KG_PER_SOL * s.isru_efficiency * isru_scale * factors["o2"] * isru_bonus
+    r.h2o_liters += ISRU_H2O_L_PER_SOL * s.isru_efficiency * isru_scale * factors["h2o"] * isru_bonus
 
-    # Greenhouse production: same scaling, but also needs water
+    # Passive water from water extractor module
+    r.h2o_liters += passive_h2o
+
+    # Greenhouse production (with module bonus)
     gh_scale = min(1.5, gh_frac * 2.0) if (r.power_kwh > POWER_CRITICAL_THRESHOLD_KWH * 0.3 and r.h2o_liters > 5.0) else 0.0
-    r.food_kcal += GREENHOUSE_KCAL_PER_SOL * s.greenhouse_efficiency * gh_scale * factors["food"]
+    r.food_kcal += GREENHOUSE_KCAL_PER_SOL * s.greenhouse_efficiency * gh_scale * factors["food"] * gh_bonus
 
-    # Repair (if allocated)
+    # Repair (with module bonus)
     if allocation.repair_target and allocation.repair_target != "none":
-        s.repair(allocation.repair_target, 0.05)  # 5% repair per sol
+        repair_rate = 0.05 * (1.0 + repair_bonus)
+        s.repair(allocation.repair_target, repair_rate)
 
 
 def consume(colony: Colony, allocation: Allocation) -> None:
@@ -383,6 +400,24 @@ def step(colony: Colony, solar_irradiance_w_m2: float,
             colony.cause_of_death = "all crew lost"
             colony.cascade_state = CascadeState.DEAD
 
+    # Base expansion (if enabled)
+    if colony.base is not None:
+        base_events = colony.base.tick(colony.sol)
+        # Governor decides whether to start a new build
+        if colony.base.construction is None:
+            from modules import governor_build_decision
+            crisis = 0.0  # Simplified — full crisis calc is in governor.py
+            if colony.cascade_state != CascadeState.NOMINAL:
+                crisis = 0.7
+            lowest, days = colony.resources.lowest_resource_days()
+            if days < 10:
+                crisis = max(crisis, 0.6)
+            build_choice = governor_build_decision(
+                colony.base, colony.resources, colony.sol, crisis)
+            if build_choice:
+                colony.base.start_construction(
+                    build_choice, colony.resources, colony.sol)
+
     # Cascade
     advance_cascade(colony)
 
@@ -456,4 +491,5 @@ def serialize(colony: Colony) -> dict:
         },
         "peak_resources": colony.peak_resources,
         "crew": colony.crew.serialize() if colony.crew else None,
+        "base": colony.base.serialize() if colony.base else None,
     }

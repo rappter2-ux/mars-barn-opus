@@ -36,14 +36,17 @@ The single biggest thing the swarm doesn't have. Makes it feel real.
 - [x] Twin state includes crew data
 - [x] 154 tests pass (23 new crew tests)
 
-## Cycle 4: Communication Delay
-The core tension of real Mars operations.
+## Cycle 4: Communication Delay + Web Mission Control [DONE]
 
-### What to build
-- Commands from operator have 4-24 minute delay (configurable)
-- Colony must survive autonomously during delay
-- In mission control: you see "Command queued... ETA 14m"
-- Emergency override: instant but costs reputation/trust
+### What was built
+- src/comms.py: Earth-Mars comms with orbital delay (0.3-1.5 sols),
+  solar conjunction blackout (~14 sols), command queuing
+- docs/index.html: PLAYABLE WEB VERSION — full Mission Control in browser
+  Pure JS, zero deps, local-first, import/export state as JSON
+  GitHub Pages live at rappter2-ux.github.io/mars-barn-opus
+- Operator overrides are now DELAYED through comms channel
+- Emergency protocols queue with arrival time
+- 167 tests, all passing
 
 ## Cycle 5: Colony Expansion
 Start small, grow over time.
