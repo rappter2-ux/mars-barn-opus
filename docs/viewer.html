@@ -534,7 +534,7 @@ function buildGroundScene(){
   // Sky color shifts with time of day
   let skyColor,fogColor,sunIntensity,ambientIntensity,exposure;
   if(isNight){
-    skyColor=0x050208;fogColor=0x050208;sunIntensity=0;ambientIntensity=0.08;exposure=0.3;
+    skyColor=0x0a0515;fogColor=0x0a0515;sunIntensity=0;ambientIntensity=0.25;exposure=0.7;
   }else if(isDawn){
     const t=(marsHour-5.5)/2;// 0→1
     skyColor=lerpColor(0x1a0510,0x6b3020,t);fogColor=skyColor;
@@ -580,7 +580,7 @@ function buildGroundScene(){
   sun.shadow.camera.top=60;sun.shadow.camera.bottom=-60;
   groundScene.add(sun);
   // Warm fill from regolith (dims at night)
-  const fillLight=new T.HemisphereLight(isNight?0x111133:0xffa060,0x8b4513,isNight?0.05:0.3);
+  const fillLight=new T.HemisphereLight(isNight?0x223355:0xffa060,0x8b4513,isNight?0.2:0.3);
   groundScene.add(fillLight);
 
   // Stars visible at night
@@ -658,8 +658,8 @@ function buildGroundScene(){
   const ring=new T.Mesh(ringG,ringM);
   ring.rotation.x=Math.PI/2;ring.position.y=0.1;
   groundScene.add(ring);
-  // Interior light glow inside dome (brighter at night)
-  const glowLight=new T.PointLight(0xffeebb,isNight?1.5:0.6,isNight?25:15);
+  // Interior light glow inside dome (much brighter at night)
+  const glowLight=new T.PointLight(0xffeebb,isNight?2.5:0.6,isNight?35:15);
   glowLight.position.set(0,3,0);
   groundScene.add(glowLight);
   // Dome emissive at night (warm glow from inside)
@@ -704,7 +704,7 @@ function buildGroundScene(){
       new T.MeshBasicMaterial({color:isNight?0xffaa44:0x886622}));
     bulb.position.set(7+i*1.6,1.25,1.5);groundScene.add(bulb);
     if(isNight){
-      const pl=new T.PointLight(0xffaa44,0.3,5);
+      const pl=new T.PointLight(0xffaa44,0.8,10);
       pl.position.set(7+i*1.6,1.3,1.5);groundScene.add(pl);
     }
   }
@@ -717,7 +717,7 @@ function buildGroundScene(){
       new T.MeshBasicMaterial({color:0xff2200}));
     bLight.position.set(bx,1.1,bz);groundScene.add(bLight);
     if(isNight){
-      const rpl=new T.PointLight(0xff2200,0.2,8);
+      const rpl=new T.PointLight(0xff2200,0.6,12);
       rpl.position.set(bx,1.2,bz);groundScene.add(rpl);
     }
   }
@@ -731,12 +731,20 @@ function buildGroundScene(){
   }
   // Flood lights on antenna tower (illuminate base at night)
   if(isNight){
-    const flood1=new T.SpotLight(0xccddff,0.8,80,Math.PI/4,0.5);
+    const flood1=new T.SpotLight(0xddeeff,2.5,120,Math.PI/3,0.3);
     flood1.position.set(-12,17,-10);flood1.target.position.set(0,0,0);
     groundScene.add(flood1);groundScene.add(flood1.target);
-    const flood2=new T.SpotLight(0xccddff,0.4,60,Math.PI/3,0.5);
+    const flood2=new T.SpotLight(0xddeeff,1.5,100,Math.PI/3,0.3);
     flood2.position.set(-12,17,-10);flood2.target.position.set(20,0,0);
     groundScene.add(flood2);groundScene.add(flood2.target);
+    // Secondary flood from opposite side
+    const flood3=new T.SpotLight(0xddeeff,1.5,100,Math.PI/3,0.4);
+    flood3.position.set(15,12,12);flood3.target.position.set(0,0,0);
+    groundScene.add(flood3);groundScene.add(flood3.target);
+    // Dome ring light (bright at night)
+    const domeRing=new T.PointLight(0xffeebb,1.2,30);
+    domeRing.position.set(0,1,0);
+    groundScene.add(domeRing);
   }
 
   // Built modules as distinct buildings
@@ -792,7 +800,7 @@ function buildGroundScene(){
     groundScene.add(ind);
     if(isNight&&cfg.shape!=='flat'){
       const winColor=cfg.shape==='dome'?0x44ff88:0xffeebb;
-      const modGlow=new T.PointLight(winColor,0.4,10);
+      const modGlow=new T.PointLight(winColor,1.0,15);
       modGlow.position.set(mesh.position.x,cfg.scale,mesh.position.z);
       groundScene.add(modGlow);
     }
