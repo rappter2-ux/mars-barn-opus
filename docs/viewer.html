@@ -158,7 +158,7 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
 // Same sim engine as index.html
 // ============================================================
 
-const MARS_TEX = 'https://unpkg.com/three-globe/example/img/earth-topology.png';
+const MARS_TEX = 'https://raw.githubusercontent.com/kody-w/mars-barn/main/assets/textures/2k_mars.jpg';
 const BG = 'https://unpkg.com/three-globe/example/img/night-sky.png';
 
 // ── Real Mars Climate Engine (NASA Mission Data) ──────────────────
@@ -265,8 +265,8 @@ function initGlobe(){
   globe.controls().autoRotate=true;
   globe.controls().autoRotateSpeed=0.3;
   globe.pointOfView({altitude:2.5});
-  // Tint the globe reddish for Mars
-  globe.globeMaterial().color.setHex(0xffccaa);
+  // Keep natural Mars texture colors
+  globe.globeMaterial().color.setHex(0xffffff);
 }
 
 // ── Zoom Levels ──
@@ -831,27 +831,44 @@ function solIrr(sol){
   const dust=state.events.some(e=>e.type==='dust_storm')?0.25:1;
   return sc*el*dust*0.7;
 }
+// ── Echo Frame System ──
+// Each sim step produces an echo frame: a delta describing what changed.
+// The 3D scene reacts to the echo. The echo IS the heartbeat of the colony.
+// Output of frame N is input to frame N+1 — data sloshing.
+let echoHistory=[];
+let lastEcho=null;
+
 function stepSim(){
-  if(!state.alive)return;
+  if(!state.alive)return null;
   state.sol++;const s=state.sol;
   const ac=state.crew.filter(c=>c.alive);
-  if(!ac.length){state.alive=false;state.cause='all crew lost';return}
+  if(!ac.length){state.alive=false;state.cause='all crew lost';return{type:'death',cause:'all crew lost'}}
+
+  // Snapshot pre-state for delta
+  const pre={o2:state.o2,h2o:state.h2o,food:state.food,power:state.power,
+    crew_alive:ac.length,morale:state.morale};
+
   // Events
   state.events=state.events.filter(e=>{e.remaining--;return e.remaining>0});
-  const probs={dust_storm:0.12,solar_flare:0.04,meteorite:0.003,equipment_failure:0.02};
+  const probs={dust_storm:0.12,dust_devil:0.15,solar_flare:0.04,meteorite:0.003,equipment_failure:0.02,radiation_spike:0.03};
   const newEv=[];const types=state.events.map(e=>e.type);
   for(const[t,p]of Object.entries(probs)){
     if(types.includes(t))continue;
-    if(R()<p){const sv=0.2+R()*0.8,dur=t==='dust_storm'?Math.floor(5+R()*25):Math.floor(1+R()*5);
-      const ev={type:t,severity:sv,remaining:dur,duration:dur};state.events.push(ev);newEv.push(ev);
+    if(R()<p){const sv=0.2+R()*0.8,dur=t==='dust_storm'?Math.floor(5+R()*25):t==='dust_devil'?Math.floor(1+R()*2):Math.floor(1+R()*5);
+      const descs={dust_storm:'Dust storm approaching from the north',dust_devil:'Dust devil spotted near habitat',
+        solar_flare:'Solar particle event — seek shelter',meteorite:'Meteorite impact detected nearby',
+        equipment_failure:'Equipment malfunction in ISRU unit',radiation_spike:'Elevated background radiation'};
+      const ev={type:t,severity:sv,remaining:dur,duration:dur,desc:descs[t]||t};
+      state.events.push(ev);newEv.push(ev);
       if(t==='meteorite'){state.s_eff*=(1-0.15*sv);state.g_eff*=(1-0.2*sv)}
       if(t==='equipment_failure'){state.i_eff*=(1-0.15*sv);state.power-=20*sv}
+      if(t==='solar_flare'){state.rad+=50*sv}
     }
   }
-  // Production
-  const irr=solIrr(s);
-  const a=state.alloc;
-  state.power+=irr*PANEL*EFF*SOL_H/1000*state.s_eff*(1+state.modules.filter(m=>m.type==='solar_farm').length*0.4);
+  // Production (with module bonuses)
+  const irr=solIrr(s);const a=state.alloc;
+  const solarBonus=1+state.modules.filter(m=>m.type==='solar_farm').length*0.4;
+  state.power+=irr*PANEL*EFF*SOL_H/1000*state.s_eff*solarBonus;
   if(state.power>PCRIT*0.3){
     const is=Math.min(1.5,a.i*2),ib=1+state.modules.filter(m=>m.type==='isru_plant').length*0.4;
     state.o2+=ISRU_O2*state.i_eff*is*ib;state.h2o+=ISRU_H2O*state.i_eff*is*ib;
@@ -869,46 +886,130 @@ function stepSim(){
   state.int_temp=Math.max(200,Math.min(310,state.int_temp+(state.power>PCRIT?0.5:-2)));
   state.rad+=0.335;
   // Crew
+  const crewEvents=[];
   ac.forEach(m=>{
-    m.rad+=0.335;
+    m.rad+=0.335;const prevHp=m.hp;
     if(state.food/(n*FOOD_PP)<0.3){m.hp-=3;m.mor-=5;m.st='STARVING'}
     else if(state.h2o/(n*H2O_PP)<0.3){m.hp-=5;m.mor-=3;m.st='DEHYDRATED'}
     else if(state.int_temp<263){m.hp-=4;m.st='HYPOTHERMIC'}
     else{m.hp=Math.min(100,m.hp+0.5);m.st='Nominal'}
     m.mor=Math.max(0,Math.min(100,m.mor));
-    if(m.hp<=0){m.alive=false;m.st='DECEASED'}
+    if(m.hp<=0&&prevHp>0){m.alive=false;m.st='DECEASED';crewEvents.push({type:'crew_death',name:m.name,role:m.role})}
+    if(prevHp>50&&m.hp<=50){crewEvents.push({type:'crew_critical',name:m.name})}
   });
-  state.morale=ac.reduce((s,m)=>s+m.mor,0)/Math.max(1,ac.length)/100;
+  state.morale=ac.filter(c=>c.alive).reduce((s,m)=>s+m.mor,0)/Math.max(1,ac.filter(c=>c.alive).length)/100;
   if(state.o2<=0){state.alive=false;state.cause='O2 depletion'}
   if(state.food<=0){state.alive=false;state.cause='starvation'}
-  // Governor
+  // Governor personality-driven decisions
   const o2d=state.o2/(O2_PP*n),h2od=state.h2o/(H2O_PP*n),fd=state.food/(FOOD_PP*n);
+  const traits={engineer:{r:0.3,t:0.6,ag:0.5},philosopher:{r:0.5,t:0.8,ag:0.2},contrarian:{r:0.8,t:0.2,ag:0.8},
+    survivalist:{r:0.1,t:0.3,ag:0.7},diplomat:{r:0.4,t:0.9,ag:0.1},wildcard:{r:0.9,t:0.5,ag:0.6},
+    commander:{r:0.4,t:0.5,ag:0.9},scientist:{r:0.6,t:0.7,ag:0.3},merchant:{r:0.5,t:0.4,ag:0.4},hermit:{r:0.2,t:0.1,ag:0.3}};
+  const tr=traits[state.arch]||traits.engineer;
   if(o2d<5||h2od<5){a.h=0.15;a.i=0.70;a.g=0.15;a.r=fd<5?0.5:0.75}
   else if(fd<10){a.h=0.15;a.i=0.30;a.g=0.55;a.r=0.75}
+  else{// Personality drives allocation in stable conditions
+    a.h=0.30-0.20*tr.r;a.i=0.30+0.15*(1-tr.t)+0.10*tr.ag;a.g=0.40+0.15*tr.t-0.10*tr.ag;
+    const tot=a.h+a.i+a.g;a.h/=tot;a.i/=tot;a.g/=tot;
+    a.r=fd<20?0.75+0.25*tr.t:1.0;
+  }
   // Auto-build
-  if(!state.building&&state.sol>15&&o2d>10&&fd>10){
+  let buildEvent=null;
+  if(!state.building&&state.sol>15&&o2d>8&&fd>8){
     const opts=['greenhouse_dome','isru_plant','solar_farm','water_extractor','repair_bay','radiation_shelter','comms_array','storage_depot'];
     const built=new Set(state.modules.map(m=>m.type));
     const need=opts.find(o=>!built.has(o)||(o==='solar_farm'&&state.modules.filter(m=>m.type==='solar_farm').length<3));
-    if(need){state.building={type:need,remaining:Math.floor(8+R()*12)};}
+    if(need){state.building={type:need,remaining:Math.floor(8+R()*12)};
+      buildEvent={type:'construction_start',module:need};}
   }
   if(state.building){state.building.remaining--;if(state.building.remaining<=0){
     state.modules.push({type:state.building.type,built:s});
-    state.log.push(`Sol ${s}: ${state.building.type.replace(/_/g,' ')} COMPLETED`);
+    buildEvent={type:'construction_complete',module:state.building.type};
     state.building=null;
   }}
-  // Log
-  state.log.push(`Sol ${s}: ${(state.int_temp-273.15).toFixed(0)}°C int, ${ac.length} crew, ${(state.o2/(O2_PP*n)).toFixed(0)}d O2`);
-  if(newEv.length)state.log.push(`  ⚠ ${newEv.map(e=>e.type.replace(/_/g,' ')).join(', ')}`);
-  if(!state.alive)state.log.push(`COLONY LOST: ${state.cause}`);
+
+  // ── Build Echo Frame Delta ──
+  const post={o2:state.o2,h2o:state.h2o,food:state.food,power:state.power,
+    crew_alive:state.crew.filter(c=>c.alive).length,morale:state.morale};
+  const echo={
+    frame:s, utc:new Date().toISOString(),
+    delta:{o2:post.o2-pre.o2,h2o:post.h2o-pre.h2o,food:post.food-pre.food,power:post.power-pre.power},
+    events:newEv.map(e=>({type:e.type,severity:e.severity,desc:e.desc})),
+    crew_events:crewEvents,
+    build:buildEvent,
+    alive:state.alive,cause:state.cause,
+    // Visual hints for the 3D scene
+    visual:{
+      dust_storm:state.events.some(e=>e.type==='dust_storm'),
+      solar_flare:state.events.some(e=>e.type==='solar_flare'),
+      meteorite:newEv.some(e=>e.type==='meteorite'),
+      night:marsWeather.lmst<6||marsWeather.lmst>19,
+      construction:!!state.building,
+      alert:post.crew_alive<pre.crew_alive?'crew_lost':
+        !state.alive?'colony_dead':
+        (post.o2/(O2_PP*n))<5?'o2_critical':
+        (post.food/(FOOD_PP*n))<5?'food_critical':'nominal',
+    },
+  };
+  echoHistory.push(echo);if(echoHistory.length>500)echoHistory.shift();
+  lastEcho=echo;
+
+  // Log with echo context
+  let logLine=`Sol ${s}: ${(state.int_temp-273.15).toFixed(0)}°C, ${post.crew_alive} crew`;
+  if(echo.delta.o2<0)logLine+=`, O₂ ${echo.delta.o2.toFixed(1)}`;
+  if(newEv.length)logLine+=` | ${newEv.map(e=>e.desc||e.type).join(', ')}`;
+  state.log.push(logLine);
+  crewEvents.forEach(ce=>state.log.push(`  💀 ${ce.name} (${ce.type==='crew_death'?'DECEASED':'CRITICAL'})`));
+  if(buildEvent)state.log.push(`  🔨 ${buildEvent.module.replace(/_/g,' ')} ${buildEvent.type==='construction_complete'?'COMPLETED':'started'}`);
+  if(!state.alive)state.log.push(`☠ COLONY LOST: ${state.cause}`);
+
   updateAllUI();
+  applyEchoVisuals(echo);
+  return echo;
+}
+
+// ── Apply Echo Frame to 3D Scene ──
+function applyEchoVisuals(echo){
+  if(!echo||!groundScene)return;
+  const v=echo.visual;
+
+  // Camera shake on meteorite
+  if(v.meteorite&&groundCamera){
+    const origY=groundCamera.position.y;
+    groundCamera.position.y+=3;
+    setTimeout(()=>{if(groundCamera)groundCamera.position.y=origY},200);
+  }
+
+  // Flash on solar flare (briefly brighten everything)
+  if(echo.events.some(e=>e.type==='solar_flare')&&groundScene){
+    const flash=new THREE.AmbientLight(0xffffff,2);
+    groundScene.add(flash);
+    setTimeout(()=>{if(groundScene)groundScene.remove(flash)},300);
+  }
+
+  // Screen tint on crew death
+  if(echo.crew_events.some(e=>e.type==='crew_death')){
+    document.body.style.boxShadow='inset 0 0 100px rgba(218,54,51,0.3)';
+    setTimeout(()=>{document.body.style.boxShadow='none'},1500);
+  }
+
+  // Green flash on construction complete
+  if(echo.build&&echo.build.type==='construction_complete'){
+    document.body.style.boxShadow='inset 0 0 60px rgba(63,185,80,0.2)';
+    setTimeout(()=>{document.body.style.boxShadow='none'},1000);
+    // Rebuild ground scene to show new module
+    if(currentZoom==='base'||currentZoom==='module'){
+      exitGround();enterGround();
+    }
+  }
 }
 
 // ── UI Updates ──
 function updateAllUI(){
   const s=state,ac=s.crew.filter(c=>c.alive),n=Math.max(1,ac.length);
   // Status
-  document.getElementById('status-text').textContent=s.alive?`SOL ${s.sol} | ${s.arch.toUpperCase()} | ${ac.length} CREW`:'COLONY LOST — '+s.cause;
+  const echoTag=lastEcho?` | ECHO ${echoHistory.length}`:'';
+  document.getElementById('status-text').textContent=s.alive?`SOL ${s.sol} | ${s.arch.toUpperCase()} | ${ac.length} CREW${echoTag}`:'COLONY LOST — '+s.cause;
   // Colony info
   document.getElementById('colony-info').innerHTML=`
     <div class="colony-card"><span class="name">Ares Colony</span><span class="hp" style="color:${s.alive?'var(--green)':'var(--red)'}">${s.alive?'ACTIVE':'DEAD'}</span>
@@ -937,11 +1038,11 @@ function updateAllUI(){
     const col=!m.alive?'var(--red)':m.hp>70?'var(--green)':m.hp>30?'var(--yellow)':'var(--red)';
     return`<div class="crew-row"><span style="color:${col};width:8px">●</span><span style="width:100px">${m.name}</span><span style="width:40px;color:var(--dim)">${m.role}</span><span style="width:35px;text-align:right;color:${col}">${m.alive?m.hp.toFixed(0):'--'}</span><span style="flex:1;text-align:right;font-size:10px;color:var(--dim)">${m.st}</span></div>`;
   }).join('');
-  // Events
+  // Events — show echo frame events with descriptions
   const recent=s.events.slice(-5);
   document.getElementById('event-feed').innerHTML=recent.length?recent.map(e=>
-    `<div class="event-item"><span class="tag">${e.type.replace(/_/g,' ').toUpperCase()}</span> sev ${e.severity.toFixed(1)} (${e.remaining} sols)</div>`
-  ).join(''):'<div class="event-item">No active events</div>';
+    `<div class="event-item"><span class="tag">${e.type.replace(/_/g,' ').toUpperCase()}</span> ${e.desc||''} <span style="color:var(--dim)">(sev ${e.severity.toFixed(1)}, ${e.remaining}s left)</span></div>`
+  ).join(''):'<div class="event-item" style="color:var(--green)">All systems nominal</div>';
   // Log
   document.getElementById('mini-log').innerHTML=s.log.slice(-20).map(l=>
     l.includes('COLONY LOST')?`<div style="color:var(--red)">${l}</div>`:
