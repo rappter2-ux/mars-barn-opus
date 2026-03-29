@@ -148,6 +148,8 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
   <div id="systems"></div>
   <h3>Base Modules</h3>
   <div id="modules-list">No modules built</div>
+  <h3>Research</h3>
+  <div id="research-list" style="font-size:10px">No research yet</div>
 </div>
 
 <!-- Right panel: crew + events -->
@@ -244,7 +246,7 @@ let state={sol:0,alive:true,cause:null,arch:'engineer',
     {name:'Okafor A.',role:'SCI',hp:98,fat:0,mor:78,rad:0,alive:true,st:'Nominal'},
     {name:'Johansson K.',role:'MED',hp:95,fat:0,mor:88,rad:0,alive:true,st:'Nominal'}
   ],
-  events:[],log:[],modules:[],building:null,
+  events:[],log:[],modules:[],building:null,research:[],researching:null,
   alloc:{h:.25,i:.4,g:.35,r:1},lat:18.38,lng:77.58
 };
 
@@ -1052,6 +1054,31 @@ function stepSim(){
     state.building=null;
   }}
 
+  // Auto-research (tier 1 → 2 → 3)
+  let researchEvent=null;
+  const RTREE={improved_solar:{name:'Improved Solar',sols:12,tier:1,cost_pwr:100,eff:'solar+15%'},
+    water_recycling:{name:'Water Recycling',sols:10,tier:1,cost_pwr:80,eff:'h2o-20%'},
+    crop_optimization:{name:'Crop Optimization',sols:15,tier:1,cost_pwr:60,eff:'food+25%'},
+    radiation_hardening:{name:'Radiation Hardening',sols:14,tier:1,cost_pwr:120,eff:'rad-30%'},
+    moxie_upgrade:{name:'MOXIE II',sols:20,tier:2,cost_pwr:200,req:'water_recycling',eff:'isru+30%'},
+    dust_mitigation:{name:'Dust Mitigation',sols:12,tier:2,cost_pwr:80,req:'improved_solar',eff:'dust-40%'},
+    autonomous_repair:{name:'Auto Repair',sols:18,tier:2,cost_pwr:150,req:'improved_solar',eff:'repair+'},
+    nuclear_thermal:{name:'Nuclear Thermal',sols:30,tier:3,cost_pwr:500,req:'moxie_upgrade',eff:'no cascade'}};
+  if(!state.researching&&s>30&&o2d>8&&fd>8&&state.power>200){
+    const done=new Set(state.research);
+    const opts=Object.entries(RTREE).filter(([k,v])=>!done.has(k)&&(!v.req||done.has(v.req))&&state.power>=v.cost_pwr);
+    if(opts.length){
+      const[rk,rv]=opts[0];state.researching={slug:rk,name:rv.name,remaining:rv.sols,total:rv.sols};
+      state.power-=rv.cost_pwr;
+      researchEvent={type:'research_start',name:rv.name};
+    }
+  }
+  if(state.researching){state.researching.remaining--;if(state.researching.remaining<=0){
+    state.research.push(state.researching.slug);
+    researchEvent={type:'research_complete',name:state.researching.name};
+    state.researching=null;
+  }}
+
   // ── Build Echo Frame Delta ──
   const post={o2:state.o2,h2o:state.h2o,food:state.food,power:state.power,
     crew_alive:state.crew.filter(c=>c.alive).length,morale:state.morale};
@@ -1085,6 +1112,7 @@ function stepSim(){
   state.log.push(logLine);
   crewEvents.forEach(ce=>state.log.push(`  💀 ${ce.name} (${ce.type==='crew_death'?'DECEASED':'CRITICAL'})`));
   if(buildEvent)state.log.push(`  🔨 ${buildEvent.module.replace(/_/g,' ')} ${buildEvent.type==='construction_complete'?'COMPLETED':'started'}`);
+  if(researchEvent)state.log.push(`  🔬 ${researchEvent.name} ${researchEvent.type==='research_complete'?'BREAKTHROUGH':'started'}`);
   if(!state.alive)state.log.push(`☠ COLONY LOST: ${state.cause}`);
 
   updateAllUI();
@@ -1157,6 +1185,15 @@ function updateAllUI(){
     s.modules.map(m=>`<div class="module-item"><span>${m.type.replace(/_/g,' ')}</span><span class="status">✓ Sol ${m.built}</span></div>`).join('')
     +(s.building?`<div class="module-item" style="color:var(--yellow)"><span>${s.building.type.replace(/_/g,' ')}</span><span>${s.building.remaining} sols</span></div>`:'')
     :'Landing habitat only'+(s.building?`<div style="color:var(--yellow);margin-top:4px">Building: ${s.building.type.replace(/_/g,' ')} (${s.building.remaining} sols)</div>`:'');
+  // Research
+  const rl=document.getElementById('research-list');
+  if(rl){
+    let rhtml='';
+    if(s.research.length)rhtml+=s.research.map(r=>`<div style="color:var(--green)">✓ ${r.replace(/_/g,' ')}</div>`).join('');
+    if(s.researching)rhtml+=`<div style="color:var(--cyan)">◎ ${s.researching.name} (${s.researching.remaining}s left, ${Math.round((1-s.researching.remaining/s.researching.total)*100)}%)</div>`;
+    if(!rhtml)rhtml='<div style="color:var(--dim)">Available after sol 30</div>';
+    rl.innerHTML=rhtml;
+  }
   // Crew
   document.getElementById('crew-roster').innerHTML=s.crew.map(m=>{
     const col=!m.alive?'var(--red)':m.hp>70?'var(--green)':m.hp>30?'var(--yellow)':'var(--red)';
@@ -1232,7 +1269,7 @@ function resetState(){
       {name:'Rodriguez M.',role:'ENGR',hp:96,fat:0,mor:85,rad:0,alive:true,st:'Nominal'},
       {name:'Okafor A.',role:'SCI',hp:98,fat:0,mor:78,rad:0,alive:true,st:'Nominal'},
       {name:'Johansson K.',role:'MED',hp:95,fat:0,mor:88,rad:0,alive:true,st:'Nominal'}],
-    events:[],log:[],modules:[],building:null,alloc:{h:.25,i:.4,g:.35,r:1},lat:18.38,lng:77.58};
+    events:[],log:[],modules:[],building:null,research:[],researching:null,alloc:{h:.25,i:.4,g:.35,r:1},lat:18.38,lng:77.58};
   document.getElementById('sim-btn').textContent='▶ START SIM';
   updateAllUI();
 }
