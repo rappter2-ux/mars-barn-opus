@@ -27,6 +27,11 @@ color:var(--dim);cursor:pointer;font-family:var(--font);font-size:11px;transitio
 animation:pulse 2s infinite;margin-right:6px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 
+/* Zoom transitions */
+#globe-container,#warmap-view,#ground-view{transition:opacity 0.5s ease-in-out}
+.fade-out{opacity:0!important;pointer-events:none}
+.fade-in{opacity:1}
+
 /* Globe container */
 #globe-container{position:fixed;top:36px;left:0;right:0;bottom:0}
 #globeViz{width:100%;height:100%}
@@ -116,6 +121,12 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
   </div>
   <div id="ground-canvas"></div>
   <div class="ground-hud" id="ground-hud"></div>
+  <!-- Real Mars weather overlay -->
+  <div id="weather-hud" style="position:fixed;top:80px;right:290px;z-index:60;background:var(--panel);
+    border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:10px;min-width:180px">
+    <div style="color:var(--cyan);font-weight:700;font-size:11px;margin-bottom:6px;letter-spacing:1px">REAL MARS WEATHER</div>
+    <div id="wx-data" style="line-height:1.8"></div>
+  </div>
 </div>
 
 <!-- Left panel: colony status -->
@@ -148,8 +159,60 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
 // ============================================================
 
 const MARS_TEX = 'https://unpkg.com/three-globe/example/img/earth-topology.png';
-// Use a Mars-like texture (reddish topology)
 const BG = 'https://unpkg.com/three-globe/example/img/night-sky.png';
+
+// ── Real Mars Climate Engine (NASA Mission Data) ──────────────────
+// Sources: Viking 1&2, Curiosity/REMS, Perseverance/MEDA, MCD v6.1
+const JEZERO={lat:18.38,lon:77.58};
+const MC_TEMP={0:[207,12,180,235],30:[210,11,185,240],60:[213,10,190,243],90:[208,11,184,238],
+  120:[205,12,180,235],150:[210,13,182,245],180:[218,15,188,260],210:[225,18,190,272],
+  240:[228,20,192,280],270:[222,17,189,272],300:[218,15,185,265],330:[212,13,183,250]};
+const MC_PRES={0:[750,30],30:[730,25],60:[710,20],90:[700,20],120:[720,25],150:[750,30],
+  180:[800,35],210:[860,40],240:[920,45],270:[960,40],300:[930,35],330:[850,30]};
+const MC_SOLAR={0:[530,350,120],30:[510,340,115],60:[495,330,110],90:[490,325,105],
+  120:[505,335,110],150:[530,350,120],180:[570,375,130],210:[620,410,140],
+  240:[670,440,90],270:[715,470,80],300:[680,450,100],330:[610,400,135]};
+const MC_DUST={0:[0.02,0.005,0,0.2,0.4],30:[0.02,0.005,0,0.2,0.4],60:[0.03,0.008,0,0.25,0.5],
+  90:[0.03,0.008,0,0.25,0.5],120:[0.04,0.01,0,0.3,0.5],150:[0.05,0.015,0,0.3,0.6],
+  180:[0.10,0.03,0.002,0.4,0.7],210:[0.15,0.05,0.005,0.5,0.8],240:[0.20,0.08,0.01,0.5,0.9],
+  270:[0.25,0.10,0.015,0.6,0.95],300:[0.18,0.06,0.008,0.5,0.85],330:[0.08,0.02,0.002,0.3,0.6]};
+const MC_WIND={0:[4,12],30:[3.5,10],60:[3,9],90:[3,8],120:[3.5,10],150:[4,12],
+  180:[5.5,16],210:[7,22],240:[8.5,28],270:[9,35],300:[7.5,25],330:[5,15]};
+const MC_SEASONS=['Early Spring','Spring','Late Spring','Early Summer','Mid Summer','Late Summer',
+  'Autumn Equinox','Dust Season','Peak Dust','Perihelion','Late Winter','Winter Waning'];
+
+function mcInterp(table,ls){
+  const bin=Math.floor((((ls%360)+360)%360)/30)*30,next=(bin+30)%360;
+  const f=(((ls%360)+360)%360-bin)/30;
+  return table[bin].map((v,i)=>v+(table[next][i]-v)*f);
+}
+function marsDateNow(){
+  const jd=Date.now()/86400000+2440587.5+69.184/86400,dJ=jd-2451545.0;
+  const msd=(dJ-4.5)/1.0274912517+44796.0-0.00096,M=(19.3871+0.52402075*msd)%360;
+  const Mr=M*Math.PI/180;
+  const eoc=10.691*Math.sin(Mr)+0.623*Math.sin(2*Mr)+0.050*Math.sin(3*Mr)+0.005*Math.sin(4*Mr);
+  let ls=(M+eoc+270.3863)%360;if(ls<0)ls+=360;
+  let lmst=((24*msd)%24+JEZERO.lon/15)%24;if(lmst<0)lmst+=24;
+  return{msd,ls,lmst,sol:Math.floor(msd)};
+}
+function getMarsWeather(){
+  const md=marsDateNow(),t=mcInterp(MC_TEMP,md.ls),p=mcInterp(MC_PRES,md.ls);
+  const s=mcInterp(MC_SOLAR,md.ls),d=mcInterp(MC_DUST,md.ls),w=mcInterp(MC_WIND,md.ls);
+  const phase=(md.lmst-14)/24*2*Math.PI;
+  const tempK=(t[2]+t[3])/2+((t[3]-t[2])/2)*Math.cos(phase);
+  const tau=0.3+d[3]*1.5,surfSolar=Math.round(s[1]*(1-tau*0.4));
+  return{sol:md.sol,ls:Math.round(md.ls*10)/10,lmst:md.lmst,
+    season:MC_SEASONS[Math.floor((((md.ls%360)+360)%360)/30)],
+    tempC:Math.round(tempK-273.15),tempK:Math.round(tempK),
+    pressurePa:Math.round(p[0]),windMs:Math.round(w[0]*10)/10,
+    gustMs:Math.round(w[1]),dustTau:Math.round(tau*100)/100,
+    uvIndex:Math.round((s[1]/470)*12*(1-tau*0.3)*10)/10,
+    solarWm2:surfSolar,dustStormProb:Math.round(d[0]*100),
+    timeStr:`${String(Math.floor(md.lmst)).padStart(2,'0')}:${String(Math.floor((md.lmst%1)*60)).padStart(2,'0')}`};
+}
+let marsWeather=getMarsWeather();
+setInterval(()=>{marsWeather=getMarsWeather()},30000);
+// ── End Mars Climate Engine ──────────────────────────────────────
 
 // Sim state (reuse from index.html engine)
 const O2_PP=0.84,H2O_PP=2.5,FOOD_PP=2500,PWR_BASE=30,ISRU_O2=5,ISRU_H2O=12,GH_KCAL=15000,PANEL=200,EFF=0.22,SOL_H=24.66,PCRIT=50;
@@ -212,23 +275,39 @@ function setZoom(level){
   document.querySelectorAll('.zoom-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('z-'+level)?.classList.add('active');
 
-  // Hide all views first
-  document.getElementById('warmap-view').style.display='none';
-  document.getElementById('ground-view').style.display='none';
-  document.getElementById('globe-container').style.display='none';
+  // Fade out all views
+  ['globe-container','warmap-view','ground-view'].forEach(id=>{
+    document.getElementById(id).classList.add('fade-out');
+  });
 
-  if(level==='planet'||level==='surface'){
-    exitGround();
-    document.getElementById('globe-container').style.display='block';
-    if(level==='planet')globe.pointOfView({altitude:2.5},1000);
-    else globe.pointOfView({lat:state.lat,lng:state.lng,altitude:0.15},1000);
-  } else if(level==='warmap'){
-    exitGround();
-    document.getElementById('warmap-view').style.display='block';
-    renderWarmap();
-  } else {
-    enterGround();
-  }
+  // After fade, show the target view
+  setTimeout(()=>{
+    document.getElementById('warmap-view').style.display='none';
+    document.getElementById('ground-view').style.display='none';
+    document.getElementById('globe-container').style.display='none';
+
+    if(level==='planet'||level==='surface'){
+      exitGround();
+      const el=document.getElementById('globe-container');
+      el.style.display='block';
+      setTimeout(()=>el.classList.remove('fade-out'),20);
+      if(level==='planet')globe.pointOfView({altitude:2.5},1000);
+      else globe.pointOfView({lat:state.lat,lng:state.lng,altitude:0.15},1000);
+    } else if(level==='warmap'){
+      exitGround();
+      const el=document.getElementById('warmap-view');
+      el.style.display='block';
+      setTimeout(()=>el.classList.remove('fade-out'),20);
+      renderWarmap();
+    } else {
+      const el=document.getElementById('ground-view');
+      el.style.display='block';
+      setTimeout(()=>el.classList.remove('fade-out'),20);
+      enterGround();
+    }
+    // Update weather visibility
+    updateAllUI();
+  },300);
 }
 
 // ── Warmap View (2D tactical satellite map) ──
@@ -887,6 +966,27 @@ function updateAllUI(){
     <div class="hud-stat"><div class="hud-val">${s.modules.length}</div><div class="hud-label">Modules</div></div>
     <div class="hud-stat"><div class="hud-val" style="color:${s.alive?'var(--green)':'var(--red)'}">${s.alive?'ALIVE':'DEAD'}</div><div class="hud-label">Status</div></div>
   `;
+  // Real Mars weather HUD
+  const w=marsWeather;
+  const wxEl=document.getElementById('wx-data');
+  if(wxEl){
+    const stormRisk=w.dustStormProb>10?`<span style="color:var(--red)">${w.dustStormProb}%</span>`:`<span style="color:var(--green)">${w.dustStormProb}%</span>`;
+    wxEl.innerHTML=`
+      <div>LMST: <span style="color:#fff">${w.timeStr}</span></div>
+      <div>Season: <span style="color:#fff">${w.season}</span></div>
+      <div>Ls: <span style="color:#fff">${w.ls}°</span></div>
+      <div>Temp: <span style="color:${w.tempC>-40?'var(--yellow)':'var(--cyan)'}">${w.tempC}°C</span> (${w.tempK}K)</div>
+      <div>Pressure: <span style="color:#fff">${w.pressurePa} Pa</span></div>
+      <div>Wind: <span style="color:#fff">${w.windMs} m/s</span> (gusts ${w.gustMs})</div>
+      <div>Solar: <span style="color:var(--yellow)">${w.solarWm2} W/m²</span></div>
+      <div>Dust τ: <span style="color:#fff">${w.dustTau}</span></div>
+      <div>UV: <span style="color:#fff">${w.uvIndex}</span></div>
+      <div>Storm Risk: ${stormRisk}/sol</div>
+      <div>Real Sol: <span style="color:var(--cyan)">${w.sol}</span></div>`;
+  }
+  // Show/hide weather based on zoom
+  const wxPanel=document.getElementById('weather-hud');
+  if(wxPanel)wxPanel.style.display=(currentZoom==='base'||currentZoom==='module'||currentZoom==='crew')?'block':'none';
 }
 
 function toggleSim(){
