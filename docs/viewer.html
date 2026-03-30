@@ -1149,7 +1149,117 @@ const TASK_TEMPLATES = [
           s.log.push('  💥 Airlock seal compromised. Partial decompression event. Crew exposed.');
           s.log.push('  📊 Rapid decompression at Mars ambient (600 Pa): ebullism onset in 15 seconds.');}
       },
-      timeout:40, defaultChoice:'deny'}}}
+      timeout:40, defaultChoice:'deny'}}},
+
+  // ══════════════════════════════════════════════════════════════
+  // ROBOT-RESCUES-ROBOT — swarm autonomy with player creativity
+  // A robot is down. You dispatch another robot to diagnose,
+  // troubleshoot, and repair. The operator guides the rescue
+  // remotely. Sometimes the second robot gets stuck too.
+  // ══════════════════════════════════════════════════════════════
+
+  // ── ROBOT TIPPED OVER — dispatch rescue robot ──
+  {trigger: s=>{const bots=s.crew.filter(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
+    return bots.length>=2 && s.sol>10 && R()<0.05},
+   gen: s=>{const bots=s.crew.filter(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
+    const fallen=bots[Math.floor(R()*bots.length)];
+    const rescuer=bots.find(b=>b.name!==fallen.name)||bots[0];
+    const terrain=['loose regolith slope','crater rim edge','rock field','sand drift'][Math.floor(R()*4)];
+    return {id:'robot_tipped',urgency:'urgent',from:fallen,
+      title:`${fallen.name} TIPPED OVER — DISPATCH ${rescuer.name}`,
+      body:`${fallen.name} lost balance on ${terrain}. Lying on side, wheels spinning. Gyroscope reads 73° from vertical. ${rescuer.name} is closest — 200m away. Guide rescue: approach, assess, right the unit. Careful — the same terrain that tipped ${fallen.name} can tip ${rescuer.name}.`,
+      data:`Down: ${fallen.name} (${fallen.hp}% HP) | Rescuer: ${rescuer.name} (${rescuer.hp}% HP) | Terrain: ${terrain} | Distance: 200m | Slope: ${(8+R()*15).toFixed(0)}°`,
+      override:{
+        delaySeconds: 3,
+        commands:[
+          {label:'🤖 APPROACH SLOW', response:`${rescuer.name} approaching at 0.2 m/s. Terrain scan active. 180m remaining.`},
+          {label:'🤖 APPROACH FAST', failResponse:`${rescuer.name} hit same loose surface at speed. BOTH ROBOTS NOW TIPPED. Rescue failed.`},
+          {label:'📷 SCAN TERRAIN', response:`Ground-penetrating radar: ${terrain} depth 0.4m. Bearing capacity marginal. Approach from uphill side.`},
+          {label:'🦾 EXTEND LIFT ARM', response:`${rescuer.name} arm extended under ${fallen.name} chassis. Contact.`},
+          {label:'⬆️ LIFT SLOWLY', response:`${fallen.name} rotating... 73° → 45° → 20° → vertical. Righted! Wheels on ground.`},
+          {label:'⬆️ LIFT FAST', failResponse:`Jerked too hard. ${fallen.name} swung past vertical, tipped the OTHER way. Damage to both units.`},
+          {label:'✓ SYSTEM CHECK', response:`${fallen.name} self-test: motors OK, sensors OK, frame bent 2°. Operational.`},
+        ],
+        sequence:[0,2,3,4,6], // approach slow → scan → extend arm → lift slowly → system check
+        onSuccess:s=>{
+          fallen.hp=Math.max(50,fallen.hp-10); // some damage from the fall
+          fallen.st='Recovered';
+          s.log.push(`  🤖 ${rescuer.name} righted ${fallen.name}. Both units operational.`);
+          s.log.push(`  📊 Mars gravity: 3.72 m/s². Robots tip at 35° on loose regolith. Earth: 55°.`);},
+        onFailure:s=>{
+          fallen.hp=Math.max(5,fallen.hp-30);
+          rescuer.hp=Math.max(10,rescuer.hp-15);
+          fallen.st='DAMAGED';rescuer.st='DAMAGED';
+          s.log.push(`  💥 Rescue failed. Both ${fallen.name} and ${rescuer.name} damaged.`);
+          s.log.push('  📊 Robot-rescues-robot failure rate on uneven terrain: ~20%. Send slow, scan first.');}
+      },
+      timeout:35, defaultChoice:'deny'}}},
+
+  // ── ROBOT WHEEL JAMMED — regolith packed in drivetrain ──
+  {trigger: s=>{const bots=s.crew.filter(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
+    return bots.length>=2 && s.sol>20 && R()<0.04},
+   gen: s=>{const bots=s.crew.filter(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
+    const stuck=bots[Math.floor(R()*bots.length)];
+    const helper=bots.find(b=>b.name!==stuck.name)||bots[0];
+    const wheelNum=Math.floor(R()*4)+1;
+    return {id:'wheel_jam',urgency:'request',from:stuck,
+      title:`${stuck.name} WHEEL ${wheelNum} JAMMED — ${helper.name} ASSISTING`,
+      body:`Wheel ${wheelNum} locked. Regolith packed between wheel and housing. ${helper.name} needs to clear debris. Sequence: position helper, deploy compressed gas, clear loose material, manually rotate wheel to test.`,
+      data:`Stuck: ${stuck.name} | Wheel: #${wheelNum} | Cause: regolith compaction | Helper: ${helper.name} | Torque needed: ${(5+R()*10).toFixed(0)} N·m`,
+      override:{
+        delaySeconds: 2,
+        commands:[
+          {label:'🤖 POSITION HELPER', response:`${helper.name} positioned at wheel ${wheelNum}. Camera view: compacted regolith visible in gap.`},
+          {label:'💨 COMPRESSED GAS', response:'CO₂ burst applied. Loose particles clearing. 60% of blockage removed.'},
+          {label:'🦾 PICK AT DEBRIS', response:'Manipulator arm clearing remaining packed material. Hard crust breaking up.'},
+          {label:'🔄 ROTATE WHEEL', response:`Wheel ${wheelNum} rotating freely! 360° test pass complete.`},
+          {label:'💪 FORCE WHEEL', failResponse:'Forced rotation with debris still packed. Gear teeth ground down. Motor damaged.'},
+          {label:'✓ DRIVE TEST', response:`${stuck.name} moving forward 2m, backward 2m. All 4 wheels nominal.`},
+        ],
+        sequence:[0,1,2,3,5], // position → gas → pick → rotate → drive test
+        onSuccess:s=>{
+          stuck.st='Nominal';
+          s.log.push(`  🔧 ${helper.name} cleared wheel jam on ${stuck.name}. Both mobile.`);
+          s.log.push('  📊 Spirit rover lost to wheel jam after 2,208 sols. Regular clearing extends life.');},
+        onFailure:s=>{
+          stuck.hp=Math.max(10,stuck.hp-20);stuck.st='Wheel damaged';
+          s.log.push(`  💥 Wheel motor damaged on ${stuck.name}. Mobility reduced.`);
+          s.log.push('  📊 Forcing a jammed drivetrain: stripped gears. No replacement on Mars.');}
+      },
+      timeout:30, defaultChoice:'deny'}}},
+
+  // ── ROBOT SOLAR PANEL DEPLOY FAILURE — panel stuck half-open ──
+  {trigger: s=>{const bots=s.crew.filter(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
+    return bots.length>=1 && s.sol>5 && s.s_eff<0.8 && R()<0.04},
+   gen: s=>{const bot=s.crew.find(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
+    if(!bot)return null;
+    const deployAngle=Math.floor(30+R()*40); // stuck at partial deployment
+    return {id:'panel_deploy',urgency:'request',from:bot,
+      title:`${bot.name}: SOLAR PANEL STUCK AT ${deployAngle}° — MANUAL OVERRIDE`,
+      body:`Deployment actuator stalled at ${deployAngle}°/180°. Panel generating only ${Math.floor(deployAngle/180*100)}% capacity. Hinge may be obstructed by dust or thermal warping. Sequence: image the hinge, clear obstruction, pulse actuator in small increments, verify full deploy.`,
+      data:`Deploy angle: ${deployAngle}°/180° | Output: ${Math.floor(deployAngle/180*100)}% | Actuator current: ${(0.5+R()*0.8).toFixed(2)}A (nominal: 0.3A) | Temp: ${marsWeather.tempC}°C`,
+      override:{
+        delaySeconds: 2,
+        commands:[
+          {label:'📷 IMAGE HINGE', response:`Camera: dust accumulation at hinge pivot. No structural deformation visible.`},
+          {label:'💨 CLEAR DUST', response:'Compressed gas clearing hinge area. Pivot point exposed.'},
+          {label:'⚡ PULSE +10°', response:`Panel moved to ${deployAngle+10}°. Actuator responding.`},
+          {label:'⚡ PULSE +10°', response:`Panel at ${deployAngle+20}°. Movement smoother. Obstruction cleared.`},
+          {label:'⚡ FULL DEPLOY', response:'Panel deploying... 90°... 135°... 180°. Full deployment achieved!'},
+          {label:'⚡ FORCE DEPLOY', failResponse:'Actuator overloaded. Gear train stripped. Panel locked at current angle permanently.'},
+          {label:'✓ VERIFY OUTPUT', response:'Solar output: 100% of rated capacity. Panel nominal.'},
+        ],
+        sequence:[0,1,2,3,4,6], // image → clear → pulse → pulse → full deploy → verify
+        onSuccess:s=>{
+          s.s_eff=Math.min(1,s.s_eff+0.12);
+          s.log.push(`  ☀️ ${bot.name}: Panel fully deployed. Solar +12%.`);
+          s.log.push('  📊 InSight lander lost to dust-covered panels. Incremental clearing saves missions.');},
+        onFailure:s=>{
+          s.s_eff*=0.85;
+          s.log.push(`  💥 ${bot.name}: Panel actuator destroyed. Stuck at partial deploy permanently.`);
+          s.log.push('  📊 Forced actuator: back-EMF spike burned the H-bridge. No repair possible.');}
+      },
+      timeout:30, defaultChoice:'deny'}}}
 ];
 
 function generateTask(){
