@@ -693,6 +693,62 @@ function runLispyOnState(){
   }
 }
 
+// ── Colony Risk Index (CRI) — a VIX for Mars ──
+// Computed by LisPy every sol. Feeds into secondary consequence probabilities.
+// Higher CRI = more likely something goes wrong. Range: 0-100.
+const CRI_PROGRAM = `(begin
+  (define base_risk 10)
+  (define o2_risk (if (< o2_days 5) 30 (if (< o2_days 10) 15 (if (< o2_days 20) 5 0))))
+  (define food_risk (if (< food_days 5) 25 (if (< food_days 10) 12 (if (< food_days 20) 4 0))))
+  (define h2o_risk (if (< h2o_days 5) 28 (if (< h2o_days 10) 14 (if (< h2o_days 20) 4 0))))
+  (define power_risk (if (< power_kwh 50) 25 (if (< power_kwh 150) 12 0)))
+  (define crew_risk (* (- crew_total crew_alive) 8))
+  (define morale_risk (if (< morale 30) 20 (if (< morale 50) 10 (if (< morale 70) 3 0))))
+  (define dust_risk (if (> dust_tau 0.6) 15 (if (> dust_tau 0.3) 5 0)))
+  (define solar_risk (if (< solar_eff 0.7) 12 (if (< solar_eff 0.85) 5 0)))
+  (define event_risk (* events_active 6))
+  (define total (+ base_risk o2_risk food_risk h2o_risk power_risk crew_risk morale_risk dust_risk solar_risk event_risk))
+  (set! colony_risk_index (min 100 total))
+  (set! risk_grade (cond
+    ((> total 70) "CRITICAL")
+    ((> total 50) "HIGH")
+    ((> total 30) "ELEVATED")
+    ((> total 15) "MODERATE")
+    (true "LOW"))))`;
+
+let colonyRiskIndex = 10;
+let riskGrade = 'LOW';
+
+function computeCRI(){
+  const vm = new LispyVM();
+  const n = Math.max(1, state.crew.filter(c=>c.alive).length);
+  vm.setEnv('o2_days', state.o2/(O2_PP*n));
+  vm.setEnv('h2o_days', state.h2o/(H2O_PP*n));
+  vm.setEnv('food_days', state.food/(FOOD_PP*n));
+  vm.setEnv('power_kwh', state.power);
+  vm.setEnv('crew_alive', n);
+  vm.setEnv('crew_total', state.crew.length);
+  vm.setEnv('morale', state.morale*100);
+  vm.setEnv('solar_eff', state.s_eff);
+  vm.setEnv('dust_tau', marsWeather.dustTau);
+  vm.setEnv('events_active', state.events.length);
+  vm.setEnv('colony_risk_index', 10);
+  vm.setEnv('risk_grade', 'LOW');
+  const result = vm.run(CRI_PROGRAM);
+  if(result.ok){
+    colonyRiskIndex = Math.round(result.env.colony_risk_index || 10);
+    riskGrade = result.env.risk_grade || 'LOW';
+  }
+  return colonyRiskIndex;
+}
+
+// Risk-weighted random — higher CRI = higher chance of bad outcomes
+function riskRoll(baseProb){
+  // At CRI 0: use baseProb as-is. At CRI 100: triple the probability.
+  const multiplier = 1 + (colonyRiskIndex / 50);
+  return R() < (baseProb * multiplier);
+}
+
 // ── End LisPy VM ─────────────────────────────────────────────────
 
 // ══════════════════════════════════════════════════════════════════
@@ -1115,13 +1171,210 @@ function resolveTask(choice, timedOut){
     tasksResolved++;
   }
   taskHistory.push({id:task.id,sol:state.sol,choice,timedOut:!!timedOut});
+
+  // ── HIDDEN CONSEQUENCES — Mars doesn't care about your intentions ──
+  // Realistic secondary effects that fire based on chance + conditions.
+  // Some reward good calls. Some punish correct decisions anyway. That's Mars.
+  rollSecondaryConsequence(task.id, choice);
+
   activeTask=null;
-  cameraPOV=null; // release camera back to orbit
+  cameraPOV=null;
   document.getElementById('task-panel').classList.remove('task-visible');
-  // Show next task if queued (with delay for camera to ease back)
   setTimeout(()=>{ if(taskQueue.length)showNextTask(); },1200);
   updateTaskBadge();
   updateAllUI();
+}
+
+function rollSecondaryConsequence(taskId, choice){
+  const s=state;const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+  const cri=colonyRiskIndex; // current Colony Risk Index
+
+  // All probabilities are risk-weighted: higher CRI = more likely to trigger
+  // riskRoll(base) applies the CRI multiplier automatically
+
+  // ── O₂ REROUTE ──
+  if(taskId==='o2_reroute'&&choice==='approve'&&riskRoll(0.12)){
+    s.i_eff*=0.85;
+    s.log.push('  ⚡ UNINTENDED: ISRU overloaded from sudden power surge. Efficiency permanently reduced.');
+    s.log.push(`  📊 CRI was ${cri} — high-stress systems fail more often under load.`);
+  }
+  if(taskId==='o2_reroute'&&choice==='deny'&&riskRoll(0.15)){
+    const victim=s.crew.filter(c=>c.alive)[Math.floor(R()*n)];
+    if(victim){victim.hp-=15;victim.st='Hypoxia';victim.mor-=10;
+      s.log.push(`  🫁 UNINTENDED: ${victim.name} suffered hypoxia episode. HP -15.`);
+      s.log.push(`  📊 At CRI ${cri}, low O₂ hits faster than the gauges show.`);}
+  }
+
+  // ── WATER CRISIS ──
+  if(taskId==='h2o_crisis'&&choice==='approve'&&riskRoll(0.20)){
+    s.g_eff*=0.6;
+    s.log.push('  🌱 UNINTENDED: Seed bank desiccated. Greenhouse efficiency permanently reduced.');
+    s.log.push('  📊 Mars humidity near zero. Dehydration is measured in minutes, not hours.');
+  }
+  if(taskId==='h2o_crisis'&&choice==='deny'&&riskRoll(0.18)){
+    // Rationed water causes kidney stress in one crew member
+    const victim=s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT'))[Math.floor(R()*Math.max(1,s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT')).length))];
+    if(victim){victim.hp-=12;victim.st='Kidney stress';
+      s.log.push(`  🏥 UNINTENDED: ${victim.name} showing signs of kidney stress from dehydration.`);
+      s.log.push(`  📊 Human kidneys need minimum 1.5L/day. Below that, damage accumulates.`);}
+  }
+
+  // ── MEDICAL ──
+  if(taskId==='crew_medical'&&choice==='approve'&&riskRoll(0.08)){
+    s.s_eff=Math.min(1,s.s_eff+0.05);s.i_eff=Math.min(1,s.i_eff+0.05);
+    const resting=s.crew.find(c=>c.st==='Resting');
+    s.log.push(`  🔍 UNEXPECTED: ${resting?resting.name:'Crew'} found a wiring fault while resting. Systems improved.`);
+  }
+  if(taskId==='crew_medical'&&choice==='deny'&&riskRoll(0.10)){
+    const sick=s.crew.find(c=>c.alive&&c.hp<50);
+    if(sick){sick.hp=Math.max(1,sick.hp-20);sick.st='COLLAPSED';
+      s.log.push(`  🚨 UNINTENDED: ${sick.name} collapsed. Now critical.`);
+      s.log.push(`  📊 At CRI ${cri}, pushing injured crew is a coin flip.`);}
+  }
+
+  // ── DUST STORM ──
+  if(taskId==='storm_prep'&&choice==='approve'&&riskRoll(0.06)){
+    s.log.push('  🔧 UNEXPECTED: Pressurization test revealed micro-leak in Hab-2.');
+    s.log.push('  📊 That leak would have killed everyone in ~30 sols. The storm saved you.');
+    s.crew.filter(c=>c.alive).forEach(c=>{c.mor=Math.min(100,c.mor+8);});
+  }
+  if(taskId==='storm_prep'&&choice==='deny'&&riskRoll(0.15)){
+    s.s_eff*=0.70;
+    s.log.push('  💥 UNINTENDED: Solar array destroyed. Efficiency dropped to '+Math.round(s.s_eff*100)+'%.');
+    s.log.push('  📊 Mars dust at 100 km/h. 150μm particles. Abrasive force: '+Math.round(marsWeather.windMs*12)+' N/m².');
+  }
+  if(taskId==='storm_prep'&&choice==='alt'&&riskRoll(0.10)){
+    s.s_eff*=0.88;
+    s.crew.filter(c=>c.alive).forEach(c=>{c.rad+=3;});
+    s.log.push('  ⚡ UNINTENDED: Partial seal wasn\'t enough. Panel degradation + crew radiation.');
+    s.log.push('  📊 Compromise looked smart. Mars doesn\'t negotiate.');
+  }
+
+  // ── CONSTRUCTION ──
+  if(taskId.startsWith('build_')&&choice==='approve'){
+    if(riskRoll(0.08)){
+      s.h2o+=50;
+      if(!s.discoveries.some(d=>d.type==='construction_ice'))
+        s.discoveries.push({type:'construction_ice',name:'Subsurface Ice (excavation)',sol:s.sol});
+      s.log.push('  🧊 UNEXPECTED: Excavation hit subsurface ice! +50L H₂O.');
+      s.log.push('  📊 Jezero crater sits on ancient aquifer. Probability was ~8% per dig.');
+    }
+    if(riskRoll(0.05)){
+      s.building=null;s.power-=50;
+      const victim=s.crew.filter(c=>c.alive)[Math.floor(R()*n)];
+      if(victim){victim.hp-=12;victim.mor-=10;}
+      s.log.push('  💥 UNINTENDED: Structural failure. Mars gravity: 3.72 m/s². Regolith bearing capacity lower than assumed.');
+      s.log.push('  📊 CRI ${cri}. Construction accidents increase exponentially with colony stress.');
+    }
+  }
+
+  // ── SUPPLY MANIFEST — historically accurate failure rate ──
+  if(taskId==='trade_offer'){
+    // ~5% Mars mission failure rate (real: 40% historically, 5% modern)
+    if(riskRoll(0.04)){
+      s.log.push('  🚀💥 UNINTENDED: Resupply rocket lost during Mars orbital insertion.');
+      s.log.push('  📊 Historical Mars mission success rate: ~60%. Modern: ~95%. You got unlucky.');
+      s.log.push('  ⚠️ No resupply until Sol '+(s.sol+760)+'. Plan accordingly.');
+    }
+  }
+
+  // ── ROBOT DIAGNOSTIC ──
+  if(taskId==='bot_glitch'&&choice==='deny'&&riskRoll(0.07)){
+    const bots=s.crew.filter(c=>c.alive&&(c.name.startsWith('OPT')||c.name.startsWith('LUN')));
+    const other=bots.find(c=>c.hp>50);
+    if(other){other.hp-=12;
+      s.log.push(`  ⚡ UNINTENDED: ${other.name} received corrupted nav data. Sensor mesh compromised.`);
+      s.log.push('  📊 Autonomous robots share state. One bad node poisons the network.');}
+  }
+
+  // ── MORALE ──
+  if(taskId==='morale_break'&&choice==='approve'&&riskRoll(0.06)){
+    s.i_eff=Math.min(1,s.i_eff+0.08);s.g_eff=Math.min(1,s.g_eff+0.05);
+    s.log.push('  🛠️ UNEXPECTED: Crew used rest to reorganize. ISRU +8%, Greenhouse +5%.');
+    s.log.push('  📊 NASA studies: forced rest improves ISS crew task performance by 12-18%.');
+  }
+  if(taskId==='morale_break'&&choice==='deny'&&riskRoll(0.08)){
+    // Someone makes a dangerous mistake from fatigue
+    const tired=s.crew.find(c=>c.alive&&c.mor<40);
+    if(tired){tired.hp-=10;
+      s.log.push(`  😤 UNINTENDED: ${tired.name} made fatigue-induced error during EVA. HP -10.`);
+      s.log.push('  📊 Sleep deprivation equivalent to 0.08% BAC. Mars doesn\'t have a designated driver.');}
+  }
+
+  // ── POWER RATIONING ──
+  if(taskId==='power_ration'&&choice==='approve'&&riskRoll(0.10)){
+    s.int_temp=Math.max(240,s.int_temp-15);
+    s.crew.filter(c=>c.alive).forEach(c=>{c.hp-=3;c.st='Hypothermic';});
+    s.log.push('  ❄️ UNINTENDED: Heating dropped below safe threshold. Mars night: -80°C.');
+    s.log.push('  📊 Habitat thermal mass buys ~4 hours without heating. After that, physics wins.');
+  }
+  if(taskId==='power_ration'&&choice==='deny'&&riskRoll(0.12)){
+    s.power=Math.max(0,s.power-40);
+    s.log.push('  ⚡ UNINTENDED: Power surge from maintaining full load on stressed grid. -40 kWh.');
+    s.log.push('  📊 Electrical systems degrade under sustained peak load. CRI was '+cri+'.');
+  }
+
+  // ── CREW DISPUTE ──
+  if(taskId==='crew_dispute'&&riskRoll(0.04)){
+    const loser=s.crew.find(c=>c.alive&&c.mor<40);
+    if(loser){loser.hp-=8;loser.mor-=12;
+      s.log.push(`  😤 UNINTENDED: ${loser.name} made a reckless decision after being overruled.`);
+      s.log.push('  📊 ISS incident reports: interpersonal conflict is the #1 mission risk after equipment failure.');}
+  }
+}
+
+// ── AMBIENT HAZARDS — fire every sol based on CRI, independent of tasks ──
+// These are the things that just HAPPEN on Mars. No decision caused them.
+// Higher CRI = more frequent. This is the accumulated risk manifesting.
+function rollAmbientHazards(){
+  const s=state;const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+  if(!s.alive)return;
+
+  // Micrometeorite — tiny but real. 0.1% base, CRI-weighted
+  if(riskRoll(0.001)){
+    const target=['solar','isru','greenhouse','habitat'][Math.floor(R()*4)];
+    const dmg=0.03+R()*0.05;
+    if(target==='solar')s.s_eff*=(1-dmg);
+    if(target==='isru')s.i_eff*=(1-dmg);
+    if(target==='greenhouse')s.g_eff*=(1-dmg);
+    if(target==='habitat'){s.crew.filter(c=>c.alive).forEach(c=>{c.hp-=2;c.rad+=1;});}
+    s.log.push(`  ☄️ Micrometeorite struck ${target}. Minor damage.`);
+    s.log.push('  📊 Mars gets ~1000 meteorites >1kg per year. Tiny ones are constant.');
+  }
+
+  // Regolith infiltration — dust gets into everything
+  if(riskRoll(0.003)){
+    const system=['ISRU','solar','greenhouse'][Math.floor(R()*3)];
+    if(system==='ISRU')s.i_eff*=0.97;
+    if(system==='solar')s.s_eff*=0.98;
+    if(system==='greenhouse')s.g_eff*=0.98;
+    s.log.push(`  🏜️ Regolith dust infiltrated ${system} seals. Slight efficiency loss.`);
+  }
+
+  // Radiation spike (solar particle event) — unpredictable
+  if(riskRoll(0.002)){
+    const dose=10+R()*40;
+    const sheltered=s.modules.some(m=>m.type==='radiation_shelter');
+    const actualDose=sheltered?dose*0.3:dose;
+    s.crew.filter(c=>c.alive).forEach(c=>{c.rad+=actualDose;c.hp-=actualDose>20?5:1;});
+    s.log.push(`  ☢️ Solar particle event. ${actualDose.toFixed(0)} mSv ${sheltered?'(sheltered)':'(UNSHIELDED)'}.`);
+    s.log.push('  📊 SEP events are unpredictable. The Sun doesn\'t warn you.');
+  }
+
+  // Comms blackout (solar conjunction) — can't call Earth
+  if(s.sol%669>250&&s.sol%669<270&&riskRoll(0.05)){
+    s.log.push('  📡 Solar conjunction approaching. Earth comms degraded for ~20 sols.');
+    s.log.push('  📊 Mars passes behind the Sun every 26 months. You are truly alone.');
+  }
+
+  // Equipment fatigue — everything wears out
+  if(s.sol>100&&riskRoll(0.002)){
+    const sys=['s_eff','i_eff','g_eff'][Math.floor(R()*3)];
+    const names={s_eff:'Solar',i_eff:'ISRU',g_eff:'Greenhouse'};
+    s[sys]*=0.96;
+    s.log.push(`  🔧 ${names[sys]} system showing wear. Efficiency: ${(s[sys]*100).toFixed(0)}%.`);
+    s.log.push('  📊 No spare parts warehouse on Mars. Everything degrades. Permanently.');
+  }
 }
 
 function updateTaskBadge(){
@@ -2061,6 +2314,10 @@ function stepSim(){
 
   // Supply chain
   tickSupplyChain(s);
+  // Colony Risk Index — LisPy computes the VIX for Mars every sol
+  if(s>1) computeCRI();
+  // Ambient hazards — Mars doesn't need your permission to break things
+  rollAmbientHazards();
   // Papers Please — generate tasks for the player
   if(s>5)generateTask();
   // Geology — rover discoveries
@@ -2271,7 +2528,8 @@ function updateAllUI(){
   const s=state,ac=s.crew.filter(c=>c.alive),n=Math.max(1,ac.length);
   // Status
   const echoTag=lastEcho?` | ECHO ${echoHistory.length}`:'';
-  document.getElementById('status-text').textContent=s.alive?`SOL ${s.sol} | ${s.arch.toUpperCase()} | ${ac.length} CREW${echoTag}`:'COLONY LOST — '+s.cause;
+  const riskCol=colonyRiskIndex>50?'var(--red)':colonyRiskIndex>30?'var(--yellow)':'var(--green)';
+  document.getElementById('status-text').innerHTML=s.alive?`SOL ${s.sol} | ${s.arch.toUpperCase()} | ${ac.length} CREW | <span style="color:${riskCol}">CRI ${colonyRiskIndex} ${riskGrade}</span>${echoTag}`:'COLONY LOST — '+s.cause;
   // Colony info
   document.getElementById('colony-info').innerHTML=`
     <div class="colony-card"><span class="name">Ares Colony</span><span class="hp" style="color:${s.alive?'var(--green)':'var(--red)'}">${s.alive?'ACTIVE':'DEAD'}</span>
@@ -2372,6 +2630,7 @@ function updateAllUI(){
     <div class="hud-stat"><div class="hud-val">${s.power.toFixed(0)}</div><div class="hud-label">kWh</div></div>
     <div class="hud-stat"><div class="hud-val">${s.modules.length}</div><div class="hud-label">Modules</div></div>
     <div class="hud-stat"><div class="hud-val" style="color:${s.alive?'var(--green)':'var(--red)'}">${s.alive?'ALIVE':'DEAD'}</div><div class="hud-label">Status</div></div>
+    <div class="hud-stat"><div class="hud-val" style="color:${riskCol}">${colonyRiskIndex}</div><div class="hud-label">CRI</div></div>
   `;
   // Real Mars weather HUD
   const w=marsWeather;
@@ -2920,31 +3179,81 @@ function showDeathScreen(){
 
     const ac = state.crew.filter(c=>c.alive);
     const dead = state.crew.filter(c=>!c.alive);
+    const peakCRI = Math.max(colonyRiskIndex, ...taskHistory.map(()=>colonyRiskIndex));
     document.getElementById('death-stats').innerHTML = `
       <div class="death-stat"><div class="val">${state.sol}</div><div class="lbl">Sols Survived</div></div>
       <div class="death-stat"><div class="val">${ac.length}/${state.crew.length}</div><div class="lbl">Crew Alive</div></div>
       <div class="death-stat"><div class="val">${state.modules.length}</div><div class="lbl">Modules Built</div></div>
       <div class="death-stat"><div class="val">${tasksResolved}</div><div class="lbl">Tasks Resolved</div></div>
-      <div class="death-stat"><div class="val">${tasksIgnored}</div><div class="lbl">Tasks Timed Out</div></div>`;
+      <div class="death-stat"><div class="val" style="color:${colonyRiskIndex>50?'var(--red)':'var(--yellow)'}">${colonyRiskIndex}</div><div class="lbl">Final CRI</div></div>`;
 
-    // Generate post-mortem
+    // ── CAUSAL CHAIN POST-MORTEM ──
+    // Trace backwards through the log to find what killed the colony
     const n = Math.max(1, state.crew.length);
     const o2d = state.o2 / (O2_PP * n);
     const h2od = state.h2o / (H2O_PP * n);
     const fd = state.food / (FOOD_PP * n);
-    let analysis = `<strong>Post-Mortem Analysis — Sol ${state.sol}</strong><br><br>`;
-    analysis += `The colony survived ${state.sol} sols before ${state.cause}.<br><br>`;
-    if(dead.length) analysis += `Crew lost: ${dead.map(c=>c.name+' ('+c.role+')').join(', ')}.<br>`;
-    if(state.events.length) analysis += `Active hazards at time of failure: ${state.events.map(e=>e.type.replace(/_/g,' ')).join(', ')}.<br>`;
-    analysis += `<br>Final reserves: O₂ ${o2d.toFixed(1)}d, H₂O ${h2od.toFixed(1)}d, Food ${fd.toFixed(1)}d, Power ${state.power.toFixed(0)} kWh.<br>`;
-    if(state.sol < 30) analysis += `<br><em>The colony never established itself. Consider a mission with more starting reserves.</em>`;
-    else if(state.sol < 100) analysis += `<br><em>Early failure. The governor may need a different strategy for this mission profile.</em>`;
-    else if(state.sol < 300) analysis += `<br><em>A respectable run. With better resource management, this colony could have lasted longer.</em>`;
-    else analysis += `<br><em>A strong colony. Approaching autonomy. Try reaching 500+ sols for MARS-READY status.</em>`;
+
+    let analysis = `<strong>Post-Mortem Investigation — Sol ${state.sol}</strong><br><br>`;
+    analysis += `<strong>Cause of death:</strong> ${state.cause}<br>`;
+    analysis += `<strong>Final CRI:</strong> ${colonyRiskIndex} (${riskGrade})<br><br>`;
+
+    // Decision chain — what player decisions led here
+    const relevant = taskHistory.filter(t=>t.sol>state.sol-50); // last 50 sols of decisions
+    if(relevant.length){
+      analysis += `<strong>Decision chain (last ${Math.min(relevant.length,50)} decisions):</strong><br>`;
+      relevant.slice(-8).forEach(t=>{
+        const icon = t.timedOut ? '⏱️' : t.choice==='approve' ? '✓' : t.choice==='alt' ? '◐' : '✗';
+        analysis += `  Sol ${t.sol}: ${icon} ${t.id.replace(/_/g,' ')}${t.timedOut?' (TIMED OUT)':''}<br>`;
+      });
+      analysis += '<br>';
+    }
+
+    // Unintended consequences from the log
+    const unintended = state.log.filter(l=>l.includes('UNINTENDED')||l.includes('UNEXPECTED'));
+    if(unintended.length){
+      analysis += `<strong>Unintended consequences (${unintended.length} events):</strong><br>`;
+      unintended.slice(-5).forEach(l=>{
+        analysis += `${l.trim()}<br>`;
+      });
+      analysis += '<br>';
+    }
+
+    // Ambient hazards
+    const hazards = state.log.filter(l=>l.includes('☄️')||l.includes('🏜️')||l.includes('☢️')||l.includes('🔧 '));
+    if(hazards.length){
+      analysis += `<strong>Ambient hazards endured:</strong> ${hazards.length} events<br>`;
+    }
+
+    // Crew status at death
+    analysis += `<br><strong>Crew at time of failure:</strong><br>`;
+    state.crew.forEach(c=>{
+      const col = !c.alive?'var(--red)':c.hp>50?'var(--green)':'var(--yellow)';
+      analysis += `<span style="color:${col}">● ${c.name}</span> (${c.role}) — ${c.alive?`HP:${c.hp.toFixed(0)} Mor:${c.mor.toFixed(0)} Rad:${c.rad.toFixed(0)}mSv ${c.st}`:'DECEASED'}<br>`;
+    });
+
+    analysis += `<br><strong>Final reserves:</strong> O₂ ${o2d.toFixed(1)}d · H₂O ${h2od.toFixed(1)}d · Food ${fd.toFixed(1)}d · Power ${state.power.toFixed(0)} kWh<br>`;
+    analysis += `<strong>Systems:</strong> Solar ${(state.s_eff*100).toFixed(0)}% · ISRU ${(state.i_eff*100).toFixed(0)}% · Greenhouse ${(state.g_eff*100).toFixed(0)}%<br>`;
+
+    // What would have helped
+    analysis += '<br><strong>What might have saved you:</strong><br>';
+    if(o2d<2) analysis += '• More ISRU allocation earlier — O₂ was the bottleneck<br>';
+    if(fd<2) analysis += '• Greenhouse priority — you starved before you suffocated<br>';
+    if(state.s_eff<0.5) analysis += '• Storm preparation — solar panels were devastated<br>';
+    if(dead.length>=2) analysis += '• Medical decisions — too many crew lost<br>';
+    if(tasksIgnored>3) analysis += '• Responding to tasks — '+tasksIgnored+' decisions defaulted to AI<br>';
+    if(state.modules.length<2) analysis += '• Earlier construction — modules multiply survival odds<br>';
+    if(state.power<PCRIT) analysis += '• Power management — everything dies without power<br>';
 
     // Grade
     const grade = state.sol >= 500 ? 'MARS-READY' : state.sol >= 300 ? 'A' : state.sol >= 200 ? 'B' : state.sol >= 100 ? 'C' : state.sol >= 50 ? 'D' : 'F';
-    analysis += `<br><br><strong>AUTONOMY GRADE: ${grade}</strong>`;
+    analysis += `<br><strong style="font-size:14px">AUTONOMY GRADE: ${grade}</strong>`;
+    if(grade==='F') analysis += '<br><em>The colony barely began. Every sol you survive teaches you something.</em>';
+    else if(grade==='D') analysis += '<br><em>You survived the first weeks. That\'s harder than it sounds.</em>';
+    else if(grade==='C') analysis += '<br><em>100+ sols. You proved a colony can exist. Now prove it can last.</em>';
+    else if(grade==='B') analysis += '<br><em>200+ sols. Approaching viability. The hardest part is consistency.</em>';
+    else if(grade==='A') analysis += '<br><em>300+ sols. This colony was real. Almost autonomous.</em>';
+    else analysis += '<br><em>500+ sols. MARS-READY. The AI can keep humans alive without calling home.</em>';
 
     document.getElementById('death-postmortem').innerHTML = analysis;
   }, 1500);
