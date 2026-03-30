@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>First Principles to Mars — 3D Colony Viewer</title>
+<title>First Principles to Mars</title>
 <script src="https://unpkg.com/globe.gl"></script>
 <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 <style>
@@ -70,12 +70,138 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
 .res-track{flex:1;height:8px;background:rgba(255,255,255,0.05);border-radius:2px}
 .res-fill{height:100%;border-radius:2px;transition:width 0.3s}
 .res-val{width:60px;text-align:right;font-size:10px}
+
+/* ── Mission Selector Overlay ── */
+#mission-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:500;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 1s ease-out;overflow-y:auto;padding:20px}
+#mission-overlay.fade-out{opacity:0;pointer-events:none}
+#mission-overlay h1{font-size:36px;color:#fff;letter-spacing:6px;margin-bottom:4px;
+  text-shadow:0 0 40px rgba(88,166,255,0.4)}
+#mission-overlay .subtitle{color:var(--dim);font-size:14px;margin-bottom:32px;text-align:center;max-width:600px;line-height:1.6}
+.mission-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1100px;width:100%}
+.mission-card{background:rgba(22,27,34,0.9);border:1px solid var(--border);border-radius:10px;
+  padding:20px 16px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+.mission-card:hover{transform:translateY(-4px);border-color:var(--cyan);
+  box-shadow:0 8px 32px rgba(88,166,255,0.15)}
+.mission-card .diff{position:absolute;top:12px;right:12px;font-size:9px;padding:2px 8px;
+  border-radius:10px;font-weight:700;letter-spacing:0.5px}
+.diff-easy{background:#1a3a1a;color:var(--green)}.diff-medium{background:#2a2a1a;color:var(--yellow)}
+.diff-hard{background:#3a2a1a;color:#ff9944}.diff-extreme{background:#3a1a1a;color:var(--red)}
+.mission-card h3{font-size:15px;margin-bottom:8px;letter-spacing:0.5px}
+.mission-card .desc{font-size:11px;color:var(--dim);line-height:1.5;margin-bottom:12px;min-height:48px}
+.mission-card .stats{font-size:10px;color:var(--dim);border-top:1px solid var(--border);padding-top:8px;line-height:1.8}
+.mission-card .stats span{color:var(--text)}
+
+/* ── Landing Sequence Overlay ── */
+#landing-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:400;
+  display:none;align-items:center;justify-content:center;flex-direction:column;
+  pointer-events:none}
+#landing-text{font-size:18px;color:#fff;text-align:center;letter-spacing:2px;
+  text-shadow:0 0 20px rgba(88,166,255,0.6);opacity:0;transition:opacity 0.8s}
+#landing-sub{font-size:12px;color:var(--dim);margin-top:8px;letter-spacing:1px;
+  opacity:0;transition:opacity 0.8s}
+
+/* ── Death Screen ── */
+#death-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:450;
+  background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;
+  flex-direction:column;transition:opacity 1s}
+#death-overlay h1{font-size:32px;color:var(--red);letter-spacing:4px;margin-bottom:8px;
+  text-shadow:0 0 30px rgba(218,54,51,0.5)}
+#death-overlay .cause{font-size:16px;color:var(--text);margin-bottom:24px}
+#death-overlay .stats-row{display:flex;gap:32px;margin-bottom:32px}
+#death-overlay .death-stat{text-align:center}
+#death-overlay .death-stat .val{font-size:28px;font-weight:700;color:var(--cyan)}
+#death-overlay .death-stat .lbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+#death-overlay .post-mortem{max-width:500px;font-size:12px;color:var(--dim);line-height:1.8;
+  text-align:center;margin-bottom:24px;border:1px solid var(--border);border-radius:8px;padding:16px;
+  background:rgba(22,27,34,0.5)}
+.btn-retry{padding:12px 32px;border-radius:8px;border:1px solid var(--cyan);
+  background:rgba(88,166,255,0.15);color:var(--cyan);cursor:pointer;font-size:14px;
+  font-family:var(--font);letter-spacing:1px;transition:all 0.3s}
+.btn-retry:hover{background:rgba(88,166,255,0.3);transform:scale(1.05)}
+
+/* Hide side panels and header until game starts */
+.game-hidden{opacity:0;pointer-events:none;transition:opacity 0.5s}
+.game-visible{opacity:1;pointer-events:auto;transition:opacity 0.5s}
 </style>
 </head>
 <body>
 
+<!-- ══ MISSION SELECTOR (Oregon Trail: Choose Your Party) ══ -->
+<div id="mission-overlay">
+  <h1>FIRST PRINCIPLES TO MARS</h1>
+  <div class="subtitle">An Oregon Trail for Mars. Pick your mission. Pick your crew. Survive — or learn why you didn't.</div>
+  <div class="mission-grid">
+    <div class="mission-card" onclick="launchMission('ares')" style="border-left:3px solid var(--green)">
+      <span class="diff diff-medium">MEDIUM</span>
+      <h3 style="color:var(--green)">Ares I: First Landing</h3>
+      <div class="desc">4 humans. 30 sols of reserves. The classic Mars mission. Can your governor keep them alive?</div>
+      <div class="stats">Crew: <span>4 humans</span><br>O₂: <span>101 kg</span> · H₂O: <span>300 L</span><br>Food: <span>300k kcal</span> · Power: <span>500 kWh</span></div>
+    </div>
+    <div class="mission-card" onclick="launchMission('optimus')" style="border-left:3px solid var(--blue)">
+      <span class="diff diff-medium">MEDIUM</span>
+      <h3 style="color:var(--blue)">Optimus Pathfinder</h3>
+      <div class="desc">4 Tesla bots. No humans. Pure robot autonomy. Build the first base before the crew arrives.</div>
+      <div class="stats">Crew: <span>4 robots</span><br>O₂: <span>0 kg</span> · H₂O: <span>200 L</span><br>Food: <span>0 kcal</span> · Power: <span>800 kWh</span></div>
+    </div>
+    <div class="mission-card" onclick="launchMission('skeleton')" style="border-left:3px solid var(--yellow)">
+      <span class="diff diff-hard">HARD</span>
+      <h3 style="color:var(--yellow)">Skeleton Crew</h3>
+      <div class="desc">2 humans, minimal supplies. Every gram was weighed. Every watt is accounted for.</div>
+      <div class="stats">Crew: <span>2 humans</span><br>O₂: <span>25 kg</span> · H₂O: <span>75 L</span><br>Food: <span>75k kcal</span> · Power: <span>300 kWh</span></div>
+    </div>
+    <div class="mission-card" onclick="launchMission('garden')" style="border-left:3px solid var(--green)">
+      <span class="diff diff-easy">EASY</span>
+      <h3 style="color:var(--green)">Garden of Mars</h3>
+      <div class="desc">6 crew, double reserves. Easy mode — but 6 mouths to feed adds up fast.</div>
+      <div class="stats">Crew: <span>6 humans</span><br>O₂: <span>300 kg</span> · H₂O: <span>900 L</span><br>Food: <span>900k kcal</span> · Power: <span>1000 kWh</span></div>
+    </div>
+    <div class="mission-card" onclick="launchMission('dustbowl')" style="border-left:3px solid var(--red)">
+      <span class="diff diff-extreme">EXTREME</span>
+      <h3 style="color:var(--red)">Dust Bowl</h3>
+      <div class="desc">Land during peak dust season. Solar panels are a luxury. Survive on reserves and faith.</div>
+      <div class="stats">Crew: <span>4 humans</span><br>O₂: <span>80 kg</span> · H₂O: <span>200 L</span><br>Food: <span>200k kcal</span> · Power: <span>300 kWh</span></div>
+    </div>
+    <div class="mission-card" onclick="launchMission('noisru')" style="border-left:3px solid var(--red)">
+      <span class="diff diff-extreme">EXTREME</span>
+      <h3 style="color:var(--red)">ISRU Down</h3>
+      <div class="desc">ISRU failed on landing. No local O₂ or H₂O production. Live on what you brought.</div>
+      <div class="stats">Crew: <span>4 humans</span><br>O₂: <span>200 kg</span> · H₂O: <span>500 L</span><br>Food: <span>400k kcal</span> · Power: <span>500 kWh</span></div>
+    </div>
+    <div class="mission-card" onclick="launchMission('hybrid')" style="border-left:3px solid var(--purple)">
+      <span class="diff diff-medium">MEDIUM</span>
+      <h3 style="color:var(--purple)">Hybrid Colony</h3>
+      <div class="desc">2 humans + 4 robots. The real future of Mars colonization. Balance biology and machines.</div>
+      <div class="stats">Crew: <span>6 mixed</span><br>O₂: <span>50 kg</span> · H₂O: <span>200 L</span><br>Food: <span>150k kcal</span> · Power: <span>800 kWh</span></div>
+    </div>
+    <div class="mission-card" onclick="launchMission('lunar')" style="border-left:3px solid var(--cyan)">
+      <span class="diff diff-hard">HARD</span>
+      <h3 style="color:var(--cyan)">Lunar Testbed</h3>
+      <div class="desc">2 bots on the Moon. 14-day night. Prove the concept before betting on Mars.</div>
+      <div class="stats">Crew: <span>2 robots</span><br>O₂: <span>0 kg</span> · H₂O: <span>50 L</span><br>Food: <span>0 kcal</span> · Power: <span>400 kWh</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LANDING SEQUENCE (cinematic zoom text) ══ -->
+<div id="landing-overlay">
+  <div id="landing-text"></div>
+  <div id="landing-sub"></div>
+</div>
+
+<!-- ══ DEATH SCREEN (Oregon Trail: You Have Died) ══ -->
+<div id="death-overlay">
+  <h1>COLONY LOST</h1>
+  <div class="cause" id="death-cause"></div>
+  <div class="stats-row" id="death-stats"></div>
+  <div class="post-mortem" id="death-postmortem"></div>
+  <button class="btn-retry" onclick="restartGame()">↻ TRY ANOTHER MISSION</button>
+</div>
+
 <!-- Header with zoom levels -->
-<div class="hdr">
+<div class="hdr game-hidden" id="game-hdr">
   <h1>MARS BARN OPUS</h1>
   <div class="zoom-bar">
     <button class="zoom-btn active" onclick="setZoom('planet')" id="z-planet">PLANET</button>
@@ -100,12 +226,12 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
 </div>
 
 <!-- Nav -->
-<div style="position:fixed;top:0;left:0;right:0;z-index:200;background:#080b10;border-bottom:1px solid var(--border);padding:4px 16px;display:flex;align-items:center;gap:12px;font-size:11px;font-family:var(--font)">
-  <span style="color:var(--cyan);font-weight:700;font-size:12px;letter-spacing:1px;margin-right:6px">MARS BARN OPUS</span>
-  <a href="index.html" style="color:var(--dim);text-decoration:none;padding:3px 8px;border-radius:3px">Dashboard</a>
-  <a href="viewer.html" style="color:var(--cyan);text-decoration:none;padding:3px 8px;border-radius:3px;background:rgba(88,166,255,0.15);border:1px solid rgba(88,166,255,0.3)">3D Viewer</a>
+<div id="top-nav" class="game-hidden" style="position:fixed;top:0;left:0;right:0;z-index:200;background:#080b10;border-bottom:1px solid var(--border);padding:4px 16px;display:flex;align-items:center;gap:12px;font-size:11px;font-family:var(--font)">
+  <span style="color:var(--cyan);font-weight:700;font-size:12px;letter-spacing:1px;margin-right:6px">FIRST PRINCIPLES TO MARS</span>
+  <a href="splitscreen.html" style="color:var(--dim);text-decoration:none;padding:3px 8px;border-radius:3px">Earth↔Mars</a>
+  <a href="timelapse.html" style="color:var(--dim);text-decoration:none;padding:3px 8px;border-radius:3px">Timelapse</a>
+  <a href="multiplayer.html" style="color:var(--dim);text-decoration:none;padding:3px 8px;border-radius:3px">Multiplayer</a>
   <a href="https://github.com/rappter2-ux/mars-barn-opus" target="_blank" style="color:var(--dim);text-decoration:none;padding:3px 8px">GitHub</a>
-  <span style="color:var(--red);font-size:10px;border:1px solid var(--red);padding:1px 5px;border-radius:8px;margin-left:auto">1vsM</span>
 </div>
 
 <!-- Globe (planet + surface zoom) -->
@@ -140,7 +266,7 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
 </div>
 
 <!-- Left panel: colony status -->
-<div class="side-panel left" id="left-panel">
+<div class="side-panel left game-hidden" id="left-panel">
   <h3>Colony Status</h3>
   <div id="colony-info">Initializing...</div>
   <h3>Resources</h3>
@@ -154,7 +280,7 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
 </div>
 
 <!-- Right panel: crew + events -->
-<div class="side-panel right" id="right-panel">
+<div class="side-panel right game-hidden" id="right-panel">
   <h3>Crew Roster</h3>
   <div id="crew-roster">Awaiting telemetry...</div>
   <h3>Event Feed</h3>
@@ -169,6 +295,21 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
   <div id="crew-journal" style="max-height:100px;overflow-y:auto;font-size:10px;line-height:1.5;color:var(--text);font-style:italic;padding:4px;background:rgba(0,0,0,0.3);border-radius:4px">Awaiting first sol...</div>
   <h3>Colony DNA</h3>
   <div id="colony-dna" style="overflow-x:auto"></div>
+  <h3 style="cursor:pointer" onclick="document.getElementById('lispy-panel').style.display=document.getElementById('lispy-panel').style.display==='none'?'block':'none'">LisPy Console ▾</h3>
+  <div id="lispy-panel" style="display:none">
+    <div style="margin-bottom:4px;display:flex;gap:4px;align-items:center">
+      <select id="lispy-select" onchange="switchLispy(this.value)" style="flex:1;background:#0a0e14;border:1px solid var(--border);color:var(--text);padding:2px 4px;font-family:var(--font);font-size:10px">
+        <option value="adaptive_governor">Adaptive Governor</option>
+        <option value="basic_governor">Basic Governor</option>
+        <option value="thermal_monitor">Thermal Monitor</option>
+        <option value="custom">Custom</option>
+      </select>
+      <button onclick="lispyEnabled=!lispyEnabled;this.textContent=lispyEnabled?'ON':'OFF';this.style.color=lispyEnabled?'var(--green)':'var(--red)'" style="background:none;border:1px solid var(--border);color:var(--green);font-family:var(--font);font-size:10px;padding:2px 6px;cursor:pointer">ON</button>
+    </div>
+    <textarea id="lispy-editor" spellcheck="false" style="width:100%;height:120px;background:#080b10;border:1px solid var(--border);color:var(--cyan);font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;padding:6px;border-radius:4px;resize:vertical;line-height:1.4" oninput="lispyCode=this.value"></textarea>
+    <div id="lispy-output" style="font-size:9px;color:var(--dim);margin-top:4px;max-height:40px;overflow-y:auto;font-family:monospace"></div>
+    <div id="lispy-alloc" style="font-size:9px;color:var(--yellow);margin-top:2px"></div>
+  </div>
   <h3>Mission Log</h3>
   <div id="mini-log" style="max-height:120px;overflow-y:auto;font-size:10px;color:var(--dim)"></div>
 </div>
@@ -242,6 +383,192 @@ function lerpColor(a,b,t){
   return(r<<16)|(g<<8)|bl;
 }
 // ── End Mars Climate Engine ──────────────────────────────────────
+
+// ══════════════════════════════════════════════════════════════════
+// LisPy VM — Sandboxed Lisp for colony control programs
+// Port of src/lispy.py. Same language, runs in browser.
+// S-expressions are both data AND executable code (homoiconic).
+// ══════════════════════════════════════════════════════════════════
+
+const LISPY_PROGRAMS = {
+  basic_governor: `(begin
+  (define crisis (< (min o2_days h2o_days food_days) 10))
+  (if crisis
+    (begin
+      (set! heating_alloc 0.15)
+      (set! isru_alloc 0.70)
+      (set! greenhouse_alloc 0.15)
+      (set! food_ration 0.50))
+    (begin
+      (set! heating_alloc 0.25)
+      (set! isru_alloc 0.40)
+      (set! greenhouse_alloc 0.35)
+      (set! food_ration 1.0))))`,
+
+  adaptive_governor: `(begin
+  (define o2_urgent (< o2_days 5))
+  (define food_urgent (< food_days 5))
+  (define power_low (< power_kwh 100))
+  (define dust_active (> dust_tau 0.5))
+  (cond
+    (o2_urgent (begin
+      (set! isru_alloc 0.80)
+      (set! heating_alloc 0.10)
+      (set! greenhouse_alloc 0.10)
+      (set! food_ration 0.50)))
+    (food_urgent (begin
+      (set! greenhouse_alloc 0.60)
+      (set! isru_alloc 0.25)
+      (set! heating_alloc 0.15)
+      (set! food_ration 0.75)))
+    (power_low (begin
+      (set! heating_alloc 0.40)
+      (set! isru_alloc 0.30)
+      (set! greenhouse_alloc 0.30)
+      (set! food_ration 0.80)))
+    (dust_active (begin
+      (set! heating_alloc 0.20)
+      (set! isru_alloc 0.55)
+      (set! greenhouse_alloc 0.25)
+      (set! food_ration 0.80)))
+    (true (begin
+      (set! heating_alloc 0.20)
+      (set! isru_alloc 0.45)
+      (set! greenhouse_alloc 0.35)
+      (set! food_ration 1.0)))))`,
+
+  thermal_monitor: `(begin
+  (define temp_c (- interior_temp_k 273.15))
+  (define too_cold (< temp_c 5))
+  (define too_hot (> temp_c 35))
+  (cond
+    (too_cold (begin (set! heating_alloc 0.50) "THERMAL: Boosting heat"))
+    (too_hot (begin (set! heating_alloc 0.10) "THERMAL: Reducing heat"))
+    (true "THERMAL: Nominal")))`
+};
+
+class LispyVM {
+  constructor(){this.env={};this.output=[];this.steps=0;this.maxSteps=5000}
+  setEnv(k,v){this.env[k]=v}
+  tokenize(src){
+    const tokens=[];let i=0;
+    while(i<src.length){
+      const c=src[i];
+      if(c===' '||c==='\t'||c==='\n'||c==='\r'){i++;continue}
+      if(c===';'){while(i<src.length&&src[i]!=='\n')i++;continue}
+      if(c==='('||c===')'){tokens.push(c);i++;continue}
+      if(c==='"'){let s='"';i++;while(i<src.length&&src[i]!=='"'){if(src[i]==='\\')s+=src[i++];s+=src[i++]}if(i<src.length)i++;tokens.push(s+'"');continue}
+      let tok='';while(i<src.length&&!' \t\n\r()'.includes(src[i])){tok+=src[i++]}
+      tokens.push(tok);
+    }
+    return tokens;
+  }
+  parse(tokens,pos={i:0}){
+    if(pos.i>=tokens.length)throw new Error('Unexpected EOF');
+    const t=tokens[pos.i++];
+    if(t==='('){
+      const list=[];
+      while(pos.i<tokens.length&&tokens[pos.i]!==')')list.push(this.parse(tokens,pos));
+      if(pos.i<tokens.length)pos.i++;
+      return list;
+    }
+    if(t===')')throw new Error('Unexpected )');
+    if(t[0]==='"')return t.slice(1,-1);
+    const n=Number(t);
+    return isNaN(n)?t:n;
+  }
+  eval(expr){
+    if(++this.steps>this.maxSteps)throw new Error('LisPy: step limit exceeded');
+    if(typeof expr==='number')return expr;
+    if(typeof expr==='string'){
+      if(expr==='true')return true;
+      if(expr==='false')return false;
+      if(expr in this.env)return this.env[expr];
+      throw new Error(`Undefined: ${expr}`);
+    }
+    if(!Array.isArray(expr)||expr.length===0)return expr;
+    const[op,...args]=expr;
+    if(op==='begin'){let r;for(const a of args)r=this.eval(a);return r}
+    if(op==='define'){this.env[args[0]]=this.eval(args[1]);return this.env[args[0]]}
+    if(op==='set!'){this.env[args[0]]=this.eval(args[1]);return this.env[args[0]]}
+    if(op==='if')return this.eval(args[0])?this.eval(args[1]):(args.length>2?this.eval(args[2]):false);
+    if(op==='cond'){for(const clause of args){const[test,...body]=clause;if(this.eval(test)){let r;for(const b of body)r=this.eval(b);return r}}return false}
+    if(op==='print'){const v=this.eval(args[0]);this.output.push(String(v));return v}
+    // Math/comparison
+    const vals=args.map(a=>this.eval(a));
+    const ops={'+':()=>vals.reduce((a,b)=>a+b,0),'-':()=>vals.length===1?-vals[0]:vals[0]-vals[1],
+      '*':()=>vals.reduce((a,b)=>a*b,1),'/':()=>vals[0]/vals[1],
+      '<':()=>vals[0]<vals[1],'>':()=>vals[0]>vals[1],'<=':()=>vals[0]<=vals[1],'>=':()=>vals[0]>=vals[1],
+      '=':()=>vals[0]===vals[1],'!=':()=>vals[0]!==vals[1],
+      'min':()=>Math.min(...vals),'max':()=>Math.max(...vals),
+      'abs':()=>Math.abs(vals[0]),'round':()=>Math.round(vals[0]),
+      'and':()=>vals.every(Boolean),'or':()=>vals.some(Boolean),'not':()=>!vals[0]};
+    if(op in ops)return ops[op]();
+    throw new Error(`Unknown op: ${op}`);
+  }
+  run(src){
+    this.steps=0;this.output=[];
+    try{
+      const tokens=this.tokenize(src);
+      const ast=this.parse(tokens);
+      return{ok:true,result:this.eval(ast),env:this.env,output:this.output};
+    }catch(e){return{ok:false,error:e.message,env:this.env,output:this.output}}
+  }
+}
+
+// Active LisPy program for colony automation
+let activeLispy = 'adaptive_governor';
+let lispyCode = LISPY_PROGRAMS.adaptive_governor;
+let lispyEnabled = true;
+let lastLispyOutput = [];
+
+function runLispyOnState(){
+  if(!lispyEnabled||!lispyCode)return;
+  const vm=new LispyVM();
+  const n=Math.max(1,state.crew.filter(c=>c.alive).length);
+  // Feed real colony state into VM
+  vm.setEnv('sol',state.sol);
+  vm.setEnv('o2_days',state.o2/(O2_PP*n));
+  vm.setEnv('h2o_days',state.h2o/(H2O_PP*n));
+  vm.setEnv('food_days',state.food/(FOOD_PP*n));
+  vm.setEnv('power_kwh',state.power);
+  vm.setEnv('crew_alive',n);
+  vm.setEnv('crew_total',state.crew.length);
+  vm.setEnv('morale',state.morale*100);
+  vm.setEnv('interior_temp_k',state.int_temp);
+  vm.setEnv('radiation_msv',state.rad);
+  vm.setEnv('solar_eff',state.s_eff);
+  vm.setEnv('isru_eff',state.i_eff);
+  vm.setEnv('modules_built',state.modules.length);
+  vm.setEnv('events_active',state.events.length);
+  vm.setEnv('dust_tau',marsWeather.dustTau);
+  vm.setEnv('mars_temp_k',marsWeather.tempK);
+  vm.setEnv('mars_solar_wm2',marsWeather.solarWm2);
+  vm.setEnv('mars_wind_ms',marsWeather.windMs);
+  vm.setEnv('mars_season',marsWeather.season);
+  // Default allocations (LisPy overrides these)
+  vm.setEnv('heating_alloc',state.alloc.h);
+  vm.setEnv('isru_alloc',state.alloc.i);
+  vm.setEnv('greenhouse_alloc',state.alloc.g);
+  vm.setEnv('food_ration',state.alloc.r);
+  const result=vm.run(lispyCode);
+  if(result.ok){
+    // Apply LisPy decisions to colony
+    const e=result.env;
+    if('heating_alloc' in e)state.alloc.h=Math.max(0,Math.min(1,e.heating_alloc));
+    if('isru_alloc' in e)state.alloc.i=Math.max(0,Math.min(1,e.isru_alloc));
+    if('greenhouse_alloc' in e)state.alloc.g=Math.max(0,Math.min(1,e.greenhouse_alloc));
+    if('food_ration' in e)state.alloc.r=Math.max(0.1,Math.min(1.5,e.food_ration));
+    // Normalize allocations
+    const tot=state.alloc.h+state.alloc.i+state.alloc.g;
+    if(tot>0){state.alloc.h/=tot;state.alloc.i/=tot;state.alloc.g/=tot}
+    lastLispyOutput=result.output;
+  }else{
+    lastLispyOutput=[`ERROR: ${result.error}`];
+  }
+}
+
+// ── End LisPy VM ─────────────────────────────────────────────────
 
 // Sim state (reuse from index.html engine)
 const O2_PP=0.84,H2O_PP=2.5,FOOD_PP=2500,PWR_BASE=30,ISRU_O2=5,ISRU_H2O=12,GH_KCAL=15000,PANEL=200,EFF=0.22,SOL_H=24.66,PCRIT=50;
@@ -1046,18 +1373,23 @@ function stepSim(){
   state.morale=ac.filter(c=>c.alive).reduce((s,m)=>s+m.mor,0)/Math.max(1,ac.filter(c=>c.alive).length)/100;
   if(state.o2<=0){state.alive=false;state.cause='O2 depletion'}
   if(state.food<=0){state.alive=false;state.cause='starvation'}
-  // Governor personality-driven decisions
+  // Governor decisions — LisPy automation runs first, personality fallback second
   const o2d=state.o2/(O2_PP*n),h2od=state.h2o/(H2O_PP*n),fd=state.food/(FOOD_PP*n);
-  const traits={engineer:{r:0.3,t:0.6,ag:0.5},philosopher:{r:0.5,t:0.8,ag:0.2},contrarian:{r:0.8,t:0.2,ag:0.8},
-    survivalist:{r:0.1,t:0.3,ag:0.7},diplomat:{r:0.4,t:0.9,ag:0.1},wildcard:{r:0.9,t:0.5,ag:0.6},
-    commander:{r:0.4,t:0.5,ag:0.9},scientist:{r:0.6,t:0.7,ag:0.3},merchant:{r:0.5,t:0.4,ag:0.4},hermit:{r:0.2,t:0.1,ag:0.3}};
-  const tr=traits[state.arch]||traits.engineer;
-  if(o2d<5||h2od<5){a.h=0.15;a.i=0.70;a.g=0.15;a.r=fd<5?0.5:0.75}
-  else if(fd<10){a.h=0.15;a.i=0.30;a.g=0.55;a.r=0.75}
-  else{// Personality drives allocation in stable conditions
-    a.h=0.30-0.20*tr.r;a.i=0.30+0.15*(1-tr.t)+0.10*tr.ag;a.g=0.40+0.15*tr.t-0.10*tr.ag;
-    const tot=a.h+a.i+a.g;a.h/=tot;a.i/=tot;a.g/=tot;
-    a.r=fd<20?0.75+0.25*tr.t:1.0;
+  if(lispyEnabled){
+    runLispyOnState();
+  } else {
+    // Fallback: personality-driven allocation
+    const traits={engineer:{r:0.3,t:0.6,ag:0.5},philosopher:{r:0.5,t:0.8,ag:0.2},contrarian:{r:0.8,t:0.2,ag:0.8},
+      survivalist:{r:0.1,t:0.3,ag:0.7},diplomat:{r:0.4,t:0.9,ag:0.1},wildcard:{r:0.9,t:0.5,ag:0.6},
+      commander:{r:0.4,t:0.5,ag:0.9},scientist:{r:0.6,t:0.7,ag:0.3},merchant:{r:0.5,t:0.4,ag:0.4},hermit:{r:0.2,t:0.1,ag:0.3}};
+    const tr=traits[state.arch]||traits.engineer;
+    if(o2d<5||h2od<5){a.h=0.15;a.i=0.70;a.g=0.15;a.r=fd<5?0.5:0.75}
+    else if(fd<10){a.h=0.15;a.i=0.30;a.g=0.55;a.r=0.75}
+    else{
+      a.h=0.30-0.20*tr.r;a.i=0.30+0.15*(1-tr.t)+0.10*tr.ag;a.g=0.40+0.15*tr.t-0.10*tr.ag;
+      const tot=a.h+a.i+a.g;a.h/=tot;a.i/=tot;a.g/=tot;
+      a.r=fd<20?0.75+0.25*tr.t:1.0;
+    }
   }
   // Auto-build
   let buildEvent=null;
@@ -1361,6 +1693,15 @@ function updateAllUI(){
   }
   // DNA
   updateDNA(s);
+  // LisPy console
+  const lispyEd=document.getElementById('lispy-editor');
+  if(lispyEd&&!lispyEd.matches(':focus'))lispyEd.value=lispyCode;
+  const lispyOut=document.getElementById('lispy-output');
+  if(lispyOut)lispyOut.innerHTML=lastLispyOutput.length?lastLispyOutput.map(l=>
+    l.startsWith('ERROR')?`<span style="color:var(--red)">${l}</span>`:l).join('<br>')
+    :'<span style="color:var(--green)">LisPy: nominal</span>';
+  const lispyAlloc=document.getElementById('lispy-alloc');
+  if(lispyAlloc)lispyAlloc.textContent=`H:${(s.alloc.h*100).toFixed(0)}% I:${(s.alloc.i*100).toFixed(0)}% G:${(s.alloc.g*100).toFixed(0)}% R:${(s.alloc.r*100).toFixed(0)}%`;
   // Globe colony marker
   if(globe){
     const hp=s.alive?Math.max(10,Math.min(100,80-s.sol*0.1)):0;
@@ -1405,7 +1746,11 @@ function toggleSim(){
   running=true;document.getElementById('sim-btn').textContent='⏸ PAUSE';
   simInterval=setInterval(()=>{
     stepSim();
-    if(!state.alive){running=false;clearInterval(simInterval);document.getElementById('sim-btn').textContent='COLONY LOST'}
+    if(!state.alive){
+      running=false;clearInterval(simInterval);
+      document.getElementById('sim-btn').textContent='COLONY LOST';
+      showDeathScreen();
+    }
   },500);
 }
 
@@ -1494,7 +1839,292 @@ function tickSupplyChain(sol){
   });
 }
 
-// Init
+// ══════════════════════════════════════════════════════════════
+// OREGON TRAIL GAME FLOW
+// Pick mission → Cinematic landing → Sim runs → Death screen
+// ══════════════════════════════════════════════════════════════
+
+function switchLispy(name){
+  if(name==='custom'){activeLispy='custom';return}
+  if(LISPY_PROGRAMS[name]){
+    activeLispy=name;
+    lispyCode=LISPY_PROGRAMS[name];
+    const ed=document.getElementById('lispy-editor');
+    if(ed)ed.value=lispyCode;
+  }
+}
+
+const MISSIONS = {
+  ares:     {name:'Ares I: First Landing', arch:'engineer', crew:4, o2:100.8, h2o:300, food:300000, power:500,
+             brief:'4 humans. 30 sols of reserves. The classic Mars mission.',
+             crewList:[
+               {name:'Chen W.',role:'CMDR',hp:97,fat:0,mor:82,rad:0,alive:true,st:'Nominal'},
+               {name:'Rodriguez M.',role:'ENGR',hp:96,fat:0,mor:85,rad:0,alive:true,st:'Nominal'},
+               {name:'Okafor A.',role:'SCI',hp:98,fat:0,mor:78,rad:0,alive:true,st:'Nominal'},
+               {name:'Johansson K.',role:'MED',hp:95,fat:0,mor:88,rad:0,alive:true,st:'Nominal'}]},
+  optimus:  {name:'Optimus Pathfinder', arch:'engineer', crew:4, o2:0, h2o:200, food:0, power:800,
+             brief:'4 Tesla bots. No humans. Pure robot autonomy.',
+             crewList:[
+               {name:'OPT-01',role:'ENGR',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'},
+               {name:'OPT-02',role:'ENGR',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'},
+               {name:'OPT-03',role:'SCI',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'},
+               {name:'OPT-04',role:'CMDR',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'}]},
+  skeleton: {name:'Skeleton Crew', arch:'survivalist', crew:2, o2:25, h2o:75, food:75000, power:300,
+             brief:'2 humans. Every gram was weighed.',
+             crewList:[
+               {name:'Chen W.',role:'CMDR',hp:97,fat:0,mor:82,rad:0,alive:true,st:'Nominal'},
+               {name:'Rodriguez M.',role:'ENGR',hp:96,fat:0,mor:85,rad:0,alive:true,st:'Nominal'}]},
+  garden:   {name:'Garden of Mars', arch:'diplomat', crew:6, o2:300, h2o:900, food:900000, power:1000,
+             brief:'6 crew, double reserves. Easy — but 6 mouths to feed.',
+             crewList:[
+               {name:'Chen W.',role:'CMDR',hp:97,fat:0,mor:82,rad:0,alive:true,st:'Nominal'},
+               {name:'Rodriguez M.',role:'ENGR',hp:96,fat:0,mor:85,rad:0,alive:true,st:'Nominal'},
+               {name:'Okafor A.',role:'SCI',hp:98,fat:0,mor:78,rad:0,alive:true,st:'Nominal'},
+               {name:'Johansson K.',role:'MED',hp:95,fat:0,mor:88,rad:0,alive:true,st:'Nominal'},
+               {name:'Kim J.',role:'SCI',hp:96,fat:0,mor:80,rad:0,alive:true,st:'Nominal'},
+               {name:'Volkov D.',role:'ENGR',hp:97,fat:0,mor:82,rad:0,alive:true,st:'Nominal'}]},
+  dustbowl: {name:'Dust Bowl', arch:'commander', crew:4, o2:80, h2o:200, food:200000, power:300,
+             brief:'Peak dust season. Solar panels are a luxury.',
+             crewList:[
+               {name:'Chen W.',role:'CMDR',hp:97,fat:0,mor:82,rad:0,alive:true,st:'Nominal'},
+               {name:'Rodriguez M.',role:'ENGR',hp:96,fat:0,mor:85,rad:0,alive:true,st:'Nominal'},
+               {name:'Okafor A.',role:'SCI',hp:98,fat:0,mor:78,rad:0,alive:true,st:'Nominal'},
+               {name:'Johansson K.',role:'MED',hp:95,fat:0,mor:88,rad:0,alive:true,st:'Nominal'}]},
+  noisru:   {name:'ISRU Down', arch:'scientist', crew:4, o2:200, h2o:500, food:400000, power:500,
+             brief:'ISRU failed. No local production. Live on reserves.',
+             crewList:[
+               {name:'Chen W.',role:'CMDR',hp:97,fat:0,mor:82,rad:0,alive:true,st:'Nominal'},
+               {name:'Rodriguez M.',role:'ENGR',hp:96,fat:0,mor:85,rad:0,alive:true,st:'Nominal'},
+               {name:'Okafor A.',role:'SCI',hp:98,fat:0,mor:78,rad:0,alive:true,st:'Nominal'},
+               {name:'Johansson K.',role:'MED',hp:95,fat:0,mor:88,rad:0,alive:true,st:'Nominal'}]},
+  hybrid:   {name:'Hybrid Colony', arch:'scientist', crew:6, o2:50, h2o:200, food:150000, power:800,
+             brief:'2 humans + 4 robots. The real future of Mars.',
+             crewList:[
+               {name:'Chen W.',role:'CMDR',hp:97,fat:0,mor:82,rad:0,alive:true,st:'Nominal'},
+               {name:'Rodriguez M.',role:'ENGR',hp:96,fat:0,mor:85,rad:0,alive:true,st:'Nominal'},
+               {name:'OPT-01',role:'ENGR',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'},
+               {name:'OPT-02',role:'ENGR',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'},
+               {name:'OPT-03',role:'SCI',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'},
+               {name:'OPT-04',role:'CMDR',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'}]},
+  lunar:    {name:'Lunar Testbed', arch:'survivalist', crew:2, o2:0, h2o:50, food:0, power:400,
+             brief:'2 bots on the Moon. 14-day night. Prove it first.',
+             crewList:[
+               {name:'LUN-01',role:'ENGR',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'},
+               {name:'LUN-02',role:'SCI',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'}]}
+};
+
+let activeMission = null;
+
+function launchMission(key){
+  const m = MISSIONS[key];
+  if(!m) return;
+  activeMission = key;
+
+  // ── Snapshot REAL current Mars conditions as starting frame ──
+  const wx = getMarsWeather();
+  const realSolarFactor = Math.max(0.3, wx.solarWm2 / 589); // vs Mars mean
+  const realDustPenalty = Math.max(0, 1 - wx.dustTau * 0.4);
+  const realTempK = wx.tempK;
+  const startInDust = wx.dustStormProb > 15;
+
+  // Configure state — seeded from REAL Mars right now
+  const seed = Math.floor(Math.random()*99999);
+  R = rng32(seed);
+  state = {sol:0,alive:true,cause:null,arch:m.arch,
+    o2:m.o2, h2o:m.h2o, food:m.food, power:m.power * realSolarFactor,
+    s_eff:(key==='noisru'?0.3:1) * realDustPenalty,
+    i_eff:key==='noisru'?0.1:1, g_eff:1, h_eff:1,
+    cascade:'NOM', int_temp:Math.max(250, Math.min(300, realTempK + 80)), morale:0.85, rad:0,
+    crew: m.crewList.map(c=>({...c})),
+    events:[], log:[], modules:[], building:null, research:[], researching:null,
+    discoveries:[], economy:10000, conversations:[], postMortem:null,
+    alloc:{h:.25,i:.4,g:.35,r:1}, lat:18.38, lng:77.58,
+    startWeather: wx};
+
+  // Inject real dust storm if Mars is dusty right now
+  if(startInDust || key==='dustbowl'){
+    const sv = Math.min(0.9, wx.dustTau * 1.5);
+    state.events.push({type:'dust_storm',severity:sv,remaining:Math.floor(5+R()*20),
+      duration:25,desc:`Dust storm — real Mars τ=${wx.dustTau}. Solar output reduced.`});
+    state.s_eff *= (1 - 0.3 * sv);
+  }
+
+  // Set active LisPy program
+  lispyEnabled = true;
+  lispyCode = LISPY_PROGRAMS.adaptive_governor;
+  activeLispy = 'adaptive_governor';
+
+  document.getElementById('gov-sel').value = m.arch;
+  echoHistory = [];
+  dnaHistory = [];
+  supplyChain = {nextLaunchWindow:100,inTransit:[],delivered:0};
+
+  // Start cinematic landing sequence
+  const overlay = document.getElementById('mission-overlay');
+  overlay.classList.add('fade-out');
+
+  const landingEl = document.getElementById('landing-overlay');
+  const textEl = document.getElementById('landing-text');
+  const subEl = document.getElementById('landing-sub');
+  landingEl.style.display = 'flex';
+
+  // Phase 1: Mission name (planet view)
+  setTimeout(()=>{
+    textEl.textContent = m.name.toUpperCase();
+    subEl.textContent = m.brief;
+    textEl.style.opacity = '1';
+    subEl.style.opacity = '1';
+    globe.pointOfView({altitude:2.5},500);
+  }, 800);
+
+  // Phase 2: Zoom to Mars surface
+  setTimeout(()=>{
+    textEl.style.opacity = '0';
+    subEl.style.opacity = '0';
+  }, 3000);
+
+  setTimeout(()=>{
+    textEl.textContent = 'APPROACHING MARS';
+    subEl.textContent = `Jezero Crater · ${wx.season} · ${wx.tempC}°C · Wind ${wx.windMs} m/s`;
+    textEl.style.opacity = '1';
+    subEl.style.opacity = '1';
+    globe.pointOfView({lat:state.lat,lng:state.lng,altitude:0.4},2000);
+  }, 3500);
+
+  // Phase 3: Zoom to surface
+  setTimeout(()=>{
+    textEl.style.opacity = '0';
+    subEl.style.opacity = '0';
+  }, 6000);
+
+  setTimeout(()=>{
+    textEl.textContent = 'LANDING';
+    subEl.textContent = `Solar: ${wx.solarWm2} W/m² · Dust τ: ${wx.dustTau} · Ls ${wx.ls}°`;
+    textEl.style.opacity = '1';
+    subEl.style.opacity = '1';
+    globe.pointOfView({lat:state.lat,lng:state.lng,altitude:0.08},2000);
+  }, 6500);
+
+  // Phase 4: Transition to ground view and start sim
+  setTimeout(()=>{
+    textEl.style.opacity = '0';
+    subEl.style.opacity = '0';
+  }, 9000);
+
+  setTimeout(()=>{
+    landingEl.style.display = 'none';
+    overlay.style.display = 'none';
+
+    // Show game UI
+    document.getElementById('game-hdr').classList.remove('game-hidden');
+    document.getElementById('game-hdr').classList.add('game-visible');
+    document.getElementById('left-panel').classList.remove('game-hidden');
+    document.getElementById('left-panel').classList.add('game-visible');
+    document.getElementById('right-panel').classList.remove('game-hidden');
+    document.getElementById('right-panel').classList.add('game-visible');
+    document.getElementById('top-nav').classList.remove('game-hidden');
+    document.getElementById('top-nav').classList.add('game-visible');
+
+    // Enter ground view
+    setZoom('base');
+
+    // Auto-start simulation
+    updateAllUI();
+    state.log.push(`Mission: ${m.name}`);
+    state.log.push(`Governor: ${m.arch.toUpperCase()} + LisPy (${activeLispy})`);
+    state.log.push(`Crew: ${m.crewList.length} members deployed`);
+    state.log.push(`🌡️ Real Mars: ${wx.season} · ${wx.tempC}°C · Solar ${wx.solarWm2} W/m²`);
+    state.log.push(`🌪️ Dust τ: ${wx.dustTau} · Wind: ${wx.windMs} m/s · Storm risk: ${wx.dustStormProb}%`);
+    if(startInDust) state.log.push('⚠️ DUST STORM ACTIVE — starting in reduced solar conditions');
+    state.log.push('─── Sol 1 begins ───');
+
+    setTimeout(()=>{
+      running = true;
+      document.getElementById('sim-btn').textContent = '⏸ PAUSE';
+      simInterval = setInterval(()=>{
+        stepSim();
+        if(!state.alive){
+          running = false;
+          clearInterval(simInterval);
+          document.getElementById('sim-btn').textContent = 'COLONY LOST';
+          showDeathScreen();
+        }
+      }, 500);
+    }, 500);
+  }, 9500);
+}
+
+function showDeathScreen(){
+  setTimeout(()=>{
+    const el = document.getElementById('death-overlay');
+    el.style.display = 'flex';
+
+    document.getElementById('death-cause').textContent = state.cause ? state.cause.toUpperCase() : 'UNKNOWN FAILURE';
+
+    const ac = state.crew.filter(c=>c.alive);
+    const dead = state.crew.filter(c=>!c.alive);
+    document.getElementById('death-stats').innerHTML = `
+      <div class="death-stat"><div class="val">${state.sol}</div><div class="lbl">Sols Survived</div></div>
+      <div class="death-stat"><div class="val">${ac.length}/${state.crew.length}</div><div class="lbl">Crew Alive</div></div>
+      <div class="death-stat"><div class="val">${state.modules.length}</div><div class="lbl">Modules Built</div></div>
+      <div class="death-stat"><div class="val">${state.research.length}</div><div class="lbl">Tech Researched</div></div>
+      <div class="death-stat"><div class="val">${state.discoveries.length}</div><div class="lbl">Discoveries</div></div>`;
+
+    // Generate post-mortem
+    const n = Math.max(1, state.crew.length);
+    const o2d = state.o2 / (O2_PP * n);
+    const h2od = state.h2o / (H2O_PP * n);
+    const fd = state.food / (FOOD_PP * n);
+    let analysis = `<strong>Post-Mortem Analysis — Sol ${state.sol}</strong><br><br>`;
+    analysis += `The colony survived ${state.sol} sols before ${state.cause}.<br><br>`;
+    if(dead.length) analysis += `Crew lost: ${dead.map(c=>c.name+' ('+c.role+')').join(', ')}.<br>`;
+    if(state.events.length) analysis += `Active hazards at time of failure: ${state.events.map(e=>e.type.replace(/_/g,' ')).join(', ')}.<br>`;
+    analysis += `<br>Final reserves: O₂ ${o2d.toFixed(1)}d, H₂O ${h2od.toFixed(1)}d, Food ${fd.toFixed(1)}d, Power ${state.power.toFixed(0)} kWh.<br>`;
+    if(state.sol < 30) analysis += `<br><em>The colony never established itself. Consider a mission with more starting reserves.</em>`;
+    else if(state.sol < 100) analysis += `<br><em>Early failure. The governor may need a different strategy for this mission profile.</em>`;
+    else if(state.sol < 300) analysis += `<br><em>A respectable run. With better resource management, this colony could have lasted longer.</em>`;
+    else analysis += `<br><em>A strong colony. Approaching autonomy. Try reaching 500+ sols for MARS-READY status.</em>`;
+
+    // Grade
+    const grade = state.sol >= 500 ? 'MARS-READY' : state.sol >= 300 ? 'A' : state.sol >= 200 ? 'B' : state.sol >= 100 ? 'C' : state.sol >= 50 ? 'D' : 'F';
+    analysis += `<br><br><strong>AUTONOMY GRADE: ${grade}</strong>`;
+
+    document.getElementById('death-postmortem').innerHTML = analysis;
+  }, 1500);
+}
+
+function restartGame(){
+  // Stop sim
+  running = false;
+  clearInterval(simInterval);
+
+  // Hide death screen
+  document.getElementById('death-overlay').style.display = 'none';
+
+  // Hide game UI
+  document.getElementById('game-hdr').classList.add('game-hidden');
+  document.getElementById('game-hdr').classList.remove('game-visible');
+  document.getElementById('left-panel').classList.add('game-hidden');
+  document.getElementById('left-panel').classList.remove('game-visible');
+  document.getElementById('right-panel').classList.add('game-hidden');
+  document.getElementById('right-panel').classList.remove('game-visible');
+  document.getElementById('top-nav').classList.add('game-hidden');
+  document.getElementById('top-nav').classList.remove('game-visible');
+
+  // Exit ground view
+  exitGround();
+
+  // Show mission selector
+  const overlay = document.getElementById('mission-overlay');
+  overlay.style.display = 'flex';
+  overlay.classList.remove('fade-out');
+
+  // Reset to planet view
+  setZoom('planet');
+  resetState();
+}
+
+// Init — show globe spinning behind mission selector, wait for player to choose
 initGlobe();
 resetState();
 </script>
