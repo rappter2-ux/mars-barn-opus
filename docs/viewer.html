@@ -125,6 +125,38 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
 /* Hide side panels and header until game starts */
 .game-hidden{opacity:0;pointer-events:none;transition:opacity 0.5s}
 .game-visible{opacity:1;pointer-events:auto;transition:opacity 0.5s}
+
+/* ── Papers Please Task Panel ── */
+#task-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:350;
+  width:520px;max-width:95vw;transition:transform 0.4s ease-out;transform:translateX(-50%) translateY(100%)}
+#task-panel.task-visible{transform:translateX(-50%) translateY(0)}
+#task-panel .task-card{background:rgba(10,14,20,0.97);border:1px solid var(--border);
+  border-bottom:none;border-radius:12px 12px 0 0;padding:16px 20px;
+  box-shadow:0 -8px 40px rgba(0,0,0,0.6);backdrop-filter:blur(8px)}
+.task-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.task-header .tag{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;letter-spacing:0.5px}
+.tag-urgent{background:#3a1a1a;color:var(--red);animation:pulse 1s infinite}
+.tag-request{background:#2a2a1a;color:var(--yellow)}
+.tag-info{background:#1a2a3a;color:var(--blue)}
+.task-timer{font-size:11px;color:var(--dim);font-family:monospace}
+.task-timer .time{color:var(--yellow);font-weight:700}
+.task-from{font-size:10px;color:var(--cyan);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.task-from .avatar{width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;
+  justify-content:center;font-size:8px;font-weight:700;color:#fff}
+.task-body{font-size:12px;color:var(--text);line-height:1.6;margin-bottom:12px}
+.task-data{font-size:10px;color:var(--dim);background:rgba(0,0,0,0.4);border-radius:6px;
+  padding:8px 10px;margin-bottom:12px;line-height:1.8;font-family:monospace}
+.task-actions{display:flex;gap:8px}
+.task-btn{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;
+  font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:0.5px;transition:all 0.2s}
+.task-btn:hover{transform:scale(1.03)}
+.task-btn-approve{background:rgba(63,185,80,0.2);color:var(--green);border:1px solid var(--green)}
+.task-btn-deny{background:rgba(218,54,51,0.2);color:var(--red);border:1px solid var(--red)}
+.task-btn-alt{background:rgba(88,166,255,0.15);color:var(--cyan);border:1px solid var(--border)}
+.task-queue-badge{position:fixed;bottom:16px;right:16px;z-index:340;background:var(--red);
+  color:#fff;width:32px;height:32px;border-radius:50%;display:none;align-items:center;
+  justify-content:center;font-size:14px;font-weight:700;cursor:pointer;
+  box-shadow:0 2px 12px rgba(218,54,51,0.5);animation:pulse 1.5s infinite}
 </style>
 </head>
 <body>
@@ -267,6 +299,12 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
   <div id="landing-text"></div>
   <div id="landing-sub"></div>
 </div>
+
+<!-- ══ PAPERS PLEASE TASK PANEL ══ -->
+<div id="task-panel">
+  <div class="task-card" id="task-card-inner"></div>
+</div>
+<div class="task-queue-badge" id="task-badge" onclick="showNextTask()"></div>
 
 <!-- ══ DEATH SCREEN (Oregon Trail: You Have Died) ══ -->
 <div id="death-overlay">
@@ -646,6 +684,230 @@ function runLispyOnState(){
 }
 
 // ── End LisPy VM ─────────────────────────────────────────────────
+
+// ══════════════════════════════════════════════════════════════════
+// PAPERS PLEASE — Mission Control Task System
+// Robots punt hard decisions to the player. Approve, deny, or let
+// the AI default (usually worse). Pressure builds as tasks stack.
+// ══════════════════════════════════════════════════════════════════
+
+let taskQueue = [];
+let activeTask = null;
+let taskHistory = [];
+let tasksResolved = 0;
+let tasksIgnored = 0;
+
+const ROBOT_PLEAS = [
+  'is requesting human oversight.',
+  'cannot determine optimal course of action.',
+  'has flagged this for mission control review.',
+  'is outside confidence threshold for autonomous action.',
+  'needs your authorization to proceed.',
+  'is deferring to human judgment on this one.',
+];
+
+const TASK_TEMPLATES = [
+  // Resource crises — the robot sees the problem but won't act without approval
+  {trigger: s=>{ const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+    return s.o2/(O2_PP*n)<8 && s.o2/(O2_PP*n)>2 && R()<0.3},
+   gen: s=>{ const n=Math.max(1,s.crew.filter(c=>c.alive).length); const d=(s.o2/(O2_PP*n)).toFixed(1);
+    return {id:'o2_reroute',urgency:'urgent',from:s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0],
+      title:'O₂ RESERVES LOW',
+      body:`O₂ at ${d} sols. ISRU currently at ${(s.alloc.i*100).toFixed(0)}% allocation. Recommend emergency reroute to 70% ISRU immediately. This will cut greenhouse production.`,
+      data:`O₂: ${d} sols | ISRU: ${(s.alloc.i*100).toFixed(0)}% | Food: ${(s.food/(FOOD_PP*n)).toFixed(0)} sols`,
+      approve:{label:'✓ REROUTE TO ISRU',effect:s=>{s.alloc.i=0.70;s.alloc.g=0.15;s.alloc.h=0.15;s.log.push('  ✓ MC: O₂ reroute approved — ISRU at 70%')}},
+      deny:{label:'✗ MAINTAIN COURSE',effect:s=>{s.log.push('  ✗ MC: O₂ reroute denied — maintaining current allocation')}},
+      alt:{label:'◐ SPLIT 50/50',effect:s=>{s.alloc.i=0.50;s.alloc.g=0.30;s.alloc.h=0.20;s.log.push('  ◐ MC: Compromise — ISRU/greenhouse split')}},
+      timeout:15, defaultChoice:'approve'}}},
+
+  // Crew health — medic needs authorization for risky treatment
+  {trigger: s=>s.crew.some(c=>c.alive&&c.hp<50&&c.hp>10) && R()<0.4,
+   gen: s=>{const sick=s.crew.find(c=>c.alive&&c.hp<50);const medic=s.crew.find(c=>c.role==='MED'&&c.alive);
+    return {id:'crew_medical',urgency:'urgent',from:medic||s.crew.find(c=>c.alive),
+      title:`MEDICAL: ${sick.name.toUpperCase()}`,
+      body:`${sick.name} at ${sick.hp.toFixed(0)}% health (${sick.st}). ${medic?medic.name:'Medical AI'} recommends shelter protocol — pull them from duty for 5 sols. Colony loses a crew member's production.`,
+      data:`Patient: ${sick.name} (${sick.role}) HP:${sick.hp.toFixed(0)} | Morale: ${sick.mor.toFixed(0)} | Rad: ${sick.rad.toFixed(0)} mSv`,
+      approve:{label:'✓ SHELTER PROTOCOL',effect:s=>{sick.hp=Math.min(100,sick.hp+15);sick.mor=Math.min(100,sick.mor+10);sick.st='Resting';s.log.push(`  ✓ MC: ${sick.name} placed on shelter protocol`)}},
+      deny:{label:'✗ KEEP WORKING',effect:s=>{sick.mor=Math.max(0,sick.mor-10);s.log.push(`  ✗ MC: ${sick.name} ordered to continue duty`)}},
+      timeout:12, defaultChoice:'deny'}}},
+
+  // Construction approval — governor wants to build but needs sign-off
+  {trigger: s=>!s.building && s.sol>20 && s.modules.length<6 && R()<0.15,
+   gen: s=>{const opts=['greenhouse_dome','isru_plant','solar_farm','water_extractor','repair_bay','radiation_shelter'];
+    const built=new Set(s.modules.map(m=>m.type));
+    const candidates=opts.filter(o=>!built.has(o));
+    if(!candidates.length)return null;
+    const mod=candidates[Math.floor(R()*candidates.length)];
+    const names={greenhouse_dome:'Greenhouse Dome',isru_plant:'ISRU Plant',solar_farm:'Solar Farm',
+      water_extractor:'Water Extractor',repair_bay:'Repair Bay',radiation_shelter:'Radiation Shelter'};
+    const costs={greenhouse_dome:80,isru_plant:120,solar_farm:60,water_extractor:90,repair_bay:100,radiation_shelter:110};
+    return {id:'build_'+mod,urgency:'request',from:s.crew.find(c=>c.role==='CMDR'&&c.alive)||s.crew[0],
+      title:`BUILD: ${names[mod]||mod}`,
+      body:`Governor recommends constructing ${names[mod]||mod}. Estimated ${Math.floor(8+R()*12)} sols build time. Will consume ${costs[mod]||80} kWh during construction.`,
+      data:`Modules: ${s.modules.length} built | Power: ${s.power.toFixed(0)} kWh | ${s.modules.map(m=>m.type.replace(/_/g,' ')).join(', ')||'none'}`,
+      approve:{label:'✓ AUTHORIZE BUILD',effect:s=>{s.building={type:mod,remaining:Math.floor(8+R()*12)};s.power-=Math.min(s.power*0.1,costs[mod]||80);s.log.push(`  ✓ MC: ${names[mod]} construction authorized`)}},
+      deny:{label:'✗ DENY — CONSERVE',effect:s=>{s.log.push(`  ✗ MC: ${names[mod]} construction denied — conserving resources`)}},
+      timeout:20, defaultChoice:'approve'}}},
+
+  // Dust storm incoming — seal or ride it out
+  {trigger: s=>!s.events.some(e=>e.type==='dust_storm') && marsWeather.dustStormProb>10 && R()<0.2,
+   gen: s=>{return {id:'storm_prep',urgency:'urgent',from:s.crew.find(c=>c.role==='SCI'&&c.alive)||s.crew[0],
+      title:'DUST STORM WARNING',
+      body:`Atmospheric sensors detect incoming dust activity (${marsWeather.dustStormProb}% probability). Recommend sealing habitat and switching to reserve power. This halts all outdoor operations for ~5 sols.`,
+      data:`Storm risk: ${marsWeather.dustStormProb}% | Dust τ: ${marsWeather.dustTau} | Solar: ${marsWeather.solarWm2} W/m²`,
+      approve:{label:'✓ SEAL HABITAT',effect:s=>{s.alloc.h=0.50;s.alloc.i=0.30;s.alloc.g=0.20;s.log.push('  ✓ MC: Habitat sealed — storm prep protocol active')}},
+      deny:{label:'✗ RIDE IT OUT',effect:s=>{s.s_eff*=0.9;s.log.push('  ✗ MC: Storm prep denied — maintaining operations')}},
+      alt:{label:'◐ PARTIAL SEAL',effect:s=>{s.alloc.h=0.35;s.alloc.i=0.35;s.alloc.g=0.30;s.log.push('  ◐ MC: Partial seal — reduced outdoor ops')}},
+      timeout:10, defaultChoice:'approve'}}},
+
+  // Trade offer — supply rocket decision
+  {trigger: s=>s.sol>50 && s.sol%30<2 && R()<0.3,
+   gen: s=>{const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+    const o2d=s.o2/(O2_PP*n), fd=s.food/(FOOD_PP*n);
+    const needO2=o2d<fd;
+    return {id:'trade_offer',urgency:'info',from:{name:'Earth CAPCOM',role:'COMMS',alive:true},
+      title:'SUPPLY MANIFEST DECISION',
+      body:`Next resupply window open. Earth is asking: what do you need most? They can prioritize ${needO2?'O₂/H₂O (life support)':'food/greenhouse supplies'} or balanced cargo.`,
+      data:`O₂: ${o2d.toFixed(0)} sols | Food: ${fd.toFixed(0)} sols | H₂O: ${(s.h2o/(H2O_PP*n)).toFixed(0)} sols`,
+      approve:{label:needO2?'✓ SEND O₂/H₂O':'✓ SEND FOOD',effect:s=>{if(needO2){s.o2+=40;s.h2o+=80}else{s.food+=60000};s.log.push(`  ✓ MC: Priority resupply requested — ${needO2?'life support':'food'}`)}},
+      deny:{label:'✗ BALANCED CARGO',effect:s=>{s.o2+=15;s.h2o+=30;s.food+=20000;s.power+=50;s.log.push('  ✗ MC: Balanced resupply requested')}},
+      timeout:25, defaultChoice:'deny'}}},
+
+  // Robot malfunction — investigate or ignore
+  {trigger: s=>s.crew.some(c=>c.name.startsWith('OPT')||c.name.startsWith('LUN')) && R()<0.12,
+   gen: s=>{const bot=s.crew.find(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
+    if(!bot)return null;
+    return {id:'bot_glitch',urgency:'request',from:bot,
+      title:`ROBOT DIAGNOSTIC: ${bot.name}`,
+      body:`${bot.name} reporting intermittent sensor failures. Self-diagnostic inconclusive. Request permission to enter low-power diagnostic mode (offline for 3 sols) or continue with degraded sensors.`,
+      data:`Unit: ${bot.name} | HP: ${bot.hp.toFixed(0)} | Uptime: ${state.sol} sols | Sensor confidence: ${(70+R()*25).toFixed(0)}%`,
+      approve:{label:'✓ RUN DIAGNOSTICS',effect:s=>{bot.hp=Math.min(100,bot.hp+20);bot.st='Diagnostic';s.log.push(`  ✓ MC: ${bot.name} entering diagnostic mode`)}},
+      deny:{label:'✗ KEEP RUNNING',effect:s=>{bot.hp=Math.max(10,bot.hp-5);s.log.push(`  ✗ MC: ${bot.name} continuing with degraded sensors`)}},
+      timeout:15, defaultChoice:'deny'}}},
+
+  // Morale crisis — crew wants a day off
+  {trigger: s=>s.morale<0.5 && s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT')).length>=2 && R()<0.25,
+   gen: s=>{const unhappy=s.crew.filter(c=>c.alive&&c.mor<50&&!c.name.startsWith('OPT'));
+    if(!unhappy.length)return null;
+    const who=unhappy[Math.floor(R()*unhappy.length)];
+    return {id:'morale_break',urgency:'request',from:who,
+      title:'CREW MORALE REQUEST',
+      body:`"We need a break." ${who.name} is speaking for the crew. Morale is at ${(s.morale*100).toFixed(0)}%. Requesting 1 sol stand-down — no production, rest only. Refusing may trigger further morale drops.`,
+      data:`Morale: ${(s.morale*100).toFixed(0)}% | ${who.name}: ${who.mor.toFixed(0)}% | Crew stress: ${s.events.length} active events`,
+      approve:{label:'✓ GRANT REST DAY',effect:s=>{s.crew.filter(c=>c.alive).forEach(c=>{c.mor=Math.min(100,c.mor+15);c.hp=Math.min(100,c.hp+3)});s.log.push('  ✓ MC: Rest day granted — morale boost')}},
+      deny:{label:'✗ DENIED — KEEP WORKING',effect:s=>{s.crew.filter(c=>c.alive).forEach(c=>c.mor=Math.max(0,c.mor-8));s.log.push('  ✗ MC: Rest day denied — crew morale drops')}},
+      timeout:12, defaultChoice:'deny'}}}
+];
+
+function generateTask(){
+  if(taskQueue.length>=3)return; // max 3 pending
+  if(!state.alive)return;
+  for(const tmpl of TASK_TEMPLATES){
+    if(tmpl.trigger(state)){
+      const task=tmpl.gen(state);
+      if(!task)continue;
+      // Don't duplicate same task type
+      if(taskQueue.some(t=>t.id===task.id)||activeTask?.id===task.id)continue;
+      if(taskHistory.slice(-5).some(t=>t.id===task.id))continue;
+      task.createdSol=state.sol;
+      task.timerLeft=task.timeout;
+      taskQueue.push(task);
+      state.log.push(`  📋 TASK: ${task.title} — awaiting mission control`);
+      updateTaskBadge();
+      if(!activeTask)showNextTask();
+      return;
+    }
+  }
+}
+
+function showNextTask(){
+  if(!taskQueue.length){
+    activeTask=null;
+    document.getElementById('task-panel').classList.remove('task-visible');
+    updateTaskBadge();
+    return;
+  }
+  activeTask=taskQueue.shift();
+  updateTaskBadge();
+  renderTask(activeTask);
+  document.getElementById('task-panel').classList.add('task-visible');
+}
+
+function renderTask(task){
+  const from=task.from||{name:'Colony AI',role:'GOV'};
+  const colors={CMDR:'#3fb950',ENGR:'#58a6ff',SCI:'#a371f7',MED:'#d29922',COMMS:'#79c0ff',GOV:'#79c0ff'};
+  const bgCol=colors[from.role]||'#58a6ff';
+  const urgTags={urgent:'tag-urgent',request:'tag-request',info:'tag-info'};
+  const plea=ROBOT_PLEAS[Math.floor(Math.random()*ROBOT_PLEAS.length)];
+
+  let html=`
+    <div class="task-header">
+      <span class="tag ${urgTags[task.urgency]||'tag-request'}">${task.urgency.toUpperCase()}</span>
+      <div class="task-timer">Sol ${state.sol} · <span class="time" id="task-timer-display">${task.timerLeft}s</span></div>
+    </div>
+    <div class="task-from">
+      <span class="avatar" style="background:${bgCol}">${from.role?from.role[0]:''}</span>
+      <span>${from.name}</span> <span style="color:var(--dim)">${plea}</span>
+    </div>
+    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:8px">${task.title}</div>
+    <div class="task-body">${task.body}</div>
+    <div class="task-data">${task.data}</div>
+    <div class="task-actions">
+      <button class="task-btn task-btn-approve" onclick="resolveTask('approve')">${task.approve.label}</button>
+      <button class="task-btn task-btn-deny" onclick="resolveTask('deny')">${task.deny.label}</button>
+      ${task.alt?`<button class="task-btn task-btn-alt" onclick="resolveTask('alt')">${task.alt.label}</button>`:''}
+    </div>`;
+  document.getElementById('task-card-inner').innerHTML=html;
+
+  // Start countdown
+  clearInterval(activeTask._timer);
+  activeTask._timer=setInterval(()=>{
+    if(!activeTask)return;
+    activeTask.timerLeft--;
+    const disp=document.getElementById('task-timer-display');
+    if(disp){
+      disp.textContent=activeTask.timerLeft+'s';
+      if(activeTask.timerLeft<=5)disp.style.color='var(--red)';
+    }
+    if(activeTask.timerLeft<=0){
+      clearInterval(activeTask._timer);
+      resolveTask(activeTask.defaultChoice||'deny', true);
+    }
+  },1000);
+}
+
+function resolveTask(choice, timedOut){
+  if(!activeTask)return;
+  clearInterval(activeTask._timer);
+  const task=activeTask;
+  const action=choice==='approve'?task.approve:choice==='alt'&&task.alt?task.alt:task.deny;
+  action.effect(state);
+  if(timedOut){
+    tasksIgnored++;
+    state.log.push(`  ⏱️ TIMEOUT: ${task.title} — AI defaulted to ${choice}`);
+  }else{
+    tasksResolved++;
+  }
+  taskHistory.push({id:task.id,sol:state.sol,choice,timedOut:!!timedOut});
+  activeTask=null;
+  document.getElementById('task-panel').classList.remove('task-visible');
+  // Show next task if queued
+  setTimeout(()=>{ if(taskQueue.length)showNextTask(); },800);
+  updateTaskBadge();
+  updateAllUI();
+}
+
+function updateTaskBadge(){
+  const badge=document.getElementById('task-badge');
+  if(taskQueue.length>0&&!activeTask){
+    badge.style.display='flex';
+    badge.textContent=taskQueue.length;
+  }else{
+    badge.style.display='none';
+  }
+}
+
+// ── End Papers Please ────────────────────────────────────────────
 
 // Sim state (reuse from index.html engine)
 const O2_PP=0.84,H2O_PP=2.5,FOOD_PP=2500,PWR_BASE=30,ISRU_O2=5,ISRU_H2O=12,GH_KCAL=15000,PANEL=200,EFF=0.22,SOL_H=24.66,PCRIT=50;
@@ -1485,6 +1747,8 @@ function stepSim(){
 
   // Supply chain
   tickSupplyChain(s);
+  // Papers Please — generate tasks for the player
+  if(s>5)generateTask();
   // Geology — rover discoveries
   if(R()<0.03*Math.max(1,state.modules.filter(m=>m.type==='repair_bay').length+1)){
     const dtypes=[{t:'ice_deposit',n:'Frost Vein',b:'H2O +2/sol'},{t:'mineral_deposit',n:'Iron Seam',b:'Build -15%'},
@@ -2298,8 +2562,8 @@ function showDeathScreen(){
       <div class="death-stat"><div class="val">${state.sol}</div><div class="lbl">Sols Survived</div></div>
       <div class="death-stat"><div class="val">${ac.length}/${state.crew.length}</div><div class="lbl">Crew Alive</div></div>
       <div class="death-stat"><div class="val">${state.modules.length}</div><div class="lbl">Modules Built</div></div>
-      <div class="death-stat"><div class="val">${state.research.length}</div><div class="lbl">Tech Researched</div></div>
-      <div class="death-stat"><div class="val">${state.discoveries.length}</div><div class="lbl">Discoveries</div></div>`;
+      <div class="death-stat"><div class="val">${tasksResolved}</div><div class="lbl">Tasks Resolved</div></div>
+      <div class="death-stat"><div class="val">${tasksIgnored}</div><div class="lbl">Tasks Timed Out</div></div>`;
 
     // Generate post-mortem
     const n = Math.max(1, state.crew.length);
@@ -2328,6 +2592,11 @@ function restartGame(){
   // Stop sim
   running = false;
   clearInterval(simInterval);
+
+  // Reset task state
+  taskQueue=[];activeTask=null;taskHistory=[];tasksResolved=0;tasksIgnored=0;
+  document.getElementById('task-panel').classList.remove('task-visible');
+  document.getElementById('task-badge').style.display='none';
 
   // Hide death screen
   document.getElementById('death-overlay').style.display = 'none';
