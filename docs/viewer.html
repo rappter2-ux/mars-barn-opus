@@ -717,31 +717,96 @@ const ROBOT_PLEAS = [
 ];
 
 const TASK_TEMPLATES = [
-  // Resource crises — the robot sees the problem but won't act without approval
+  // ── RESOURCE CRISES ──
+  // O₂ low — reroute power to ISRU or let food production continue
   {trigger: s=>{ const n=Math.max(1,s.crew.filter(c=>c.alive).length);
     return s.o2/(O2_PP*n)<8 && s.o2/(O2_PP*n)>2 && R()<0.3},
    gen: s=>{ const n=Math.max(1,s.crew.filter(c=>c.alive).length); const d=(s.o2/(O2_PP*n)).toFixed(1);
+    const fd=(s.food/(FOOD_PP*n)).toFixed(0);
     return {id:'o2_reroute',urgency:'urgent',from:s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0],
-      title:'O₂ RESERVES LOW',
-      body:`O₂ at ${d} sols. ISRU currently at ${(s.alloc.i*100).toFixed(0)}% allocation. Recommend emergency reroute to 70% ISRU immediately. This will cut greenhouse production.`,
-      data:`O₂: ${d} sols | ISRU: ${(s.alloc.i*100).toFixed(0)}% | Food: ${(s.food/(FOOD_PP*n)).toFixed(0)} sols`,
-      approve:{label:'✓ REROUTE TO ISRU',effect:s=>{s.alloc.i=0.70;s.alloc.g=0.15;s.alloc.h=0.15;s.log.push('  ✓ MC: O₂ reroute approved — ISRU at 70%')}},
-      deny:{label:'✗ MAINTAIN COURSE',effect:s=>{s.log.push('  ✗ MC: O₂ reroute denied — maintaining current allocation')}},
-      alt:{label:'◐ SPLIT 50/50',effect:s=>{s.alloc.i=0.50;s.alloc.g=0.30;s.alloc.h=0.20;s.log.push('  ◐ MC: Compromise — ISRU/greenhouse split')}},
+      title:'O₂ RESERVES CRITICAL',
+      body:`O₂ at ${d} sols. If we reroute ISRU to 70%, we breathe — but greenhouse drops to 15%. Food is at ${fd} sols. That clock starts ticking instead.`,
+      data:`O₂: ${d} sols | Food: ${fd} sols | ISRU: ${(s.alloc.i*100).toFixed(0)}% | Greenhouse: ${(s.alloc.g*100).toFixed(0)}%`,
+      approve:{label:'✓ REROUTE TO ISRU',effect:s=>{
+        s.alloc.i=0.70;s.alloc.g=0.15;s.alloc.h=0.15;
+        lispyEnabled=false; manualOverride=true; // player took control
+        s.log.push('  ✓ MC: O₂ reroute approved — ISRU at 70%. Greenhouse starved.');
+        s.log.push('  ⚠️ Food production halted. Clock is ticking.');}},
+      deny:{label:'✗ MAINTAIN COURSE',effect:s=>{
+        // Denying means O₂ keeps dropping — crew gets stressed
+        s.crew.filter(c=>c.alive).forEach(c=>{c.mor=Math.max(0,c.mor-5);});
+        s.log.push('  ✗ MC: O₂ reroute denied. Crew is anxious.');}},
+      alt:{label:'◐ SPLIT 50/50',effect:s=>{
+        s.alloc.i=0.50;s.alloc.g=0.30;s.alloc.h=0.20;
+        s.log.push('  ◐ MC: Compromise — neither system at full. Risk on both fronts.');}},
       timeout:15, defaultChoice:'approve'}}},
 
-  // Crew health — medic needs authorization for risky treatment
+  // Water crisis — sacrifice greenhouse or dehydrate
+  {trigger: s=>{ const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+    return s.h2o/(H2O_PP*n)<6 && s.h2o/(H2O_PP*n)>1 && R()<0.25},
+   gen: s=>{ const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+    const wd=(s.h2o/(H2O_PP*n)).toFixed(1);
+    return {id:'h2o_crisis',urgency:'urgent',from:s.crew.find(c=>c.role==='SCI'&&c.alive)||s.crew[0],
+      title:'WATER RESERVES LOW',
+      body:`H₂O at ${wd} sols. The greenhouse uses 40% of our water. Shutting it saves water but kills food production. Or we ration crew water to 60% — everyone gets dehydrated but the greenhouse survives.`,
+      data:`H₂O: ${wd} sols | Greenhouse: ${s.g_eff>0.5?'ACTIVE':'DEGRADED'} | Crew HP: ${(s.crew.filter(c=>c.alive).reduce((a,c)=>a+c.hp,0)/n).toFixed(0)}%`,
+      approve:{label:'✓ SHUT GREENHOUSE',effect:s=>{
+        s.alloc.g=0.05;s.alloc.i=0.65;s.alloc.h=0.30;
+        s.log.push('  ✓ MC: Greenhouse shut down. Water conserved. No food production.');
+        s.log.push('  🌱 Plants will die within 3 sols without water.');}},
+      deny:{label:'✗ RATION CREW WATER',effect:s=>{
+        s.alloc.r=0.60;
+        s.crew.filter(c=>c.alive).forEach(c=>{c.hp-=2;c.mor-=5;c.st='Dehydrated';});
+        s.log.push('  ✗ MC: Crew water rationed to 60%. Everyone is dehydrated.');
+        s.log.push('  💧 HP dropping. Morale dropping. But greenhouse lives.');}},
+      timeout:12, defaultChoice:'approve'}}},
+
+  // ── CREW MEDICAL — the hardest decisions ──
   {trigger: s=>s.crew.some(c=>c.alive&&c.hp<50&&c.hp>10) && R()<0.4,
    gen: s=>{const sick=s.crew.find(c=>c.alive&&c.hp<50);const medic=s.crew.find(c=>c.role==='MED'&&c.alive);
+    const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+    const isLastEngineer=sick.role==='ENGR'&&s.crew.filter(c=>c.alive&&c.role==='ENGR').length===1;
     return {id:'crew_medical',urgency:'urgent',from:medic||s.crew.find(c=>c.alive),
       title:`MEDICAL: ${sick.name.toUpperCase()}`,
-      body:`${sick.name} at ${sick.hp.toFixed(0)}% health (${sick.st}). ${medic?medic.name:'Medical AI'} recommends shelter protocol — pull them from duty for 5 sols. Colony loses a crew member's production.`,
-      data:`Patient: ${sick.name} (${sick.role}) HP:${sick.hp.toFixed(0)} | Morale: ${sick.mor.toFixed(0)} | Rad: ${sick.rad.toFixed(0)} mSv`,
-      approve:{label:'✓ SHELTER PROTOCOL',effect:s=>{sick.hp=Math.min(100,sick.hp+15);sick.mor=Math.min(100,sick.mor+10);sick.st='Resting';s.log.push(`  ✓ MC: ${sick.name} placed on shelter protocol`)}},
-      deny:{label:'✗ KEEP WORKING',effect:s=>{sick.mor=Math.max(0,sick.mor-10);s.log.push(`  ✗ MC: ${sick.name} ordered to continue duty`)}},
+      body:`${sick.name} at ${sick.hp.toFixed(0)}% (${sick.st}). ${medic?medic.name:'Medical AI'} recommends shelter protocol — off duty for recovery. ${isLastEngineer?'WARNING: This is our only engineer. ISRU and repairs will degrade without them.':'Colony loses one worker\'s output.'}`,
+      data:`Patient: ${sick.name} (${sick.role}) HP:${sick.hp.toFixed(0)} | Rad: ${sick.rad.toFixed(0)} mSv | ${isLastEngineer?'⚠️ LAST ENGINEER':''}`,
+      approve:{label:'✓ SHELTER PROTOCOL',effect:s=>{
+        sick.hp=Math.min(100,sick.hp+20);sick.mor=Math.min(100,sick.mor+15);sick.st='Resting';
+        if(isLastEngineer){s.i_eff*=0.7;s.s_eff*=0.85;
+          s.log.push(`  ⚠️ ${sick.name} is resting — ISRU/solar degrading without engineer`);}
+        s.log.push(`  ✓ MC: ${sick.name} placed on shelter protocol. Will recover.`);}},
+      deny:{label:'✗ KEEP WORKING',effect:s=>{
+        sick.hp-=3;sick.mor=Math.max(0,sick.mor-15);
+        // Denying medical care demoralizes the ENTIRE crew
+        s.crew.filter(c=>c.alive&&c.name!==sick.name).forEach(c=>{c.mor=Math.max(0,c.mor-8);});
+        s.log.push(`  ✗ MC: ${sick.name} ordered to continue. Crew is furious.`);
+        s.log.push(`  😠 All crew morale dropped — "They don't care about us."`);}},
       timeout:12, defaultChoice:'deny'}}},
 
-  // Construction approval — governor wants to build but needs sign-off
+  // Crew death aftermath — who takes over their role?
+  {trigger: s=>s.crew.some(c=>!c.alive) && s.sol>10 && R()<0.2 &&
+    !s._reassigned,
+   gen: s=>{const dead=s.crew.filter(c=>!c.alive);const alive=s.crew.filter(c=>c.alive);
+    if(!dead.length||alive.length<2)return null;
+    const vacancy=dead[dead.length-1];
+    const candidates=alive.filter(c=>c.role!==vacancy.role);
+    if(!candidates.length)return null;
+    const candidate=candidates[Math.floor(R()*candidates.length)];
+    return {id:'role_reassign',urgency:'request',from:s.crew.find(c=>c.role==='CMDR'&&c.alive)||alive[0],
+      title:`REASSIGNMENT: ${vacancy.role} VACANCY`,
+      body:`${vacancy.name} is gone. Their ${vacancy.role} duties are unassigned. ${candidate.name} (${candidate.role}) can cross-train, but they'll be less effective at both roles. Or we redistribute the workload across everyone — slower but no single point of failure.`,
+      data:`Vacancy: ${vacancy.role} | Candidate: ${candidate.name} (${candidate.role}) | Crew: ${alive.length} remaining`,
+      approve:{label:`✓ REASSIGN ${candidate.name.split(' ')[0].toUpperCase()}`,effect:s=>{
+        candidate.role=vacancy.role;candidate.mor-=10;candidate.hp-=5;
+        s._reassigned=true;
+        s.log.push(`  ✓ MC: ${candidate.name} cross-trained to ${vacancy.role}. Stressed but capable.`);}},
+      deny:{label:'✗ DISTRIBUTE WORKLOAD',effect:s=>{
+        alive.forEach(c=>{c.mor-=5;});
+        s._reassigned=true;
+        s.log.push('  ✗ MC: Workload distributed. Everyone does more. Nobody does it well.');}},
+      timeout:20, defaultChoice:'approve'}}},
+
+  // ── CONSTRUCTION — approve with real tradeoffs ──
   {trigger: s=>!s.building && s.sol>20 && s.modules.length<6 && R()<0.15,
    gen: s=>{const opts=['greenhouse_dome','isru_plant','solar_farm','water_extractor','repair_bay','radiation_shelter'];
     const built=new Set(s.modules.map(m=>m.type));
@@ -751,62 +816,167 @@ const TASK_TEMPLATES = [
     const names={greenhouse_dome:'Greenhouse Dome',isru_plant:'ISRU Plant',solar_farm:'Solar Farm',
       water_extractor:'Water Extractor',repair_bay:'Repair Bay',radiation_shelter:'Radiation Shelter'};
     const costs={greenhouse_dome:80,isru_plant:120,solar_farm:60,water_extractor:90,repair_bay:100,radiation_shelter:110};
+    const buildSols=Math.floor(8+R()*12);
+    const n=Math.max(1,s.crew.filter(c=>c.alive).length);
     return {id:'build_'+mod,urgency:'request',from:s.crew.find(c=>c.role==='CMDR'&&c.alive)||s.crew[0],
       title:`BUILD: ${names[mod]||mod}`,
-      body:`Governor recommends constructing ${names[mod]||mod}. Estimated ${Math.floor(8+R()*12)} sols build time. Will consume ${costs[mod]||80} kWh during construction.`,
-      data:`Modules: ${s.modules.length} built | Power: ${s.power.toFixed(0)} kWh | ${s.modules.map(m=>m.type.replace(/_/g,' ')).join(', ')||'none'}`,
-      approve:{label:'✓ AUTHORIZE BUILD',effect:s=>{s.building={type:mod,remaining:Math.floor(8+R()*12)};s.power-=Math.min(s.power*0.1,costs[mod]||80);s.log.push(`  ✓ MC: ${names[mod]} construction authorized`)}},
-      deny:{label:'✗ DENY — CONSERVE',effect:s=>{s.log.push(`  ✗ MC: ${names[mod]} construction denied — conserving resources`)}},
+      body:`Construction will take ${buildSols} sols and consume ${costs[mod]||80} kWh. During construction, 1 crew member is dedicated to building — reducing colony output by ${Math.round(100/n)}%.`,
+      data:`Modules: ${s.modules.length} | Power: ${s.power.toFixed(0)} kWh | Build time: ${buildSols} sols | Output reduction: ${Math.round(100/n)}%`,
+      approve:{label:'✓ AUTHORIZE BUILD',effect:s=>{
+        s.building={type:mod,remaining:buildSols};
+        s.power-=Math.min(s.power*0.15,costs[mod]||80);
+        // Construction reduces overall efficiency (crew diverted)
+        s.i_eff*=0.9;s.g_eff*=0.9;
+        s.log.push(`  ✓ MC: ${names[mod]} construction started. ${buildSols} sols. Colony output reduced.`);}},
+      deny:{label:'✗ DENY — CONSERVE',effect:s=>{
+        s.log.push(`  ✗ MC: ${names[mod]} denied. Resources conserved but no expansion.`);}},
       timeout:20, defaultChoice:'approve'}}},
 
-  // Dust storm incoming — seal or ride it out
+  // ── DUST STORM — seal has cascading effects ──
   {trigger: s=>!s.events.some(e=>e.type==='dust_storm') && marsWeather.dustStormProb>10 && R()<0.2,
-   gen: s=>{return {id:'storm_prep',urgency:'urgent',from:s.crew.find(c=>c.role==='SCI'&&c.alive)||s.crew[0],
+   gen: s=>{const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+    return {id:'storm_prep',urgency:'urgent',from:s.crew.find(c=>c.role==='SCI'&&c.alive)||s.crew[0],
       title:'DUST STORM WARNING',
-      body:`Atmospheric sensors detect incoming dust activity (${marsWeather.dustStormProb}% probability). Recommend sealing habitat and switching to reserve power. This halts all outdoor operations for ~5 sols.`,
-      data:`Storm risk: ${marsWeather.dustStormProb}% | Dust τ: ${marsWeather.dustTau} | Solar: ${marsWeather.solarWm2} W/m²`,
-      approve:{label:'✓ SEAL HABITAT',effect:s=>{s.alloc.h=0.50;s.alloc.i=0.30;s.alloc.g=0.20;s.log.push('  ✓ MC: Habitat sealed — storm prep protocol active')}},
-      deny:{label:'✗ RIDE IT OUT',effect:s=>{s.s_eff*=0.9;s.log.push('  ✗ MC: Storm prep denied — maintaining operations')}},
-      alt:{label:'◐ PARTIAL SEAL',effect:s=>{s.alloc.h=0.35;s.alloc.i=0.35;s.alloc.g=0.30;s.log.push('  ◐ MC: Partial seal — reduced outdoor ops')}},
+      body:`Storm probability ${marsWeather.dustStormProb}%. Sealing halts EVA, construction, and geological surveys for 5+ sols. Not sealing risks solar panel damage (permanent -10% efficiency) and crew radiation exposure.`,
+      data:`Storm risk: ${marsWeather.dustStormProb}% | Dust τ: ${marsWeather.dustTau} | Solar: ${marsWeather.solarWm2} W/m² | Panels: ${(s.s_eff*100).toFixed(0)}%`,
+      approve:{label:'✓ SEAL HABITAT',effect:s=>{
+        s.alloc.h=0.50;s.alloc.i=0.30;s.alloc.g=0.20;
+        if(s.building)s.building.remaining+=3; // construction delayed
+        s.log.push('  ✓ MC: Habitat sealed. EVA operations suspended.');
+        if(s.building)s.log.push(`  🔨 Construction delayed 3 sols.`);}},
+      deny:{label:'✗ RIDE IT OUT',effect:s=>{
+        s.s_eff*=0.90; // permanent panel damage
+        s.crew.filter(c=>c.alive).forEach(c=>{c.rad+=5;c.hp-=2;});
+        s.log.push('  ✗ MC: Storm prep denied. Panels taking damage.');
+        s.log.push('  ☢️ Crew radiation exposure increased. Solar efficiency permanently reduced.');}},
+      alt:{label:'◐ PARTIAL SEAL',effect:s=>{
+        s.alloc.h=0.35;s.alloc.i=0.40;s.alloc.g=0.25;
+        s.s_eff*=0.95; // some panel damage
+        s.crew.filter(c=>c.alive).forEach(c=>{c.rad+=2;});
+        s.log.push('  ◐ MC: Partial seal. Some damage, some production. Gambling.');}},
       timeout:10, defaultChoice:'approve'}}},
 
-  // Trade offer — supply rocket decision
+  // ── SUPPLY MANIFEST — long-term consequences ──
   {trigger: s=>s.sol>50 && s.sol%30<2 && R()<0.3,
    gen: s=>{const n=Math.max(1,s.crew.filter(c=>c.alive).length);
-    const o2d=s.o2/(O2_PP*n), fd=s.food/(FOOD_PP*n);
-    const needO2=o2d<fd;
+    const o2d=s.o2/(O2_PP*n), fd=s.food/(FOOD_PP*n), h2od=s.h2o/(H2O_PP*n);
+    const worst=o2d<h2od&&o2d<fd?'o2':h2od<fd?'h2o':'food';
     return {id:'trade_offer',urgency:'info',from:{name:'Earth CAPCOM',role:'COMMS',alive:true},
       title:'SUPPLY MANIFEST DECISION',
-      body:`Next resupply window open. Earth is asking: what do you need most? They can prioritize ${needO2?'O₂/H₂O (life support)':'food/greenhouse supplies'} or balanced cargo.`,
-      data:`O₂: ${o2d.toFixed(0)} sols | Food: ${fd.toFixed(0)} sols | H₂O: ${(s.h2o/(H2O_PP*n)).toFixed(0)} sols`,
-      approve:{label:needO2?'✓ SEND O₂/H₂O':'✓ SEND FOOD',effect:s=>{if(needO2){s.o2+=40;s.h2o+=80}else{s.food+=60000};s.log.push(`  ✓ MC: Priority resupply requested — ${needO2?'life support':'food'}`)}},
-      deny:{label:'✗ BALANCED CARGO',effect:s=>{s.o2+=15;s.h2o+=30;s.food+=20000;s.power+=50;s.log.push('  ✗ MC: Balanced resupply requested')}},
+      body:`Resupply window open. Transit time: 180 sols. Choose wrong and you won't get another chance for 760 sols. What's your priority?`,
+      data:`O₂: ${o2d.toFixed(0)}d | H₂O: ${h2od.toFixed(0)}d | Food: ${fd.toFixed(0)}d | Next window: Sol ${s.sol+760}`,
+      approve:{label:worst==='o2'?'✓ LIFE SUPPORT':'✓ FOOD + GREENHOUSE',effect:s=>{
+        if(worst==='o2'){s.o2+=50;s.h2o+=100;s.log.push('  ✓ MC: Life support priority. O₂ and H₂O incoming in 180 sols.');}
+        else{s.food+=80000;s.h2o+=40;s.log.push('  ✓ MC: Food priority. Greenhouse supplies and rations incoming.');}
+        s.log.push('  🚀 Next resupply window: Sol '+(s.sol+760)+'. Choose wisely.');}},
+      deny:{label:'✗ BALANCED CARGO',effect:s=>{
+        s.o2+=15;s.h2o+=30;s.food+=20000;s.power+=50;
+        s.log.push('  ✗ MC: Balanced cargo. A little of everything. Enough of nothing.');}},
       timeout:25, defaultChoice:'deny'}}},
 
-  // Robot malfunction — investigate or ignore
-  {trigger: s=>s.crew.some(c=>c.name.startsWith('OPT')||c.name.startsWith('LUN')) && R()<0.12,
+  // ── ROBOT MALFUNCTION — ignore and it gets worse ──
+  {trigger: s=>s.crew.some(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive) && R()<0.12,
    gen: s=>{const bot=s.crew.find(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
     if(!bot)return null;
+    const sensorConf=(70+R()*25).toFixed(0);
     return {id:'bot_glitch',urgency:'request',from:bot,
       title:`ROBOT DIAGNOSTIC: ${bot.name}`,
-      body:`${bot.name} reporting intermittent sensor failures. Self-diagnostic inconclusive. Request permission to enter low-power diagnostic mode (offline for 3 sols) or continue with degraded sensors.`,
-      data:`Unit: ${bot.name} | HP: ${bot.hp.toFixed(0)} | Uptime: ${state.sol} sols | Sensor confidence: ${(70+R()*25).toFixed(0)}%`,
-      approve:{label:'✓ RUN DIAGNOSTICS',effect:s=>{bot.hp=Math.min(100,bot.hp+20);bot.st='Diagnostic';s.log.push(`  ✓ MC: ${bot.name} entering diagnostic mode`)}},
-      deny:{label:'✗ KEEP RUNNING',effect:s=>{bot.hp=Math.max(10,bot.hp-5);s.log.push(`  ✗ MC: ${bot.name} continuing with degraded sensors`)}},
+      body:`${bot.name} sensors at ${sensorConf}% confidence. Diagnostics take 3 sols offline — that's 3 sols less labor. But if the sensor fails completely, the robot is permanently lost. Your call.`,
+      data:`Unit: ${bot.name} | HP: ${bot.hp.toFixed(0)} | Sensor: ${sensorConf}% | Risk if ignored: ${(100-parseFloat(sensorConf)).toFixed(0)}% failure chance`,
+      approve:{label:'✓ RUN DIAGNOSTICS',effect:s=>{
+        bot.hp=Math.min(100,bot.hp+25);bot.st='Diagnostic';
+        // Robot offline reduces colony output
+        const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+        s.i_eff*=Math.max(0.7,1-1/n);
+        s.log.push(`  ✓ MC: ${bot.name} offline for diagnostics. Colony output reduced.`);
+        s.log.push(`  🔧 Robot will return at full capacity.`);}},
+      deny:{label:'✗ KEEP RUNNING',effect:s=>{
+        // Risk: sensor might fail → robot could die
+        const failRisk=(100-parseFloat(sensorConf))/100;
+        if(R()<failRisk*0.3){
+          bot.alive=false;bot.hp=0;bot.st='SENSOR FAILURE — LOST';
+          s.log.push(`  💀 ${bot.name} LOST — sensor failure caused navigation into crevasse.`);
+          s.log.push(`  ⚠️ Colony permanently down one unit.`);
+        }else{
+          bot.hp=Math.max(10,bot.hp-8);
+          s.log.push(`  ✗ MC: ${bot.name} continues with degraded sensors. Risky.`);}
+        }},
       timeout:15, defaultChoice:'deny'}}},
 
-  // Morale crisis — crew wants a day off
+  // ── MORALE — deny and it escalates ──
   {trigger: s=>s.morale<0.5 && s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT')).length>=2 && R()<0.25,
    gen: s=>{const unhappy=s.crew.filter(c=>c.alive&&c.mor<50&&!c.name.startsWith('OPT'));
     if(!unhappy.length)return null;
     const who=unhappy[Math.floor(R()*unhappy.length)];
-    return {id:'morale_break',urgency:'request',from:who,
-      title:'CREW MORALE REQUEST',
-      body:`"We need a break." ${who.name} is speaking for the crew. Morale is at ${(s.morale*100).toFixed(0)}%. Requesting 1 sol stand-down — no production, rest only. Refusing may trigger further morale drops.`,
-      data:`Morale: ${(s.morale*100).toFixed(0)}% | ${who.name}: ${who.mor.toFixed(0)}% | Crew stress: ${s.events.length} active events`,
-      approve:{label:'✓ GRANT REST DAY',effect:s=>{s.crew.filter(c=>c.alive).forEach(c=>{c.mor=Math.min(100,c.mor+15);c.hp=Math.min(100,c.hp+3)});s.log.push('  ✓ MC: Rest day granted — morale boost')}},
-      deny:{label:'✗ DENIED — KEEP WORKING',effect:s=>{s.crew.filter(c=>c.alive).forEach(c=>c.mor=Math.max(0,c.mor-8));s.log.push('  ✗ MC: Rest day denied — crew morale drops')}},
-      timeout:12, defaultChoice:'deny'}}}
+    const prevDenied=taskHistory.some(t=>t.id==='morale_break'&&t.choice==='deny');
+    return {id:'morale_break',urgency:prevDenied?'urgent':'request',from:who,
+      title:prevDenied?'CREW MORALE CRISIS':'CREW MORALE REQUEST',
+      body:prevDenied
+        ?`"You denied us last time. People are talking about refusing orders." ${who.name} is at ${who.mor.toFixed(0)}% morale. Denying again risks a full work stoppage — 0 production for 3 sols.`
+        :`"We need a break." ${who.name} speaking for the crew. Morale: ${(s.morale*100).toFixed(0)}%. One rest sol costs production but prevents worse.`,
+      data:`Morale: ${(s.morale*100).toFixed(0)}% | ${who.name}: ${who.mor.toFixed(0)}% | Previous denied: ${prevDenied?'YES':'no'}`,
+      approve:{label:'✓ GRANT REST DAY',effect:s=>{
+        s.crew.filter(c=>c.alive).forEach(c=>{c.mor=Math.min(100,c.mor+20);c.hp=Math.min(100,c.hp+5);});
+        s.log.push('  ✓ MC: Rest day granted. Morale recovering.');
+        s.log.push('  😌 Crew is grateful. Trust in mission control restored.');}},
+      deny:{label:'✗ DENIED — KEEP WORKING',effect:s=>{
+        const severity=prevDenied?1:0;
+        s.crew.filter(c=>c.alive).forEach(c=>c.mor=Math.max(0,c.mor-(10+severity*10)));
+        if(prevDenied){
+          // Work stoppage — 0 production this sol
+          s.alloc={h:0,i:0,g:0,r:0.3};
+          s.log.push('  ✗ MC: Rest denied AGAIN. Crew refuses orders.');
+          s.log.push('  🚫 WORK STOPPAGE — zero production. You pushed too hard.');
+        }else{
+          s.log.push('  ✗ MC: Rest denied. Morale tanks. Next time will be worse.');}}},
+      timeout:12, defaultChoice:'deny'}}},
+
+  // ── POWER RATIONING — lights or life support ──
+  {trigger: s=>s.power<PCRIT*1.5 && s.power>PCRIT*0.3 && R()<0.2,
+   gen: s=>{return {id:'power_ration',urgency:'urgent',from:s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0],
+      title:'POWER RATIONING',
+      body:`Power at ${s.power.toFixed(0)} kWh — approaching critical. Cut non-essential systems (lighting, comms, heating reserve) to extend life support? Or maintain full power and hope solar picks up tomorrow?`,
+      data:`Power: ${s.power.toFixed(0)} kWh | Critical: ${PCRIT} kWh | Solar eff: ${(s.s_eff*100).toFixed(0)}% | Modules drawing: ${s.modules.length*15} kWh`,
+      approve:{label:'✓ RATION POWER',effect:s=>{
+        s.power+=30; // reclaimed from non-essentials
+        s.alloc.h=Math.max(0.10,s.alloc.h-0.10);
+        s.crew.filter(c=>c.alive).forEach(c=>{c.mor=Math.max(0,c.mor-5);});
+        s.log.push('  ✓ MC: Power rationed. Lights off. Comms reduced. Cold tonight.');
+        s.log.push('  🔦 Crew switching to personal flashlights.');}},
+      deny:{label:'✗ MAINTAIN FULL POWER',effect:s=>{
+        s.log.push('  ✗ MC: Full power maintained. Gambling on tomorrow\'s solar.');}},
+      timeout:10, defaultChoice:'approve'}}},
+
+  // ── CREW CONFLICT — two people disagree, you choose sides ──
+  {trigger: s=>{const alive=s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT'));
+    return alive.length>=3 && s.sol>30 && R()<0.08},
+   gen: s=>{const alive=s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT'));
+    const a=alive[Math.floor(R()*alive.length)];
+    let b=alive[Math.floor(R()*alive.length)];while(b.name===a.name)b=alive[Math.floor(R()*alive.length)];
+    const disputes=[
+      {issue:'greenhouse priority',aPos:'Expand food production NOW',bPos:'Focus on ISRU — we need O₂ first',
+        aEffect:s=>{s.alloc.g=0.50;s.alloc.i=0.30;s.alloc.h=0.20;a.mor+=10;b.mor-=15;},
+        bEffect:s=>{s.alloc.i=0.55;s.alloc.g=0.25;s.alloc.h=0.20;b.mor+=10;a.mor-=15;}},
+      {issue:'EVA schedule',aPos:'Double EVA shifts — we need more survey data',bPos:'Reduce EVA — radiation risk too high',
+        aEffect:s=>{s.crew.filter(c=>c.alive).forEach(c=>{c.rad+=3;});a.mor+=10;b.mor-=12;
+          if(R()<0.2){const d={type:'ice_deposit',name:'Subsurface Ice',sol:s.sol};s.discoveries.push(d);s.log.push('  🔭 Extra EVA paid off: Subsurface Ice discovered!');}},
+        bEffect:s=>{s.crew.filter(c=>c.alive).forEach(c=>{c.rad-=1;c.hp=Math.min(100,c.hp+2);});b.mor+=10;a.mor-=12;}},
+      {issue:'module repair priority',aPos:'Fix solar panels first — power is life',bPos:'Fix greenhouse first — food is life',
+        aEffect:s=>{s.s_eff=Math.min(1,s.s_eff+0.10);a.mor+=10;b.mor-=12;},
+        bEffect:s=>{s.g_eff=Math.min(1,s.g_eff+0.10);b.mor+=10;a.mor-=12;}}
+    ];
+    const d=disputes[Math.floor(R()*disputes.length)];
+    return {id:'crew_dispute',urgency:'request',from:a,
+      title:`DISPUTE: ${d.issue.toUpperCase()}`,
+      body:`${a.name} and ${b.name} disagree on ${d.issue}. Siding with one damages your relationship with the other. Both are watching.`,
+      data:`${a.name} (${a.role}): "${d.aPos}" | ${b.name} (${b.role}): "${d.bPos}"`,
+      approve:{label:`✓ SIDE WITH ${a.name.split(' ')[0].toUpperCase()}`,effect:s=>{
+        d.aEffect(s);
+        s.log.push(`  ✓ MC: Sided with ${a.name}. ${b.name} is not happy.`);}},
+      deny:{label:`✗ SIDE WITH ${b.name.split(' ')[0].toUpperCase()}`,effect:s=>{
+        d.bEffect(s);
+        s.log.push(`  ✗ MC: Sided with ${b.name}. ${a.name} feels overruled.`);}},
+      timeout:15, defaultChoice:'approve'}}}
 ];
 
 function generateTask(){
