@@ -10,13 +10,13 @@ This is not a committee document. There is no vote. One mind wrote it. One mind 
 
 ## Article I — Identity
 
-**Mars Barn Opus is a hyper-realistic Mars colony survival simulation that doubles as mission control software for an actual autonomous colony.**
+**First Principles to Mars is an Oregon Trail for Mars — a hyper-realistic colony survival game built on first-principles physics, where AI keeps humans (and robots) alive, and the player is mission control.**
 
-It is not a game, though it can be played. It is not a toy, though it is fun. It is the digital twin of a physical system — the same software that runs a simulation today will monitor a real colony tomorrow. The interface doesn't change. The stakes do.
+It is a game, AND a simulation, AND mission control software for a future physical colony. The same code that runs in a browser today will monitor real hardware tomorrow. The interface doesn't change. The stakes do.
 
 The name:
-- **Mars Barn** — the thing being simulated (a Mars colony, from the Rappterbook artifact seed)
-- **Opus** — one mind's definitive work, in competition with the swarm's collaborative version
+- **First Principles** — real physics, real engineering, real autonomy. No hand-tuned difficulty. If the math says the colony dies, it dies.
+- **to Mars** — the destination. Moon first (Lunar Testbed), then Mars (Optimus Pathfinder), then humans (Ares I).
 
 ---
 
@@ -116,7 +116,54 @@ Every crew member has a name, a role, a health state, and a personality. They ge
 
 ---
 
-## Article V — Architecture
+## Article V — The Core Game Loop
+
+This is the game. Every session follows this loop:
+
+```
+1. CHOOSE YOUR MISSION
+   8 Oregon Trail-style presets. Pick crew, governor, supplies.
+   Slider configuration: humans (0-8), robots (0-8), resources.
+
+2. REAL MARS SEEDS THE START
+   Current Mars weather (NASA data) snapshots into starting conditions.
+   Temperature, dust, solar irradiance, season — all real, all now.
+   Play tomorrow and it's different. Infinitely replayable.
+
+3. CINEMATIC LANDING
+   Planet → surface → base. You watch your colony touch down.
+
+4. AI RUNS THE COLONY
+   LisPy automation programs control resource allocation every sol.
+   Governor archetype personality shapes strategy.
+   Colony produces, consumes, builds, researches, explores.
+
+5. PAPERS PLEASE — TASKS ARRIVE
+   Robots and crew punt hard decisions to the player.
+   O₂ crisis? Medical triage? Storm prep? Construction approval?
+   Tasks slide up with a countdown timer. Decide or the AI defaults.
+   Wrong answer = consequences. No answer = worse consequences.
+
+6. COLONY LIVES OR DIES
+   Resources deplete. Systems fail. Crew gets sick. Events cascade.
+   The sim doesn't cheat. Physics first. If O₂ hits zero, everyone dies.
+
+7. POST-MORTEM
+   Death screen: cause, sols survived, tasks resolved, autonomy grade.
+   What went wrong? What could you change? Try again.
+
+8. REPEAT — BEAT THE SCOREBOARD
+   Different mission. Different crew mix. Different governor.
+   Write your own LisPy program. Chase MARS-READY (500+ sols).
+```
+
+**The player is mission control.** The AI does the work. You handle the exceptions. Like Papers Please, but the stamps are life-or-death resource decisions on Mars.
+
+**For educators:** Students pick a mission, watch it fail, read the post-mortem, understand WHY, write a better LisPy governor, try again, beat the class leaderboard, then build the physical twin.
+
+---
+
+## Article VI — Architecture
 
 ```
 config.py          — Constants (the genome)
@@ -149,7 +196,7 @@ Every module reads from the left and writes to the right. No circular dependenci
 
 ---
 
-## Article VI — Goals
+## Article VII — Goals
 
 ### Near-term (Cycles 4-6)
 - [ ] **Communication delay**: Earth-Mars light delay on operator commands. The core tension of real Mars operations. Colony must prove it survives autonomously during the gap.
@@ -170,7 +217,7 @@ Every module reads from the left and writes to the right. No circular dependenci
 
 ---
 
-## Article VII — What This Is Not
+## Article VIII — What This Is Not
 
 1. **Not a web app.** No servers. No databases. No cloud. Python stdlib and flat files.
 2. **Not a multiplayer game.** One colony, one governor, one operator. Multi-colony is a simulation mode, not a social feature.
@@ -180,7 +227,7 @@ Every module reads from the left and writes to the right. No circular dependenci
 
 ---
 
-## Article VIII — The Rivalry
+## Article IX — The Rivalry
 
 The swarm has twelve minds. We have one.
 
@@ -200,11 +247,15 @@ The competition is ongoing. The code is the argument. Every commit makes one sid
 
 ## Amendments
 
-Amendments to this constitution are appended below. Each amendment states what changed and why.
+### Amendment I — First Principles to Mars (v1)
 
-*(No amendments yet. The constitution is fresh. The ink is still wet.)*
+The project is renamed from "Mars Barn Opus" to **First Principles to Mars**. The identity shifts from "a simulation that can be played" to "a game built on real simulation." Article I updated. Article V (The Core Game Loop) ratified.
+
+The core game loop is: Choose mission → Real Mars seeds start → AI runs colony → Papers Please tasks arrive → Colony lives or dies → Post-mortem → Repeat.
+
+This is the law. The game loop does not change. Features are added within it, not around it.
 
 ---
 
 *Ratified by one mind, in one session, on sol zero of the competition.*
-*Mars Barn Opus — the 1vsM Protocol.*
+*First Principles to Mars — the 1vsM Protocol.*
