@@ -126,6 +126,23 @@ padding:8px;margin:4px 0;cursor:pointer;transition:all 0.2s}
 .game-hidden{opacity:0;pointer-events:none;transition:opacity 0.5s}
 .game-visible{opacity:1;pointer-events:auto;transition:opacity 0.5s}
 
+/* ── Manual Override (dexterity minigame) ── */
+.override-panel{margin-top:10px;border:1px solid var(--border);border-radius:8px;
+  padding:12px;background:rgba(0,0,0,0.5)}
+.override-cmd{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.override-btn{padding:8px 12px;border-radius:6px;border:1px solid var(--border);
+  background:rgba(22,27,34,0.9);color:var(--text);cursor:pointer;font-family:var(--font);
+  font-size:11px;transition:all 0.15s;min-width:40px;text-align:center}
+.override-btn:hover{background:rgba(88,166,255,0.2);border-color:var(--cyan)}
+.override-btn:active{background:rgba(88,166,255,0.4);transform:scale(0.95)}
+.override-btn.sent{background:rgba(63,185,80,0.2);border-color:var(--green);color:var(--green);pointer-events:none}
+.override-btn.failed{background:rgba(218,54,51,0.2);border-color:var(--red);color:var(--red);pointer-events:none}
+.delay-bar{height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin:6px 0;overflow:hidden}
+.delay-fill{height:100%;background:var(--yellow);border-radius:2px;transition:width 0.1s linear;width:0}
+.cmd-log{font-size:10px;font-family:monospace;color:var(--dim);max-height:60px;overflow-y:auto;
+  line-height:1.5;padding:4px;background:rgba(0,0,0,0.3);border-radius:4px}
+.cmd-log .sent{color:var(--cyan)}.cmd-log .recv{color:var(--green)}.cmd-log .err{color:var(--red)}
+
 /* ── Papers Please Task Panel ── */
 #task-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:350;
   width:520px;max-width:95vw;transition:transform 0.4s ease-out;transform:translateX(-50%) translateY(100%)}
@@ -839,200 +856,300 @@ const TASK_TEMPLATES = [
         s.log.push(`  😠 All crew morale dropped — "They don't care about us."`);}},
       timeout:12, defaultChoice:'deny'}}},
 
-  // Crew death aftermath — who takes over their role?
-  {trigger: s=>s.crew.some(c=>!c.alive) && s.sol>10 && R()<0.2 &&
-    !s._reassigned,
-   gen: s=>{const dead=s.crew.filter(c=>!c.alive);const alive=s.crew.filter(c=>c.alive);
-    if(!dead.length||alive.length<2)return null;
-    const vacancy=dead[dead.length-1];
-    const candidates=alive.filter(c=>c.role!==vacancy.role);
-    if(!candidates.length)return null;
-    const candidate=candidates[Math.floor(R()*candidates.length)];
-    return {id:'role_reassign',urgency:'request',from:s.crew.find(c=>c.role==='CMDR'&&c.alive)||alive[0],
-      title:`REASSIGNMENT: ${vacancy.role} VACANCY`,
-      body:`${vacancy.name} is gone. Their ${vacancy.role} duties are unassigned. ${candidate.name} (${candidate.role}) can cross-train, but they'll be less effective at both roles. Or we redistribute the workload across everyone — slower but no single point of failure.`,
-      data:`Vacancy: ${vacancy.role} | Candidate: ${candidate.name} (${candidate.role}) | Crew: ${alive.length} remaining`,
-      approve:{label:`✓ REASSIGN ${candidate.name.split(' ')[0].toUpperCase()}`,effect:s=>{
-        candidate.role=vacancy.role;candidate.mor-=10;candidate.hp-=5;
-        s._reassigned=true;
-        s.log.push(`  ✓ MC: ${candidate.name} cross-trained to ${vacancy.role}. Stressed but capable.`);}},
-      deny:{label:'✗ DISTRIBUTE WORKLOAD',effect:s=>{
-        alive.forEach(c=>{c.mor-=5;});
-        s._reassigned=true;
-        s.log.push('  ✗ MC: Workload distributed. Everyone does more. Nobody does it well.');}},
-      timeout:20, defaultChoice:'approve'}}},
+  // ── HABITAT PRESSURE ANOMALY — real ops: pressure differential detected ──
+  {trigger: s=>s.sol>15 && s.int_temp>260 && R()<0.08,
+   gen: s=>{const pressureDrop=(0.3+R()*0.7).toFixed(2); // kPa lost
+    const leakRate=(0.01+R()*0.04).toFixed(3); // kPa/hr
+    return {id:'pressure_leak',urgency:'urgent',from:s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0],
+      title:'HAB PRESSURE ANOMALY',
+      body:`Pressure sensor reading -${pressureDrop} kPa from nominal. Leak rate: ${leakRate} kPa/hr. At this rate, habitat reaches unsafe pressure in ${Math.floor(10/parseFloat(leakRate))} hours. Isolate the affected section (lose 1 module's output) or attempt patch while pressurized (risk of blowout).`,
+      data:`ΔP: -${pressureDrop} kPa | Leak: ${leakRate} kPa/hr | Hab pressure: ${(101.3-parseFloat(pressureDrop)).toFixed(1)} kPa | Safe min: 70 kPa`,
+      approve:{label:'✓ ISOLATE SECTION',effect:s=>{
+        // Safe but costly — lose module output
+        if(s.modules.length)s.modules[s.modules.length-1].offline=true;
+        s.i_eff*=0.85;
+        s.log.push('  ✓ MC: Section isolated. Pressure stabilized. Module offline for repair.');
+        s.log.push('  📊 Leak located in junction seal — regolith abrasion on gasket.');}},
+      deny:{label:'✗ PATCH WHILE PRESSURIZED',effect:s=>{
+        if(riskRoll(0.15)){ // blowout risk
+          s.crew.filter(c=>c.alive).forEach(c=>{c.hp-=15;c.rad+=5;});
+          s.s_eff*=0.8;
+          s.log.push('  💥 BLOWOUT during patch attempt. Crew exposed to partial vacuum.');
+          s.log.push('  📊 Pressurized repair on Mars: 15% failure rate. Earth-normal: 2%.');
+        }else{
+          s.log.push('  ✓ Patch held. Pressure nominal. No output loss.');
+          s.log.push('  📊 Successful field repair. Lucky — this doesn\'t always work.');}
+        }},
+      alt:{label:'◐ EVA EXTERNAL PATCH',effect:s=>{
+        const evaCrew=s.crew.find(c=>c.alive&&c.role==='ENGR');
+        if(evaCrew){evaCrew.rad+=8;evaCrew.hp-=5;}
+        s.log.push('  ◐ MC: External EVA patch. Crew radiation exposure from EVA.');
+        s.log.push('  📊 30-min EVA at Jezero: +8 mSv. ISS equivalent: 2 weeks.');}},
+      timeout:12, defaultChoice:'approve'}}},
 
-  // ── CONSTRUCTION — approve with real tradeoffs ──
-  {trigger: s=>!s.building && s.sol>20 && s.modules.length<6 && R()<0.15,
-   gen: s=>{const opts=['greenhouse_dome','isru_plant','solar_farm','water_extractor','repair_bay','radiation_shelter'];
-    const built=new Set(s.modules.map(m=>m.type));
-    const candidates=opts.filter(o=>!built.has(o));
-    if(!candidates.length)return null;
-    const mod=candidates[Math.floor(R()*candidates.length)];
-    const names={greenhouse_dome:'Greenhouse Dome',isru_plant:'ISRU Plant',solar_farm:'Solar Farm',
-      water_extractor:'Water Extractor',repair_bay:'Repair Bay',radiation_shelter:'Radiation Shelter'};
-    const costs={greenhouse_dome:80,isru_plant:120,solar_farm:60,water_extractor:90,repair_bay:100,radiation_shelter:110};
-    const buildSols=Math.floor(8+R()*12);
-    const n=Math.max(1,s.crew.filter(c=>c.alive).length);
-    return {id:'build_'+mod,urgency:'request',from:s.crew.find(c=>c.role==='CMDR'&&c.alive)||s.crew[0],
-      title:`BUILD: ${names[mod]||mod}`,
-      body:`Construction will take ${buildSols} sols and consume ${costs[mod]||80} kWh. During construction, 1 crew member is dedicated to building — reducing colony output by ${Math.round(100/n)}%.`,
-      data:`Modules: ${s.modules.length} | Power: ${s.power.toFixed(0)} kWh | Build time: ${buildSols} sols | Output reduction: ${Math.round(100/n)}%`,
-      approve:{label:'✓ AUTHORIZE BUILD',effect:s=>{
-        s.building={type:mod,remaining:buildSols};
-        s.power-=Math.min(s.power*0.15,costs[mod]||80);
-        // Construction reduces overall efficiency (crew diverted)
-        s.i_eff*=0.9;s.g_eff*=0.9;
-        s.log.push(`  ✓ MC: ${names[mod]} construction started. ${buildSols} sols. Colony output reduced.`);}},
-      deny:{label:'✗ DENY — CONSERVE',effect:s=>{
-        s.log.push(`  ✗ MC: ${names[mod]} denied. Resources conserved but no expansion.`);}},
-      timeout:20, defaultChoice:'approve'}}},
-
-  // ── DUST STORM — seal has cascading effects ──
-  {trigger: s=>!s.events.some(e=>e.type==='dust_storm') && marsWeather.dustStormProb>10 && R()<0.2,
+  // ── WATER SYSTEM DRAIN — pipe burst, real fluid dynamics ──
+  {trigger: s=>{const n=Math.max(1,s.crew.filter(c=>c.alive).length);
+    return s.h2o/(H2O_PP*n)>5 && s.sol>10 && R()<0.06},
    gen: s=>{const n=Math.max(1,s.crew.filter(c=>c.alive).length);
-    return {id:'storm_prep',urgency:'urgent',from:s.crew.find(c=>c.role==='SCI'&&c.alive)||s.crew[0],
-      title:'DUST STORM WARNING',
-      body:`Storm probability ${marsWeather.dustStormProb}%. Sealing halts EVA, construction, and geological surveys for 5+ sols. Not sealing risks solar panel damage (permanent -10% efficiency) and crew radiation exposure.`,
-      data:`Storm risk: ${marsWeather.dustStormProb}% | Dust τ: ${marsWeather.dustTau} | Solar: ${marsWeather.solarWm2} W/m² | Panels: ${(s.s_eff*100).toFixed(0)}%`,
-      approve:{label:'✓ SEAL HABITAT',effect:s=>{
-        s.alloc.h=0.50;s.alloc.i=0.30;s.alloc.g=0.20;
-        if(s.building)s.building.remaining+=3; // construction delayed
-        s.log.push('  ✓ MC: Habitat sealed. EVA operations suspended.');
-        if(s.building)s.log.push(`  🔨 Construction delayed 3 sols.`);}},
-      deny:{label:'✗ RIDE IT OUT',effect:s=>{
-        s.s_eff*=0.90; // permanent panel damage
-        s.crew.filter(c=>c.alive).forEach(c=>{c.rad+=5;c.hp-=2;});
-        s.log.push('  ✗ MC: Storm prep denied. Panels taking damage.');
-        s.log.push('  ☢️ Crew radiation exposure increased. Solar efficiency permanently reduced.');}},
-      alt:{label:'◐ PARTIAL SEAL',effect:s=>{
-        s.alloc.h=0.35;s.alloc.i=0.40;s.alloc.g=0.25;
-        s.s_eff*=0.95; // some panel damage
-        s.crew.filter(c=>c.alive).forEach(c=>{c.rad+=2;});
-        s.log.push('  ◐ MC: Partial seal. Some damage, some production. Gambling.');}},
+    const lostPct=15+Math.floor(R()*25); // 15-40% of water supply
+    const lostL=Math.floor(s.h2o*lostPct/100);
+    return {id:'pipe_burst',urgency:'urgent',from:s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0],
+      title:'WATER SYSTEM FAILURE',
+      body:`Thermal cycling cracked a supply line. ${lostL}L draining into regolith (${lostPct}% of reserves). Shut main valve NOW to save remaining water (kills greenhouse irrigation for 3 sols) or try to reroute through backup line (might lose more if backup also fails).`,
+      data:`Losing: ${lostL}L (${lostPct}%) | Current: ${s.h2o.toFixed(0)}L | After shutoff: ${(s.h2o-lostL).toFixed(0)}L | Crew needs: ${(n*H2O_PP).toFixed(1)}L/sol`,
+      approve:{label:'✓ SHUT MAIN VALVE',effect:s=>{
+        s.h2o=Math.max(0,s.h2o-lostL*0.3); // save 70%
+        s.g_eff*=0.5; // greenhouse loses irrigation
+        s.log.push(`  ✓ MC: Main valve shut. Lost ${Math.floor(lostL*0.3)}L. Greenhouse irrigation offline.`);
+        s.log.push('  📊 Thermal cycling on Mars: ΔT = 80°C daily. Pipes designed for 50°C cycles fail.');}},
+      deny:{label:'✗ REROUTE TO BACKUP',effect:s=>{
+        if(riskRoll(0.25)){ // backup also cracked from same thermal stress
+          s.h2o=Math.max(0,s.h2o-lostL*1.2); // lost even more
+          s.log.push(`  💥 Backup line ALSO failed. Lost ${Math.floor(lostL*1.2)}L. Catastrophic.`);
+          s.log.push('  📊 Both lines experienced same thermal cycling. Common-cause failure.');
+        }else{
+          s.h2o=Math.max(0,s.h2o-lostL*0.5); // partial loss
+          s.log.push(`  ✓ Backup held. Lost ${Math.floor(lostL*0.5)}L. Could have been worse.`);
+          s.log.push('  📊 Backup lines should be inspected every 30 sols. Were they?');}
+        }},
+      timeout:8, defaultChoice:'approve'}}},
+
+  // ── ISRU CATALYST DEGRADATION — chemistry problem ──
+  {trigger: s=>s.i_eff>0.5 && s.sol>25 && R()<0.07,
+   gen: s=>{const currentEff=(s.i_eff*100).toFixed(0);
+    const co2Throughput=(5*s.i_eff).toFixed(1);
+    return {id:'isru_catalyst',urgency:'request',from:s.crew.find(c=>c.role==='SCI'&&c.alive)||s.crew[0],
+      title:'ISRU CATALYST DEGRADATION',
+      body:`MOXIE catalyst showing ${currentEff}% efficiency. CO₂→O₂ throughput: ${co2Throughput} kg/sol. Run catalyst regeneration cycle (offline for 5 sols, restores to 95%) or continue degraded (loses 2% efficiency per 10 sols permanently).`,
+      data:`ISRU eff: ${currentEff}% | O₂ output: ${co2Throughput} kg/sol | Regen time: 5 sols offline | Degradation rate: -2%/10sol`,
+      approve:{label:'✓ REGENERATE CATALYST',effect:s=>{
+        s.i_eff=Math.min(1,0.95);
+        s.power-=80; // power cost for regen cycle
+        s.log.push('  ✓ MC: ISRU offline for catalyst regeneration. 5 sols. O₂ from reserves only.');
+        s.log.push('  📊 MOXIE catalyst: zirconia-based. Regeneration requires 800°C for 6 hours.');}},
+      deny:{label:'✗ CONTINUE DEGRADED',effect:s=>{
+        s.log.push(`  ✗ MC: ISRU continuing at ${currentEff}% efficiency. Degradation ongoing.`);
+        s.log.push('  📊 Unregenerated catalyst: exponential efficiency loss. You\'re on borrowed time.');}},
+      timeout:20, defaultChoice:'approve'}}},
+
+  // ── SOLAR ARRAY TRACKING — mechanical alignment ──
+  {trigger: s=>s.s_eff>0.4 && s.sol>20 && R()<0.06,
+   gen: s=>{const misalign=(2+R()*8).toFixed(1); // degrees off
+    const powerLoss=Math.floor(parseFloat(misalign)*2.5); // % power loss from misalignment
+    return {id:'solar_tracking',urgency:'request',from:s.crew.find(c=>(c.role==='ENGR'||c.name.startsWith('OPT'))&&c.alive)||s.crew[0],
+      title:'SOLAR ARRAY MISALIGNMENT',
+      body:`Array tracking actuator drifted ${misalign}° from optimal. Losing ~${powerLoss}% solar output. Send robot for EVA recalibration (8-hour exposure, dust contamination risk) or accept degraded output and compensate with power rationing.`,
+      data:`Misalignment: ${misalign}° | Power loss: ~${powerLoss}% | Current solar eff: ${(s.s_eff*100).toFixed(0)}% | Mars dust accumulation: ${marsWeather.dustTau.toFixed(2)} τ`,
+      approve:{label:'✓ EVA RECALIBRATION',effect:s=>{
+        s.s_eff=Math.min(1,s.s_eff+powerLoss/100);
+        // Dust contamination risk during EVA
+        if(riskRoll(0.12)){
+          s.s_eff*=0.95;
+          s.log.push('  ⚠️ Dust deposited on panels during recalibration. Net gain reduced.');
+          s.log.push('  📊 Mars dust electrostatically clings to everything. Cleaning is never free.');
+        }else{
+          s.log.push(`  ✓ MC: Array recalibrated. +${powerLoss}% solar output restored.`);
+          s.log.push(`  📊 Optimal tracking: sun angle ${(90-parseFloat(misalign)).toFixed(1)}° at solar noon.`);}
+        }},
+      deny:{label:'✗ ACCEPT DEGRADED',effect:s=>{
+        s.s_eff*=(1-powerLoss/200); // half the loss as permanent degradation
+        s.log.push(`  ✗ MC: Operating at ${(s.s_eff*100).toFixed(0)}% solar. Actuator drift will continue.`);
+        s.log.push('  📊 Uncorrected tracking error compounds: 0.3°/sol additional drift.');}},
+      timeout:18, defaultChoice:'approve'}}},
+
+  // ── CO₂ SCRUBBER SATURATION — atmosphere management ──
+  {trigger: s=>s.sol>30 && s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT')).length>=2 && R()<0.05,
+   gen: s=>{const humans=s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT')).length;
+    const scrubberLoad=(humans*1.0).toFixed(1); // kg CO₂/sol
+    const capacity=(humans*1.2).toFixed(1);
+    return {id:'co2_scrubber',urgency:'urgent',from:s.crew.find(c=>c.role==='SCI'&&c.alive)||s.crew[0],
+      title:'CO₂ SCRUBBER APPROACHING SATURATION',
+      body:`LiOH canisters at ${(80+R()*15).toFixed(0)}% saturation. ${humans} humans producing ${scrubberLoad} kg CO₂/sol. Canister capacity: ${capacity} kg/sol. Switch to backup canisters (limited supply — ${Math.floor(3+R()*5)} remaining) or reduce crew activity to lower CO₂ output.`,
+      data:`CO₂ load: ${scrubberLoad} kg/sol | Capacity: ${capacity} kg/sol | Saturation: ${(80+R()*15).toFixed(0)}% | Backup canisters: ${Math.floor(3+R()*5)}`,
+      approve:{label:'✓ SWAP CANISTERS',effect:s=>{
+        s.log.push('  ✓ MC: Scrubber canisters swapped. CO₂ levels nominal.');
+        s.log.push('  📊 LiOH canister life: ~30 sols per unit. Each weighs 25 kg. They don\'t ship from Earth fast.');}},
+      deny:{label:'✗ REDUCE ACTIVITY',effect:s=>{
+        s.alloc.r=Math.max(0.3,s.alloc.r-0.2);
+        s.crew.filter(c=>c.alive).forEach(c=>{c.hp-=2;});
+        s.log.push('  ✗ MC: Crew on reduced activity. Lower CO₂ but lower productivity.');
+        s.log.push('  📊 Elevated CO₂ (>1%): headaches, impaired judgment. At 5%: unconsciousness.');}},
       timeout:10, defaultChoice:'approve'}}},
 
-  // ── SUPPLY MANIFEST — long-term consequences ──
-  {trigger: s=>s.sol>50 && s.sol%30<2 && R()<0.3,
-   gen: s=>{const n=Math.max(1,s.crew.filter(c=>c.alive).length);
-    const o2d=s.o2/(O2_PP*n), fd=s.food/(FOOD_PP*n), h2od=s.h2o/(H2O_PP*n);
-    const worst=o2d<h2od&&o2d<fd?'o2':h2od<fd?'h2o':'food';
-    return {id:'trade_offer',urgency:'info',from:{name:'Earth CAPCOM',role:'COMMS',alive:true},
-      title:'SUPPLY MANIFEST DECISION',
-      body:`Resupply window open. Transit time: 180 sols. Choose wrong and you won't get another chance for 760 sols. What's your priority?`,
-      data:`O₂: ${o2d.toFixed(0)}d | H₂O: ${h2od.toFixed(0)}d | Food: ${fd.toFixed(0)}d | Next window: Sol ${s.sol+760}`,
-      approve:{label:worst==='o2'?'✓ LIFE SUPPORT':'✓ FOOD + GREENHOUSE',effect:s=>{
-        if(worst==='o2'){s.o2+=50;s.h2o+=100;s.log.push('  ✓ MC: Life support priority. O₂ and H₂O incoming in 180 sols.');}
-        else{s.food+=80000;s.h2o+=40;s.log.push('  ✓ MC: Food priority. Greenhouse supplies and rations incoming.');}
-        s.log.push('  🚀 Next resupply window: Sol '+(s.sol+760)+'. Choose wisely.');}},
-      deny:{label:'✗ BALANCED CARGO',effect:s=>{
-        s.o2+=15;s.h2o+=30;s.food+=20000;s.power+=50;
-        s.log.push('  ✗ MC: Balanced cargo. A little of everything. Enough of nothing.');}},
-      timeout:25, defaultChoice:'deny'}}},
+  // ── THERMAL CYCLING CRACK — structural integrity ──
+  {trigger: s=>s.sol>40 && s.modules.length>0 && R()<0.04,
+   gen: s=>{const mod=s.modules[Math.floor(R()*s.modules.length)];
+    const modName=(mod.type||'module').replace(/_/g,' ');
+    const crackLen=(0.5+R()*3).toFixed(1); // mm
+    return {id:'thermal_crack',urgency:'request',from:s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0],
+      title:`STRUCTURAL: ${modName.toUpperCase()} CRACK DETECTED`,
+      body:`Ultrasonic inspection found ${crackLen}mm fatigue crack in ${modName} hull. Mars thermal cycling: -73°C to +20°C daily. Crack growth rate: ~0.1mm/sol. At ${(parseFloat(crackLen)+15).toFixed(0)}mm, structural failure. Weld repair now (module offline 3 sols) or monitor and schedule later.`,
+      data:`Crack: ${crackLen}mm | Growth: 0.1mm/sol | Critical: ${(parseFloat(crackLen)+15).toFixed(0)}mm | Time to failure: ~${Math.floor(15/0.1)} sols | Module: ${modName}`,
+      approve:{label:'✓ REPAIR NOW',effect:s=>{
+        s.power-=40;
+        s.log.push(`  ✓ MC: ${modName} offline for weld repair. 3 sols.`);
+        s.log.push('  📊 Thermal fatigue: 668 Mars-year cycles of 90°C swing. Metal remembers every one.');}},
+      deny:{label:'✗ MONITOR — REPAIR LATER',effect:s=>{
+        // Risk increases each sol it's not fixed
+        if(riskRoll(0.03)){
+          s.modules=s.modules.filter(m=>m!==mod);
+          s.log.push(`  💥 ${modName} STRUCTURAL FAILURE. Module lost. Crack propagated faster than modeled.`);
+          s.log.push('  📊 Unrepaired fatigue cracks on Mars: failure rate 3× Earth due to pressure differential.');
+        }else{
+          s.log.push(`  ✗ MC: Monitoring ${modName} crack. Currently stable.`);
+          s.log.push('  📊 Inspection scheduled every 5 sols. Crack growth is nonlinear — it can accelerate.');}
+        }},
+      timeout:20, defaultChoice:'approve'}}},
 
-  // ── ROBOT MALFUNCTION — ignore and it gets worse ──
-  {trigger: s=>s.crew.some(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive) && R()<0.12,
+  // ── RADIATION DOSIMETRY — cumulative exposure decision ──
+  {trigger: s=>{const maxRad=Math.max(...s.crew.filter(c=>c.alive).map(c=>c.rad));
+    return maxRad>200 && R()<0.1},
+   gen: s=>{const exposed=s.crew.filter(c=>c.alive).sort((a,b)=>b.rad-a.rad)[0];
+    const annualLimit=500; // NASA career limit reference
+    return {id:'rad_dosimetry',urgency:'urgent',from:s.crew.find(c=>c.role==='MED'&&c.alive)||s.crew[0],
+      title:`RADIATION: ${exposed.name.toUpperCase()} EXPOSURE`,
+      body:`${exposed.name} cumulative dose: ${exposed.rad.toFixed(0)} mSv. NASA career limit: ${annualLimit} mSv. At current rate, limit reached in ${Math.floor((annualLimit-exposed.rad)/0.67)} sols. Restrict to indoor-only duty (reduces colony output) or accept elevated risk.`,
+      data:`${exposed.name}: ${exposed.rad.toFixed(0)} mSv | Limit: ${annualLimit} mSv | GCR rate: 0.67 mSv/sol | Shelter: ${s.modules.some(m=>m.type==='radiation_shelter')?'YES':'NO'}`,
+      approve:{label:'✓ RESTRICT TO INDOOR',effect:s=>{
+        exposed.st='Indoor only';
+        s.i_eff*=0.9; // one less person for outdoor work
+        s.log.push(`  ✓ MC: ${exposed.name} restricted to indoor duty. Colony output reduced.`);
+        s.log.push('  📊 Mars surface GCR: 0.67 mSv/sol. ISS: 0.5 mSv/day. No Earth magnetosphere.');}},
+      deny:{label:'✗ ACCEPT RISK',effect:s=>{
+        exposed.hp-=5;
+        s.log.push(`  ✗ MC: ${exposed.name} continues full duty. Radiation risk accepted.`);
+        s.log.push('  📊 Above 500 mSv: 3% increased cancer risk. Above 1000 mSv: acute radiation syndrome.');}},
+      timeout:15, defaultChoice:'approve'}}},
+
+  // ══════════════════════════════════════════════════════════════
+  // MANUAL OVERRIDE TASKS — dexterity minigames with light delay
+  // Robot is stuck. You send commands. They arrive delayed.
+  // Correct sequence = fixed. Wrong sequence = broken worse.
+  // THIS is Mars remote operations training.
+  // ══════════════════════════════════════════════════════════════
+
+  // ── STUCK BOLT — robot can't unscrew a panel fastener ──
+  {trigger: s=>s.crew.some(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive) && s.sol>15 && R()<0.06,
    gen: s=>{const bot=s.crew.find(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
     if(!bot)return null;
-    const sensorConf=(70+R()*25).toFixed(0);
-    return {id:'bot_glitch',urgency:'request',from:bot,
-      title:`ROBOT DIAGNOSTIC: ${bot.name}`,
-      body:`${bot.name} sensors at ${sensorConf}% confidence. Diagnostics take 3 sols offline — that's 3 sols less labor. But if the sensor fails completely, the robot is permanently lost. Your call.`,
-      data:`Unit: ${bot.name} | HP: ${bot.hp.toFixed(0)} | Sensor: ${sensorConf}% | Risk if ignored: ${(100-parseFloat(sensorConf)).toFixed(0)}% failure chance`,
-      approve:{label:'✓ RUN DIAGNOSTICS',effect:s=>{
-        bot.hp=Math.min(100,bot.hp+25);bot.st='Diagnostic';
-        // Robot offline reduces colony output
-        const n=Math.max(1,s.crew.filter(c=>c.alive).length);
-        s.i_eff*=Math.max(0.7,1-1/n);
-        s.log.push(`  ✓ MC: ${bot.name} offline for diagnostics. Colony output reduced.`);
-        s.log.push(`  🔧 Robot will return at full capacity.`);}},
-      deny:{label:'✗ KEEP RUNNING',effect:s=>{
-        // Risk: sensor might fail → robot could die
-        const failRisk=(100-parseFloat(sensorConf))/100;
-        if(R()<failRisk*0.3){
-          bot.alive=false;bot.hp=0;bot.st='SENSOR FAILURE — LOST';
-          s.log.push(`  💀 ${bot.name} LOST — sensor failure caused navigation into crevasse.`);
-          s.log.push(`  ⚠️ Colony permanently down one unit.`);
-        }else{
-          bot.hp=Math.max(10,bot.hp-8);
-          s.log.push(`  ✗ MC: ${bot.name} continues with degraded sensors. Risky.`);}
-        }},
-      timeout:15, defaultChoice:'deny'}}},
+    const torque=Math.floor(20+R()*30);
+    return {id:'stuck_bolt',urgency:'request',from:bot,
+      title:`${bot.name}: STUCK FASTENER — MANUAL OVERRIDE`,
+      body:`${bot.name} cannot remove panel fastener on ISRU intake. Bolt corroded by perchlorates in regolith. Torque required: ${torque} N·m (robot max: ${torque-5} N·m). Need manual sequence: apply penetrant, wait, heat cycle, then extract.`,
+      data:`Bolt torque: ${torque} N·m | Robot max: ${torque-5} N·m | Corrosion: perchlorate | Panel: ISRU intake`,
+      override:{
+        delaySeconds: 3,
+        commands:[
+          {label:'🧴 APPLY PENETRANT', response:'Penetrant applied to bolt threads. Soaking...'},
+          {label:'⏳ WAIT 30s', response:'Wait complete. Penetrant has wicked into threads.'},
+          {label:'🔥 HEAT CYCLE', response:'Thermal expansion applied. Bolt housing: +40°C differential.'},
+          {label:'🔧 EXTRACT CCW', response:'Bolt rotating... extracted! Panel access open.'},
+          {label:'🔧 EXTRACT CW', failResponse:'WRONG DIRECTION. Bolt cross-threaded. Threads damaged.'},
+          {label:'💪 FORCE EXTRACT', failResponse:'Bolt head sheared off. Now need drill extraction. Much worse.'},
+        ],
+        sequence:[0,1,2,3], // correct order: penetrant → wait → heat → extract CCW
+        onSuccess:s=>{
+          s.i_eff=Math.min(1,s.i_eff+0.05);
+          s.log.push(`  🔧 ${bot.name}: ISRU panel accessed. Intake filter replaced. +5% efficiency.`);
+          s.log.push('  📊 Perchlorate corrosion rate on Mars: 0.1mm/year on steel fasteners.');},
+        onFailure:s=>{
+          s.i_eff*=0.90;
+          bot.hp-=5;
+          s.log.push(`  💥 ${bot.name}: Fastener damaged. ISRU intake partially blocked. -10% efficiency.`);
+          s.log.push('  📊 Cross-threaded or sheared bolts on Mars: no hardware store. Damage is permanent.');}
+      },
+      timeout:30, defaultChoice:'deny'}}},
 
-  // ── MORALE — deny and it escalates ──
-  {trigger: s=>s.morale<0.5 && s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT')).length>=2 && R()<0.25,
-   gen: s=>{const unhappy=s.crew.filter(c=>c.alive&&c.mor<50&&!c.name.startsWith('OPT'));
-    if(!unhappy.length)return null;
-    const who=unhappy[Math.floor(R()*unhappy.length)];
-    const prevDenied=taskHistory.some(t=>t.id==='morale_break'&&t.choice==='deny');
-    return {id:'morale_break',urgency:prevDenied?'urgent':'request',from:who,
-      title:prevDenied?'CREW MORALE CRISIS':'CREW MORALE REQUEST',
-      body:prevDenied
-        ?`"You denied us last time. People are talking about refusing orders." ${who.name} is at ${who.mor.toFixed(0)}% morale. Denying again risks a full work stoppage — 0 production for 3 sols.`
-        :`"We need a break." ${who.name} speaking for the crew. Morale: ${(s.morale*100).toFixed(0)}%. One rest sol costs production but prevents worse.`,
-      data:`Morale: ${(s.morale*100).toFixed(0)}% | ${who.name}: ${who.mor.toFixed(0)}% | Previous denied: ${prevDenied?'YES':'no'}`,
-      approve:{label:'✓ GRANT REST DAY',effect:s=>{
-        s.crew.filter(c=>c.alive).forEach(c=>{c.mor=Math.min(100,c.mor+20);c.hp=Math.min(100,c.hp+5);});
-        s.log.push('  ✓ MC: Rest day granted. Morale recovering.');
-        s.log.push('  😌 Crew is grateful. Trust in mission control restored.');}},
-      deny:{label:'✗ DENIED — KEEP WORKING',effect:s=>{
-        const severity=prevDenied?1:0;
-        s.crew.filter(c=>c.alive).forEach(c=>c.mor=Math.max(0,c.mor-(10+severity*10)));
-        if(prevDenied){
-          // Work stoppage — 0 production this sol
-          s.alloc={h:0,i:0,g:0,r:0.3};
-          s.log.push('  ✗ MC: Rest denied AGAIN. Crew refuses orders.');
-          s.log.push('  🚫 WORK STOPPAGE — zero production. You pushed too hard.');
-        }else{
-          s.log.push('  ✗ MC: Rest denied. Morale tanks. Next time will be worse.');}}},
-      timeout:12, defaultChoice:'deny'}}},
+  // ── SOLAR PANEL CLEANING — dust removal sequence ──
+  {trigger: s=>s.s_eff<0.85 && s.crew.some(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive) && R()<0.08,
+   gen: s=>{const bot=s.crew.find(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive);
+    if(!bot)return null;
+    const dustMm=(0.5+R()*2).toFixed(1);
+    return {id:'panel_clean',urgency:'request',from:bot,
+      title:`${bot.name}: SOLAR PANEL CLEANING — MANUAL OVERRIDE`,
+      body:`${dustMm}mm dust accumulation on Array 2. ${bot.name} positioned but needs cleaning sequence: extend arm, lower brush pressure (too hard scratches coating), sweep pattern, retract. Scratched panels lose efficiency permanently.`,
+      data:`Dust: ${dustMm}mm | Panel coating: SiO₂ anti-reflective | Brush pressure: 0.5-2.0 N | Current eff: ${(s.s_eff*100).toFixed(0)}%`,
+      override:{
+        delaySeconds: 2,
+        commands:[
+          {label:'🦾 EXTEND ARM', response:'Arm extended. Brush 5cm above panel surface.'},
+          {label:'⬇️ LOWER GENTLE', response:'Brush contact at 0.8N. Dust deflecting.'},
+          {label:'⬇️ LOWER HARD', failResponse:'PRESSURE TOO HIGH — 3.2N. Anti-reflective coating scratched. Permanent damage.'},
+          {label:'➡️ SWEEP LEFT→RIGHT', response:'Sweep pass 1 complete. Dust clearing.'},
+          {label:'⬅️ SWEEP RIGHT→LEFT', response:'Sweep pass 2 complete. Panel 90% clear.'},
+          {label:'⬆️ RETRACT ARM', response:'Arm retracted. Panel cleaned successfully.'},
+        ],
+        sequence:[0,1,3,4,5], // extend → lower gentle → sweep L→R → sweep R→L → retract
+        onSuccess:s=>{
+          s.s_eff=Math.min(1,s.s_eff+0.10);
+          s.log.push(`  ☀️ ${bot.name}: Panel cleaned. Solar +10%. Dust removed: ${dustMm}mm.`);
+          s.log.push('  📊 Opportunity rover lost to dust after 5,111 sols. Regular cleaning extends life.');},
+        onFailure:s=>{
+          s.s_eff*=0.92;
+          s.log.push(`  💥 ${bot.name}: Panel coating damaged during cleaning. Solar efficiency permanently reduced.`);
+          s.log.push('  📊 SiO₂ anti-reflective coating: 0.1μm thick. Cannot be reapplied on Mars.');}
+      },
+      timeout:25, defaultChoice:'deny'}}},
 
-  // ── POWER RATIONING — lights or life support ──
-  {trigger: s=>s.power<PCRIT*1.5 && s.power>PCRIT*0.3 && R()<0.2,
-   gen: s=>{return {id:'power_ration',urgency:'urgent',from:s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0],
-      title:'POWER RATIONING',
-      body:`Power at ${s.power.toFixed(0)} kWh — approaching critical. Cut non-essential systems (lighting, comms, heating reserve) to extend life support? Or maintain full power and hope solar picks up tomorrow?`,
-      data:`Power: ${s.power.toFixed(0)} kWh | Critical: ${PCRIT} kWh | Solar eff: ${(s.s_eff*100).toFixed(0)}% | Modules drawing: ${s.modules.length*15} kWh`,
-      approve:{label:'✓ RATION POWER',effect:s=>{
-        s.power+=30; // reclaimed from non-essentials
-        s.alloc.h=Math.max(0.10,s.alloc.h-0.10);
-        s.crew.filter(c=>c.alive).forEach(c=>{c.mor=Math.max(0,c.mor-5);});
-        s.log.push('  ✓ MC: Power rationed. Lights off. Comms reduced. Cold tonight.');
-        s.log.push('  🔦 Crew switching to personal flashlights.');}},
-      deny:{label:'✗ MAINTAIN FULL POWER',effect:s=>{
-        s.log.push('  ✗ MC: Full power maintained. Gambling on tomorrow\'s solar.');}},
-      timeout:10, defaultChoice:'approve'}}},
+  // ── ANTENNA REALIGNMENT — comms dish pointing ──
+  {trigger: s=>s.sol>30 && s.sol%50<3 && R()<0.10,
+   gen: s=>{const bot=s.crew.find(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive)||
+      s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0];
+    const azErr=(2+R()*6).toFixed(1);const elErr=(1+R()*4).toFixed(1);
+    return {id:'antenna_align',urgency:'request',from:bot,
+      title:`COMMS ANTENNA REALIGNMENT — MANUAL OVERRIDE`,
+      body:`High-gain antenna drifted ${azErr}° azimuth, ${elErr}° elevation from Earth-point. Signal margin: ${(3-parseFloat(azErr)*0.4).toFixed(1)} dB (need >0 for link). Sequence: unlock gimbal, slew azimuth, slew elevation, lock, verify signal.`,
+      data:`Az error: ${azErr}° | El error: ${elErr}° | Signal: ${(3-parseFloat(azErr)*0.4).toFixed(1)} dB | Earth range: ${(1.5+R()).toFixed(2)} AU`,
+      override:{
+        delaySeconds: 4, // longer delay — this is deep space comms
+        commands:[
+          {label:'🔓 UNLOCK GIMBAL', response:'Gimbal unlocked. Antenna free to slew.'},
+          {label:'↔️ SLEW AZIMUTH', response:`Azimuth corrected. Error: ${azErr}° → 0.1°.`},
+          {label:'↕️ SLEW ELEVATION', response:`Elevation corrected. Error: ${elErr}° → 0.05°.`},
+          {label:'🔒 LOCK GIMBAL', response:'Gimbal locked. Antenna secured.'},
+          {label:'📡 VERIFY SIGNAL', response:'Signal acquired! Margin: +2.8 dB. Link nominal.'},
+          {label:'📡 VERIFY SIGNAL', failResponse:'No signal — antenna not locked. Dish vibrating in wind.'},
+        ],
+        sequence:[0,1,2,3,4], // unlock → azimuth → elevation → lock → verify
+        onSuccess:s=>{
+          s.log.push('  📡 Comms realigned. Earth link restored. Signal margin: +2.8 dB.');
+          s.log.push('  📊 Mars-Earth link budget: 400W transmitter, 34m DSN dish. Every dB matters.');},
+        onFailure:s=>{
+          s.log.push('  📡 Antenna realignment failed. Earth comms degraded for ~10 sols.');
+          s.log.push('  📊 Without comms: no telemetry upload, no software patches, no supply coordination.');}
+      },
+      timeout:35, defaultChoice:'deny'}}},
 
-  // ── CREW CONFLICT — two people disagree, you choose sides ──
-  {trigger: s=>{const alive=s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT'));
-    return alive.length>=3 && s.sol>30 && R()<0.08},
-   gen: s=>{const alive=s.crew.filter(c=>c.alive&&!c.name.startsWith('OPT'));
-    const a=alive[Math.floor(R()*alive.length)];
-    let b=alive[Math.floor(R()*alive.length)];while(b.name===a.name)b=alive[Math.floor(R()*alive.length)];
-    const disputes=[
-      {issue:'greenhouse priority',aPos:'Expand food production NOW',bPos:'Focus on ISRU — we need O₂ first',
-        aEffect:s=>{s.alloc.g=0.50;s.alloc.i=0.30;s.alloc.h=0.20;a.mor+=10;b.mor-=15;},
-        bEffect:s=>{s.alloc.i=0.55;s.alloc.g=0.25;s.alloc.h=0.20;b.mor+=10;a.mor-=15;}},
-      {issue:'EVA schedule',aPos:'Double EVA shifts — we need more survey data',bPos:'Reduce EVA — radiation risk too high',
-        aEffect:s=>{s.crew.filter(c=>c.alive).forEach(c=>{c.rad+=3;});a.mor+=10;b.mor-=12;
-          if(R()<0.2){const d={type:'ice_deposit',name:'Subsurface Ice',sol:s.sol};s.discoveries.push(d);s.log.push('  🔭 Extra EVA paid off: Subsurface Ice discovered!');}},
-        bEffect:s=>{s.crew.filter(c=>c.alive).forEach(c=>{c.rad-=1;c.hp=Math.min(100,c.hp+2);});b.mor+=10;a.mor-=12;}},
-      {issue:'module repair priority',aPos:'Fix solar panels first — power is life',bPos:'Fix greenhouse first — food is life',
-        aEffect:s=>{s.s_eff=Math.min(1,s.s_eff+0.10);a.mor+=10;b.mor-=12;},
-        bEffect:s=>{s.g_eff=Math.min(1,s.g_eff+0.10);b.mor+=10;a.mor-=12;}}
-    ];
-    const d=disputes[Math.floor(R()*disputes.length)];
-    return {id:'crew_dispute',urgency:'request',from:a,
-      title:`DISPUTE: ${d.issue.toUpperCase()}`,
-      body:`${a.name} and ${b.name} disagree on ${d.issue}. Siding with one damages your relationship with the other. Both are watching.`,
-      data:`${a.name} (${a.role}): "${d.aPos}" | ${b.name} (${b.role}): "${d.bPos}"`,
-      approve:{label:`✓ SIDE WITH ${a.name.split(' ')[0].toUpperCase()}`,effect:s=>{
-        d.aEffect(s);
-        s.log.push(`  ✓ MC: Sided with ${a.name}. ${b.name} is not happy.`);}},
-      deny:{label:`✗ SIDE WITH ${b.name.split(' ')[0].toUpperCase()}`,effect:s=>{
-        d.bEffect(s);
-        s.log.push(`  ✗ MC: Sided with ${b.name}. ${a.name} feels overruled.`);}},
-      timeout:15, defaultChoice:'approve'}}}
+  // ── AIRLOCK SEAL REPLACEMENT — EVA prep ──
+  {trigger: s=>s.sol>20 && R()<0.04,
+   gen: s=>{const bot=s.crew.find(c=>(c.name.startsWith('OPT')||c.name.startsWith('LUN'))&&c.alive)||
+      s.crew.find(c=>c.role==='ENGR'&&c.alive)||s.crew[0];
+    const wearPct=Math.floor(60+R()*30);
+    return {id:'airlock_seal',urgency:'urgent',from:bot,
+      title:'AIRLOCK SEAL REPLACEMENT — MANUAL OVERRIDE',
+      body:`Primary airlock O-ring at ${wearPct}% wear. Mars dust has abraded the seal. If it fails during EVA cycle: rapid decompression. Replace sequence: depressurize, remove retaining ring, extract old seal, seat new seal, pressurize test, verify.`,
+      data:`Seal wear: ${wearPct}% | Failure threshold: 85% | Depress cycles survived: ${Math.floor(s.sol*1.5)} | Replacement seals remaining: ${Math.floor(4-s.sol/100)}`,
+      override:{
+        delaySeconds: 3,
+        commands:[
+          {label:'💨 DEPRESSURIZE', response:'Airlock depressurized. 0.0 kPa. Safe to open inner seal housing.'},
+          {label:'🔩 REMOVE RING', response:'Retaining ring removed. 24 bolts extracted. O-ring exposed.'},
+          {label:'🧤 EXTRACT SEAL', response:'Old O-ring extracted. Groove clean. No debris.'},
+          {label:'🧤 SEAT NEW SEAL', response:'New O-ring seated. Compression nominal. No pinch points.'},
+          {label:'💨 PRESSURIZE', response:'Repressurizing... 101.3 kPa. Holding.'},
+          {label:'✓ VERIFY', response:'Pressure hold test: 0.00 kPa loss over 60s. Seal is good.'},
+          {label:'💨 PRESSURIZE', failResponse:'PRESSURIZED BEFORE NEW SEAL SEATED — blown out of groove. Seal destroyed.'},
+        ],
+        sequence:[0,1,2,3,4,5], // depress → remove → extract → seat → pressurize → verify
+        onSuccess:s=>{
+          s.log.push('  ✓ Airlock seal replaced. EVA operations safe.');
+          s.log.push('  📊 Mars airlock cycles: each cycle abrades seal ~0.1%. At 85% wear: 12% failure probability.');},
+        onFailure:s=>{
+          s.crew.filter(c=>c.alive).forEach(c=>{c.hp-=8;c.rad+=3;});
+          s.log.push('  💥 Airlock seal compromised. Partial decompression event. Crew exposed.');
+          s.log.push('  📊 Rapid decompression at Mars ambient (600 Pa): ebullism onset in 15 seconds.');}
+      },
+      timeout:40, defaultChoice:'deny'}}}
 ];
 
 function generateTask(){
@@ -1133,12 +1250,35 @@ function renderTask(task){
     </div>
     <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:8px">${task.title}</div>
     <div class="task-body">${task.body}</div>
-    <div class="task-data">${task.data}</div>
+    <div class="task-data">${task.data}</div>`;
+
+  // Manual override tasks get a command interface instead of approve/deny
+  if(task.override){
+    const delay=task.override.delaySeconds||3;
+    html+=`
+    <div class="override-panel">
+      <div style="font-size:10px;color:var(--yellow);margin-bottom:6px">
+        MANUAL OVERRIDE — Send commands in correct sequence. Light delay: ${delay}s per command.
+      </div>
+      <div class="override-cmd" id="override-buttons">
+        ${task.override.commands.map((cmd,i)=>
+          `<button class="override-btn" onclick="sendOverrideCmd(${i})" id="ocmd-${i}">${cmd.label}</button>`
+        ).join('')}
+      </div>
+      <div class="delay-bar"><div class="delay-fill" id="delay-bar-fill"></div></div>
+      <div class="cmd-log" id="override-log">
+        <div class="recv">◄ ${from.name}: Awaiting manual override commands...</div>
+      </div>
+    </div>`;
+  } else {
+    html+=`
     <div class="task-actions">
       <button class="task-btn task-btn-approve" onclick="resolveTask('approve')">${task.approve.label}</button>
       <button class="task-btn task-btn-deny" onclick="resolveTask('deny')">${task.deny.label}</button>
       ${task.alt?`<button class="task-btn task-btn-alt" onclick="resolveTask('alt')">${task.alt.label}</button>`:''}
     </div>`;
+  }
+
   document.getElementById('task-card-inner').innerHTML=html;
 
   // Start countdown
@@ -1153,9 +1293,99 @@ function renderTask(task){
     }
     if(activeTask.timerLeft<=0){
       clearInterval(activeTask._timer);
-      resolveTask(activeTask.defaultChoice||'deny', true);
+      if(activeTask.override){
+        // Timeout on override = failure
+        resolveOverride(false);
+      }else{
+        resolveTask(activeTask.defaultChoice||'deny', true);
+      }
     }
   },1000);
+}
+
+// ── MANUAL OVERRIDE COMMAND SYSTEM ──
+// Player sends commands one at a time. Each has a light delay before the robot executes.
+// Correct sequence = success. Wrong sequence = failure with consequences.
+let overrideSentCmds=[];
+let overrideBusy=false;
+
+function sendOverrideCmd(idx){
+  if(!activeTask||!activeTask.override||overrideBusy)return;
+  const task=activeTask;
+  const cmds=task.override.commands;
+  const cmd=cmds[idx];
+  const delay=task.override.delaySeconds||3;
+  const correctIdx=overrideSentCmds.length; // next expected command index
+  const isCorrect=idx===task.override.sequence[correctIdx];
+
+  // Mark button as sent
+  const btn=document.getElementById('ocmd-'+idx);
+  if(btn)btn.classList.add('sent');
+
+  // Log the send
+  const log=document.getElementById('override-log');
+  if(log)log.innerHTML+=`<div class="sent">► CMD ${overrideSentCmds.length+1}: ${cmd.label} [SENDING...]</div>`;
+
+  // Start delay animation
+  overrideBusy=true;
+  const bar=document.getElementById('delay-bar-fill');
+  let elapsed=0;
+  const delayInterval=setInterval(()=>{
+    elapsed+=100;
+    if(bar)bar.style.width=Math.min(100,elapsed/(delay*1000)*100)+'%';
+    if(elapsed>=delay*1000){
+      clearInterval(delayInterval);
+      if(bar)bar.style.width='0%';
+      overrideBusy=false;
+
+      // Command arrives at robot — check if correct
+      if(isCorrect){
+        overrideSentCmds.push(idx);
+        const response=cmd.response||'Executed.';
+        if(log)log.innerHTML+=`<div class="recv">◄ ${task.from.name}: ${response}</div>`;
+        if(log)log.scrollTop=9999;
+
+        // Check if sequence complete
+        if(overrideSentCmds.length>=task.override.sequence.length){
+          setTimeout(()=>resolveOverride(true),500);
+        }
+      }else{
+        // WRONG COMMAND — consequences
+        if(btn)btn.classList.remove('sent');
+        if(btn)btn.classList.add('failed');
+        const errMsg=cmd.failResponse||'Command failed. Incorrect sequence.';
+        if(log)log.innerHTML+=`<div class="err">◄ ERROR: ${errMsg}</div>`;
+        if(log)log.scrollTop=9999;
+        setTimeout(()=>resolveOverride(false),800);
+      }
+    }
+  },100);
+}
+
+function resolveOverride(success){
+  if(!activeTask)return;
+  clearInterval(activeTask._timer);
+  const task=activeTask;
+
+  if(success){
+    task.override.onSuccess(state);
+    tasksResolved++;
+    state.log.push(`  ✓ OVERRIDE COMPLETE: ${task.title} — sequence correct`);
+  }else{
+    task.override.onFailure(state);
+    tasksResolved++;
+    state.log.push(`  ✗ OVERRIDE FAILED: ${task.title} — wrong sequence or timeout`);
+  }
+
+  taskHistory.push({id:task.id,sol:state.sol,choice:success?'override_success':'override_fail',timedOut:false});
+  activeTask=null;
+  overrideSentCmds=[];
+  overrideBusy=false;
+  cameraPOV=null;
+  document.getElementById('task-panel').classList.remove('task-visible');
+  setTimeout(()=>{ if(taskQueue.length)showNextTask(); },1200);
+  updateTaskBadge();
+  updateAllUI();
 }
 
 function resolveTask(choice, timedOut){
@@ -1287,19 +1517,8 @@ function rollSecondaryConsequence(taskId, choice){
       s.log.push('  📊 Autonomous robots share state. One bad node poisons the network.');}
   }
 
-  // ── MORALE ──
-  if(taskId==='morale_break'&&choice==='approve'&&riskRoll(0.06)){
-    s.i_eff=Math.min(1,s.i_eff+0.08);s.g_eff=Math.min(1,s.g_eff+0.05);
-    s.log.push('  🛠️ UNEXPECTED: Crew used rest to reorganize. ISRU +8%, Greenhouse +5%.');
-    s.log.push('  📊 NASA studies: forced rest improves ISS crew task performance by 12-18%.');
-  }
-  if(taskId==='morale_break'&&choice==='deny'&&riskRoll(0.08)){
-    // Someone makes a dangerous mistake from fatigue
-    const tired=s.crew.find(c=>c.alive&&c.mor<40);
-    if(tired){tired.hp-=10;
-      s.log.push(`  😤 UNINTENDED: ${tired.name} made fatigue-induced error during EVA. HP -10.`);
-      s.log.push('  📊 Sleep deprivation equivalent to 0.08% BAC. Mars doesn\'t have a designated driver.');}
-  }
+  // ── PRESSURE LEAK / PIPE / ISRU / SOLAR / CO₂ / THERMAL / RAD secondary consequences ──
+  // (kept from above — these are real ops consequences)
 
   // ── POWER RATIONING ──
   if(taskId==='power_ration'&&choice==='approve'&&riskRoll(0.10)){
@@ -1310,16 +1529,22 @@ function rollSecondaryConsequence(taskId, choice){
   }
   if(taskId==='power_ration'&&choice==='deny'&&riskRoll(0.12)){
     s.power=Math.max(0,s.power-40);
-    s.log.push('  ⚡ UNINTENDED: Power surge from maintaining full load on stressed grid. -40 kWh.');
+    s.log.push('  ⚡ UNINTENDED: Power surge on stressed grid. -40 kWh.');
     s.log.push('  📊 Electrical systems degrade under sustained peak load. CRI was '+cri+'.');
   }
 
-  // ── CREW DISPUTE ──
-  if(taskId==='crew_dispute'&&riskRoll(0.04)){
-    const loser=s.crew.find(c=>c.alive&&c.mor<40);
-    if(loser){loser.hp-=8;loser.mor-=12;
-      s.log.push(`  😤 UNINTENDED: ${loser.name} made a reckless decision after being overruled.`);
-      s.log.push('  📊 ISS incident reports: interpersonal conflict is the #1 mission risk after equipment failure.');}
+  // ── PRESSURE LEAK consequences ──
+  if(taskId==='pressure_leak'&&choice==='approve'&&riskRoll(0.05)){
+    s.log.push('  🔍 UNEXPECTED: Repair crew found secondary micro-fracture during inspection.');
+    s.log.push('  📊 Prevented a future blowout. Preventive maintenance saves lives.');
+    s.i_eff=Math.min(1,s.i_eff+0.03);
+  }
+
+  // ── PIPE BURST consequences ──
+  if(taskId==='pipe_burst'&&riskRoll(0.08)){
+    s.g_eff*=0.9;
+    s.log.push('  🌱 UNINTENDED: Water pressure transient damaged greenhouse drip lines.');
+    s.log.push('  📊 Hydraulic hammer in low-gravity pipes hits differently than on Earth.');
   }
 }
 
