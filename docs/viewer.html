@@ -1657,7 +1657,36 @@ function buildGroundScene(){
     fig.position.set(Math.cos(angle)*8,0.5,Math.sin(angle)*8);
     fig.castShadow=true;
     groundScene.add(fig);
-    crewFigures.push({mesh:fig,baseAngle:angle,walkSpeed:0.003+rr()*0.002,crewName:c.name});
+    crewFigures.push({mesh:fig,baseAngle:angle,walkSpeed:0.003+rr()*0.002,crewName:c.name,
+      flashlight:null,flashCone:null});
+  });
+
+  // Attach personal flashlights to all crew and robots (only emit when path lights are off at night)
+  const T2=T; // alias for clarity
+  crewFigures.forEach(cf=>{
+    // Headlamp on helmet — small point light + visible cone mesh
+    const fl=new T2.SpotLight(0xffeedd,0,12,Math.PI/5,0.5);
+    fl.position.set(0,0.6,0.3);fl.target.position.set(0,0,3);
+    cf.mesh.add(fl);cf.mesh.add(fl.target);
+    // Visible flashlight beam cone (subtle)
+    const coneG=new T2.ConeGeometry(0.8,4,8,1,true);
+    const coneM=new T2.MeshBasicMaterial({color:0xffeedd,transparent:true,opacity:0,side:T2.DoubleSide});
+    const cone=new T2.Mesh(coneG,coneM);
+    cone.rotation.x=Math.PI/2;cone.position.set(0,0.4,2.2);
+    cf.mesh.add(cone);
+    cf.flashlight=fl;cf.flashCone=cone;
+  });
+  robots.forEach(r=>{
+    // Robot headlight — stronger, more focused
+    const hl=new T2.SpotLight(0xddffdd,0,18,Math.PI/6,0.4);
+    hl.position.set(0.5,0.7,0.4);hl.target.position.set(0,0,3);
+    r.mesh.add(hl);r.mesh.add(hl.target);
+    const coneG=new T2.ConeGeometry(0.6,5,8,1,true);
+    const coneM=new T2.MeshBasicMaterial({color:0xddffdd,transparent:true,opacity:0,side:T2.DoubleSide});
+    const cone=new T2.Mesh(coneG,coneM);
+    cone.rotation.x=Math.PI/2;cone.position.set(0.3,0.5,2.8);
+    r.mesh.add(cone);
+    r.flashlight=hl;r.flashCone=cone;
   });
 
   // ── Animate ──
@@ -1713,8 +1742,12 @@ function buildGroundScene(){
       r.mesh.rotation.y=Math.atan2(r.vx,r.vz);
       if(Math.abs(r.mesh.position.x)>50){r.vx*=-1;r.mesh.position.x=Math.sign(r.mesh.position.x)*49}
       if(Math.abs(r.mesh.position.z)>50){r.vz*=-1;r.mesh.position.z=Math.sign(r.mesh.position.z)*49}
-      // Blink rover light
+      // Blink rover status light
       r.light.material.color.setHex(Math.floor(frame/20+robots.indexOf(r)*7)%2?0x44ff44:0x116611);
+      // Headlight: ON when dark + colony lights OFF (rationing protocol)
+      const needFlashlight=isNight&&!lightsOn;
+      if(r.flashlight){r.flashlight.intensity=needFlashlight?2.5:0}
+      if(r.flashCone){r.flashCone.material.opacity=needFlashlight?0.06:0}
     });
 
     // Crew walking
@@ -1725,6 +1758,10 @@ function buildGroundScene(){
       cf.mesh.rotation.y=a+Math.PI/2;
       // Slight bob while walking
       cf.mesh.position.y=0.5+Math.abs(Math.sin(frame*0.05+i))*0.1;
+      // Headlamp: ON when dark + colony lights OFF (rationing — bring your flashlight)
+      const needFlashlight=isNight&&!lightsOn;
+      if(cf.flashlight){cf.flashlight.intensity=needFlashlight?1.8:0}
+      if(cf.flashCone){cf.flashCone.material.opacity=needFlashlight?0.04:0}
     });
 
     // Antenna dish rotation
