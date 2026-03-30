@@ -29,6 +29,7 @@ from scoring import score_run, build_leaderboard, display_leaderboard
 from mission_control import run_mission_control
 from evolution import evolve, display_evolution_results
 from lispy import LispyVM, CONTROL_PROGRAMS
+from autonomy import AutonomyEnforcer, AutonomyScoreboard, Phase
 
 
 def run_single(sols: int = DEFAULT_SOLS, seed: int = DEFAULT_SEED,
@@ -632,12 +633,40 @@ def main() -> None:
                         help="Run colony with LisPy governor program (built-in name or file path)")
     parser.add_argument("--lispy-list", action="store_true",
                         help="List available built-in LisPy control programs")
+    parser.add_argument("--autonomy", action="store_true",
+                        help="Run autonomy benchmark — how long without human contact?")
 
     args = parser.parse_args()
 
     start = time.time()
 
-    if args.lispy_list:
+    if args.autonomy:
+        print("\n  AUTONOMY BENCHMARK — Zero Human Contact")
+        print("  How many sols can each governor survive alone?\n")
+        scoreboard = AutonomyScoreboard()
+
+        for arch in GOVERNOR_ARCHETYPES:
+            for seed in BENCHMARK_SEEDS:
+                result = run_single(sols=args.sols, seed=seed, archetype=arch)
+                scoreboard.record_run(
+                    governor_name=f"{arch}-{seed}",
+                    archetype=arch,
+                    autonomy_sols=result["survived_sols"],
+                    colony_alive=result["alive"],
+                    cause_of_death=result.get("cause_of_death"),
+                    seed=seed,
+                )
+                print(f"\r  {arch:>14} seed={seed}: "
+                      f"{result['survived_sols']:>4} sols "
+                      f"{'ALIVE' if result['alive'] else result.get('cause_of_death', 'DEAD'):>20}",
+                      end="", flush=True)
+            print()
+
+        scoreboard.display()
+        elapsed = time.time() - start
+        print(f"  Elapsed: {elapsed:.2f}s")
+        return
+    elif args.lispy_list:
         print("\n  Available LisPy control programs:")
         for name, code in CONTROL_PROGRAMS.items():
             lines = [l.strip() for l in code.strip().split('\n') if l.strip()]
