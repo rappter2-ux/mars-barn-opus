@@ -3354,29 +3354,69 @@ function updateAllUI(){
   const echoTag=lastEcho?` | ECHO ${echoHistory.length}`:'';
   const riskCol=colonyRiskIndex>50?'var(--red)':colonyRiskIndex>30?'var(--yellow)':'var(--green)';
   document.getElementById('status-text').innerHTML=s.alive?`SOL ${s.sol} | ${s.arch.toUpperCase()} | ${ac.length} CREW | <span style="color:${riskCol}">CRI ${colonyRiskIndex} ${riskGrade}</span>${echoTag}`:'COLONY LOST — '+s.cause;
-  // Colony info
+
+  // Colony info — real compound health from multiple signals
+  const avgHp=ac.length?ac.reduce((a,c)=>a+c.hp,0)/ac.length:0;
+  const colonyHealth=s.alive?Math.round((avgHp*0.3+s.morale*100*0.2+Math.min(100,s.power/5)*0.2+(100-colonyRiskIndex)*0.3)):0;
+  const healthCol=colonyHealth>60?'var(--green)':colonyHealth>30?'var(--yellow)':'var(--red)';
   document.getElementById('colony-info').innerHTML=`
-    <div class="colony-card"><span class="name">Ares Colony</span><span class="hp" style="color:${s.alive?'var(--green)':'var(--red)'}">${s.alive?'ACTIVE':'DEAD'}</span>
-    <div style="margin-top:4px;font-size:10px">Sol ${s.sol} | Morale ${(s.morale*100).toFixed(0)}% | Rad ${s.rad.toFixed(0)} mSv</div>
-    <div class="hp-bar"><div class="hp-fill" style="width:${Math.max(0,Math.min(100,s.alive?80:0))}%;background:${s.alive?'var(--green)':'var(--red)'}"></div></div></div>`;
-  // Resources
-  const res=[['O₂',s.o2,n*O2_PP*60,s.o2/(n*O2_PP),'--blue'],['H₂O',s.h2o,n*H2O_PP*60,s.h2o/(n*H2O_PP),'--blue'],
-    ['Food',s.food,n*FOOD_PP*60,s.food/(n*FOOD_PP),'--yellow'],['Power',s.power,1000,s.power/PWR_BASE,'--purple']];
-  document.getElementById('resources').innerHTML=res.map(([l,v,mx,d,c])=>{
-    const pct=Math.min(100,v/mx*100);const col=pct>50?'var(--green)':pct>20?'var(--yellow)':'var(--red)';
-    return`<div class="res-bar"><span class="res-label">${l}</span><div class="res-track"><div class="res-fill" style="width:${pct}%;background:${col}"></div></div><span class="res-val">${d.toFixed(0)}d</span></div>`;
+    <div class="colony-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="name">${activeMission?MISSIONS[activeMission]?.name||'Colony':'Colony'}</span>
+        <span style="color:${healthCol};font-weight:700;font-size:12px">${s.alive?colonyHealth+'%':'DEAD'}</span>
+      </div>
+      <div class="hp-bar" style="margin:6px 0"><div class="hp-fill" style="width:${colonyHealth}%;background:${healthCol}"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim)">
+        <span>Sol ${s.sol}</span>
+        <span>Morale ${(s.morale*100).toFixed(0)}%</span>
+        <span>Rad ${s.rad.toFixed(0)} mSv</span>
+        <span style="color:${riskCol}">CRI ${colonyRiskIndex}</span>
+      </div>
+    </div>`;
+
+  // Resources — with delta arrows from echo inertia
+  const deltas=lastEcho?lastEcho.delta:{o2:0,h2o:0,food:0,power:0};
+  const res=[
+    ['O₂',s.o2,n*O2_PP*60,s.o2/(n*O2_PP),deltas.o2,'--blue'],
+    ['H₂O',s.h2o,n*H2O_PP*60,s.h2o/(n*H2O_PP),deltas.h2o,'--blue'],
+    ['Food',s.food,n*FOOD_PP*60,s.food/(n*FOOD_PP),deltas.food/1000,'--yellow'],
+    ['Power',s.power,1000,s.power/PWR_BASE,deltas.power,'--purple']];
+  document.getElementById('resources').innerHTML=res.map(([l,v,mx,d,delta,c])=>{
+    const pct=Math.min(100,v/mx*100);
+    const col=pct>50?'var(--green)':pct>20?'var(--yellow)':'var(--red)';
+    const arrow=delta>0.5?'<span style="color:var(--green)">▲</span>':delta<-0.5?'<span style="color:var(--red)">▼</span>':'<span style="color:var(--dim)">●</span>';
+    const deltaStr=Math.abs(delta)>0.1?`<span style="font-size:9px;color:${delta>0?'var(--green)':'var(--red)'}"> ${delta>0?'+':''}${delta.toFixed(1)}</span>`:'';
+    return`<div class="res-bar"><span class="res-label">${arrow} ${l}</span><div class="res-track"><div class="res-fill" style="width:${pct}%;background:${col}"></div></div><span class="res-val">${d.toFixed(0)}d${deltaStr}</span></div>`;
   }).join('');
-  // Systems
+
+  // Systems — with degradation warning
   const sys=[['Solar',s.s_eff],['ISRU',s.i_eff],['GreenH',s.g_eff],['Heat',s.h_eff]];
   document.getElementById('systems').innerHTML=sys.map(([l,v])=>{
     const pct=v*100;const col=pct>70?'var(--green)':pct>30?'var(--yellow)':'var(--red)';
-    return`<div class="res-bar"><span class="res-label">${l}</span><div class="res-track"><div class="res-fill" style="width:${pct}%;background:${col}"></div></div><span class="res-val">${pct.toFixed(0)}%</span></div>`;
+    const warn=pct<85?` <span style="font-size:8px;color:var(--red)">${pct<50?'⚠ DEGRADED':'↓'}</span>`:'';
+    return`<div class="res-bar"><span class="res-label">${l}</span><div class="res-track"><div class="res-fill" style="width:${pct}%;background:${col}"></div></div><span class="res-val">${pct.toFixed(0)}%${warn}</span></div>`;
   }).join('');
+
+  // Allocation display
+  const allocHtml=`<div style="display:flex;gap:2px;margin:6px 0;height:8px;border-radius:4px;overflow:hidden">
+    <div style="width:${s.alloc.h*100}%;background:var(--red)" title="Heating ${(s.alloc.h*100).toFixed(0)}%"></div>
+    <div style="width:${s.alloc.i*100}%;background:var(--blue)" title="ISRU ${(s.alloc.i*100).toFixed(0)}%"></div>
+    <div style="width:${s.alloc.g*100}%;background:var(--green)" title="Greenhouse ${(s.alloc.g*100).toFixed(0)}%"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--dim)">
+    <span style="color:var(--red)">H:${(s.alloc.h*100).toFixed(0)}%</span>
+    <span style="color:var(--blue)">I:${(s.alloc.i*100).toFixed(0)}%</span>
+    <span style="color:var(--green)">G:${(s.alloc.g*100).toFixed(0)}%</span>
+    <span>Ration:${(s.alloc.r*100).toFixed(0)}%</span>
+  </div>`;
+
   // Modules
-  document.getElementById('modules-list').innerHTML=s.modules.length?
+  document.getElementById('modules-list').innerHTML=(s.modules.length?
     s.modules.map(m=>`<div class="module-item"><span>${m.type.replace(/_/g,' ')}</span><span class="status">✓ Sol ${m.built}</span></div>`).join('')
-    +(s.building?`<div class="module-item" style="color:var(--yellow)"><span>${s.building.type.replace(/_/g,' ')}</span><span>${s.building.remaining} sols</span></div>`:'')
-    :'Landing habitat only'+(s.building?`<div style="color:var(--yellow);margin-top:4px">Building: ${s.building.type.replace(/_/g,' ')} (${s.building.remaining} sols)</div>`:'');
+    +(s.building?`<div class="module-item" style="color:var(--yellow)"><span>▶ ${s.building.type.replace(/_/g,' ')}</span><span>${s.building.remaining} sols</span></div>`:'')
+    :'Landing habitat only'+(s.building?`<div style="color:var(--yellow);margin-top:4px">▶ ${s.building.type.replace(/_/g,' ')} (${s.building.remaining} sols)</div>`:''))
+    +allocHtml;
+
   // Research
   const rl=document.getElementById('research-list');
   if(rl){
@@ -3386,16 +3426,51 @@ function updateAllUI(){
     if(!rhtml)rhtml='<div style="color:var(--dim)">Available after sol 30</div>';
     rl.innerHTML=rhtml;
   }
-  // Crew
+
+  // Crew — with HP bars and role colors
   document.getElementById('crew-roster').innerHTML=s.crew.map(m=>{
     const col=!m.alive?'var(--red)':m.hp>70?'var(--green)':m.hp>30?'var(--yellow)':'var(--red)';
-    return`<div class="crew-row"><span style="color:${col};width:8px">●</span><span style="width:100px">${m.name}</span><span style="width:40px;color:var(--dim)">${m.role}</span><span style="width:35px;text-align:right;color:${col}">${m.alive?m.hp.toFixed(0):'--'}</span><span style="flex:1;text-align:right;font-size:10px;color:var(--dim)">${m.st}</span></div>`;
+    const roleCol=m.role==='CMDR'?'#ff8800':m.role==='ENGR'?'#4488ff':m.role==='SCI'?'#44ff44':'#ff4488';
+    const isBot=m.name.startsWith('OPT')||m.name.startsWith('LUN');
+    const icon=!m.alive?'💀':isBot?'🤖':'👤';
+    return`<div class="crew-row" style="padding:4px 0">
+      <span style="font-size:11px">${icon}</span>
+      <span style="width:85px;font-size:11px;font-weight:600">${m.name}</span>
+      <span style="width:35px;font-size:9px;color:${roleCol};font-weight:700">${m.role}</span>
+      <div style="flex:1;height:6px;background:rgba(255,255,255,0.05);border-radius:3px;margin:0 4px">
+        <div style="width:${m.alive?m.hp:0}%;height:100%;background:${col};border-radius:3px;transition:width 0.3s"></div>
+      </div>
+      <span style="width:28px;font-size:10px;text-align:right;color:${col}">${m.alive?m.hp.toFixed(0):'--'}</span>
+      <span style="width:50px;font-size:8px;text-align:right;color:var(--dim)">${m.st}</span>
+    </div>`;
   }).join('');
-  // Events — show echo frame events with descriptions
+
+  // Active reflexes indicator
+  if(activeReflexes.length){
+    const reflexEl=document.getElementById('crew-roster');
+    if(reflexEl){
+      reflexEl.innerHTML+=`<div style="margin-top:6px;padding:4px 6px;background:rgba(88,166,255,0.05);border:1px solid var(--border);border-radius:4px;font-size:9px">
+        <span style="color:var(--cyan)">🧠 ${activeReflexes.length} REFLEXES:</span>
+        <span style="color:var(--dim)">${activeReflexes.slice(0,3).map(r=>r.id.replace(/_/g,' ')).join(' · ')}${activeReflexes.length>3?' +'+( activeReflexes.length-3):''}</span>
+      </div>`;
+    }
+  }
+
+  // Events — with severity bars
   const recent=s.events.slice(-5);
-  document.getElementById('event-feed').innerHTML=recent.length?recent.map(e=>
-    `<div class="event-item"><span class="tag">${e.type.replace(/_/g,' ').toUpperCase()}</span> ${e.desc||''} <span style="color:var(--dim)">(sev ${e.severity.toFixed(1)}, ${e.remaining}s left)</span></div>`
-  ).join(''):'<div class="event-item" style="color:var(--green)">All systems nominal</div>';
+  document.getElementById('event-feed').innerHTML=recent.length?recent.map(e=>{
+    const sevCol=e.severity>0.6?'var(--red)':e.severity>0.3?'var(--yellow)':'var(--blue)';
+    return`<div class="event-item">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="tag" style="color:${sevCol}">${e.type.replace(/_/g,' ').toUpperCase()}</span>
+        <span style="color:var(--dim);font-size:9px">${e.remaining}s left</span>
+      </div>
+      <div style="font-size:10px;color:var(--text);margin-top:2px">${e.desc||''}</div>
+      <div style="height:2px;background:rgba(255,255,255,0.05);border-radius:1px;margin-top:3px">
+        <div style="width:${e.severity*100}%;height:100%;background:${sevCol};border-radius:1px"></div>
+      </div>
+    </div>`;
+  }).join(''):'<div class="event-item" style="color:var(--green)">All systems nominal</div>';
   // Log
   document.getElementById('mini-log').innerHTML=s.log.slice(-20).map(l=>
     l.includes('COLONY LOST')?`<div style="color:var(--red)">${l}</div>`:
