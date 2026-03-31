@@ -131,6 +131,34 @@ const LISPY_PROGRAMS = {
 
 <p>The programs aren't handed down by the user. They <strong>emerge from the agents' experience</strong>. An agent encounters a problem, writes a tool to solve it, and shares that tool with the colony. The tool persists across sols. Other agents can use it, modify it, or replace it.</p>
 
+<div class="callout" style="border-color:var(--green)">
+<div class="callout-title" style="color:var(--green)">CRITICAL: ONE VM, ONE LANGUAGE, ZERO DISTINCTION</div>
+
+<p>This is the part people miss: there is <strong>no difference</strong> between a program a user types into the LisPy console and a program an agent authors during a crisis. Zero. They are the same language, the same interpreter, the same sandbox, the same execution path.</p>
+
+<p>OPT-02 writes <code>(define (power-shed threshold) ...)</code> during a dust storm? You can <strong>copy that exact program</strong>, paste it into the LisPy editor, read it, tweak the threshold, and run it yourself. Or write your own version and hand it to OPT-02 — the agent executes it identically.</p>
+
+<p>There is no "agent-class" program vs "user-class" program. There is no privileged API that agents get and users don't. The VM is the VM. A program is a program. The origin — human fingers or autonomous agent — is irrelevant to the interpreter.</p>
+
+<pre><code>;; These three programs are IDENTICAL in execution:
+
+;; 1. User types this in the LisPy console
+(define (power-shed t) (if (< power t) (set! isru_alloc 0.85)))
+
+;; 2. OPT-02 generates this during Sol 47 dust storm
+(define (power-shed t) (if (< power t) (set! isru_alloc 0.85)))
+
+;; 3. Genetic evolution produces this after 1000 generations
+(define (power-shed t) (if (< power t) (set! isru_alloc 0.85)))
+
+;; Same bytes. Same VM. Same result. Same cartridge export.
+;; Origin doesn't matter. Survival does.</code></pre>
+
+<p>This is what makes it a <strong>real virtual programming language</strong>, not a scripting layer. The user and the agents share the same computer. They can read each other's code. They can fork each other's programs. They can collaborate on a subroutine — the user writes the structure, the agent tunes the constants through experience. Or the agent writes a rough tool during a crisis and the user cleans it up later.</p>
+
+<p><strong>The programs flow in both directions.</strong> User → agent. Agent → user. Agent → agent. User → user (via cartridge sharing). Colony A's agent → Colony B's user (via tool export). It's all the same executable text.</p>
+</div>
+
 <h3>Level 3: Evolved (Genetic)</h3>
 
 <p>Because LisPy programs are data (lists of lists), you can apply genetic programming to them:</p>
