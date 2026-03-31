@@ -1,0 +1,47 @@
+name: Generate Mars Frames
+
+on:
+  schedule:
+    # Run daily at 06:00 UTC — new frame every Earth day
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      count:
+        description: 'Number of frames to generate'
+        required: false
+        default: '1'
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate new frames
+        run: |
+          COUNT=${{ github.event.inputs.count || '1' }}
+          python3 tools/generate_frames.py --count "$COUNT"
+
+      - name: Commit and push
+        run: |
+          git config user.name "Mars Frame Generator"
+          git config user.email "frames@mars-barn.local"
+          git add data/frames/
+          # Only commit if there are changes
+          if git diff --cached --quiet; then
+            echo "No new frames to commit"
+          else
+            LATEST=$(cat data/frames/latest.json | python3 -c "import sys,json;print(json.load(sys.stdin)['sol'])")
+            git commit -m "frame: Sol ${LATEST} — daily Mars conditions
+
+            Auto-generated from NASA Mars climate models.
+            Same planet for everyone. Compete on management."
+            git push
+          fi

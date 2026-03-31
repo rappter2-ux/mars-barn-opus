@@ -1,0 +1,54 @@
+{
+  "sol": 134,
+  "utc": "2025-11-23T16:26:24Z",
+  "mars": {
+    "ls": 197.2,
+    "season": "Northern Autumn",
+    "temp_k": 237.5,
+    "temp_c": -35.7,
+    "pressure_pa": 731,
+    "solar_wm2": 576,
+    "dust_tau": 0.201,
+    "wind_ms": 4.9,
+    "lmst": 16.2
+  },
+  "events": [
+    {
+      "type": "dust_devil",
+      "severity": 0.34,
+      "duration_sols": 1,
+      "desc": "Dust devil spotted near habitat perimeter"
+    },
+    {
+      "type": "thermal_cycle",
+      "severity": 0.46,
+      "delta_k": 34,
+      "desc": "Extreme thermal cycling \u2014 structural stress warning"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0175
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.2,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.82,
+    "water_ice_depth_m": 1.8,
+    "surface_radiation_usv": 0.71
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 133,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 6.8,
+    "dust_delta": 0.037
+  },
+  "_hash": "0b8cde9121b6dc9e"
+}

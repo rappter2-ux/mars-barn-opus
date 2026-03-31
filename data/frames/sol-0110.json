@@ -1,0 +1,61 @@
+{
+  "sol": 110,
+  "utc": "2025-10-30T00:36:00Z",
+  "mars": {
+    "ls": 184.6,
+    "season": "Northern Autumn",
+    "temp_k": 234.3,
+    "temp_c": -38.8,
+    "pressure_pa": 738,
+    "solar_wm2": 488,
+    "dust_tau": 0.142,
+    "wind_ms": 4.6,
+    "lmst": 7.6
+  },
+  "events": [
+    {
+      "type": "dust_devil",
+      "severity": 0.32,
+      "duration_sols": 1,
+      "desc": "Dust devil spotted near habitat perimeter"
+    },
+    {
+      "type": "solar_flare",
+      "severity": 0.61,
+      "duration_sols": 3,
+      "desc": "Solar particle event detected \u2014 elevated radiation"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0171
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 12.2,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.73,
+    "water_ice_depth_m": 1.8,
+    "surface_radiation_usv": 0.47
+  },
+  "challenge": {
+    "id": "sol110_water_recycler_fault",
+    "type": "water_recycler_fault",
+    "params": {
+      "efficiency_drop": 0.3,
+      "filter_age_sols": 32
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 109,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": 4.1,
+    "dust_delta": -0.073
+  },
+  "_hash": "99f2fff40b3c289a"
+}

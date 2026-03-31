@@ -1,0 +1,55 @@
+{
+  "sol": 105,
+  "utc": "2025-10-24T21:18:00Z",
+  "mars": {
+    "ls": 182.0,
+    "season": "Northern Autumn",
+    "temp_k": 235.8,
+    "temp_c": -37.3,
+    "pressure_pa": 739,
+    "solar_wm2": 465,
+    "dust_tau": 0.111,
+    "wind_ms": 5.1,
+    "lmst": 10.8
+  },
+  "events": [
+    {
+      "type": "solar_flare",
+      "severity": 0.56,
+      "duration_sols": 3,
+      "desc": "Solar particle event detected \u2014 elevated radiation"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0111
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 11.9,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.88,
+    "water_ice_depth_m": 2.2,
+    "surface_radiation_usv": 0.48
+  },
+  "challenge": {
+    "id": "sol105_co2_scrubber_saturation",
+    "type": "co2_scrubber_saturation",
+    "params": {
+      "saturation_pct": 75,
+      "co2_ppm": 1361
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 104,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": -5.1,
+    "dust_delta": 0.023
+  },
+  "_hash": "b6e0e3c9734449e4"
+}

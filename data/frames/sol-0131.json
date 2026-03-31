@@ -1,0 +1,53 @@
+{
+  "sol": 131,
+  "utc": "2025-11-20T14:27:36Z",
+  "mars": {
+    "ls": 195.6,
+    "season": "Northern Autumn",
+    "temp_k": 241.3,
+    "temp_c": -31.8,
+    "pressure_pa": 732,
+    "solar_wm2": 568,
+    "dust_tau": 0.155,
+    "wind_ms": 5.1,
+    "lmst": 18.2
+  },
+  "events": [
+    {
+      "type": "dust_storm",
+      "severity": 0.61,
+      "duration_sols": 14,
+      "desc": "Regional dust storm approaching from the north"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.018
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "antenna",
+      "degradation": 0.0068
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.1,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.81,
+    "water_ice_depth_m": 1.4,
+    "surface_radiation_usv": 0.32
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 130,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": 3.4,
+    "dust_delta": 0.016
+  },
+  "_hash": "905b0cf74fca7e84"
+}

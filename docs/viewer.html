@@ -575,6 +575,27 @@ body.cinematic-active .cartridge-bar,body.cinematic-active #task-panel{
     <div id="lispy-output" style="font-size:9px;color:var(--dim);margin-top:4px;max-height:40px;overflow-y:auto;font-family:monospace"></div>
     <div id="lispy-alloc" style="font-size:9px;color:var(--yellow);margin-top:2px"></div>
   </div>
+  <h3 style="cursor:pointer" onclick="document.getElementById('autopilot-panel').style.display=document.getElementById('autopilot-panel').style.display==='none'?'block':'none'">✈️ Autopilot Programs ▾</h3>
+  <div id="autopilot-panel" style="display:none">
+    <div style="font-size:10px;color:var(--dim);margin-bottom:6px;line-height:1.6">
+      LisPy programs that auto-resolve tasks. Same VM as the governor — edit, swap, or write your own.
+    </div>
+    <div style="margin-bottom:6px">
+      <div style="font-size:9px;color:var(--cyan);letter-spacing:0.5px;margin-bottom:2px">TASK DECISION PROGRAM</div>
+      <textarea id="autopilot-decision-editor" spellcheck="false" style="width:100%;height:100px;background:#080b10;border:1px solid var(--border);color:var(--green);font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;padding:6px;border-radius:4px;resize:vertical;line-height:1.4" oninput="autopilotPrograms.task_decision=this.value"></textarea>
+    </div>
+    <div style="margin-bottom:6px">
+      <div style="font-size:9px;color:var(--cyan);letter-spacing:0.5px;margin-bottom:2px">OVERRIDE SEQUENCE PROGRAM</div>
+      <textarea id="autopilot-override-editor" spellcheck="false" style="width:100%;height:80px;background:#080b10;border:1px solid var(--border);color:var(--green);font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;padding:6px;border-radius:4px;resize:vertical;line-height:1.4" oninput="autopilotPrograms.task_override=this.value"></textarea>
+    </div>
+    <div style="display:flex;gap:4px">
+      <button onclick="resetAutopilotDefaults()" style="flex:1;background:none;border:1px solid var(--border);color:var(--dim);font-family:var(--font);font-size:9px;padding:3px 6px;cursor:pointer;border-radius:3px">↻ Reset to Defaults</button>
+      <button onclick="exportAutopilotCartridge()" style="flex:1;background:none;border:1px solid var(--cyan);color:var(--cyan);font-family:var(--font);font-size:9px;padding:3px 6px;cursor:pointer;border-radius:3px">💾 Export Programs</button>
+      <button onclick="document.getElementById('autopilot-import-file').click()" style="flex:1;background:none;border:1px solid var(--green);color:var(--green);font-family:var(--font);font-size:9px;padding:3px 6px;cursor:pointer;border-radius:3px">📂 Import</button>
+      <input type="file" id="autopilot-import-file" accept=".json" onchange="importAutopilotCartridge(event)" style="display:none">
+    </div>
+    <div id="autopilot-status" style="font-size:9px;color:var(--dim);margin-top:4px"></div>
+  </div>
   <h3>Mission Log</h3>
   <div id="mini-log" style="max-height:120px;overflow-y:auto;font-size:10px;color:var(--dim)"></div>
 </div>
@@ -1160,6 +1181,65 @@ function toggleAutopilot(){
   state.log.push(autopilotEnabled
     ? '✈️ AUTOPILOT ENGAGED — LisPy programs will auto-resolve tasks'
     : '✈️ AUTOPILOT DISENGAGED — manual task resolution');
+}
+
+function resetAutopilotDefaults(){
+  autopilotPrograms = {};
+  const decEd = document.getElementById('autopilot-decision-editor');
+  const ovrEd = document.getElementById('autopilot-override-editor');
+  if(decEd) decEd.value = DEFAULT_AUTOPILOT.task_decision;
+  if(ovrEd) ovrEd.value = DEFAULT_AUTOPILOT.task_override;
+  const st = document.getElementById('autopilot-status');
+  if(st) st.textContent = 'Reset to defaults';
+  if(st) setTimeout(()=>st.textContent='', 2000);
+}
+
+function initAutopilotEditors(){
+  const decEd = document.getElementById('autopilot-decision-editor');
+  const ovrEd = document.getElementById('autopilot-override-editor');
+  if(decEd) decEd.value = autopilotPrograms.task_decision || DEFAULT_AUTOPILOT.task_decision;
+  if(ovrEd) ovrEd.value = autopilotPrograms.task_override || DEFAULT_AUTOPILOT.task_override;
+}
+
+function exportAutopilotCartridge(){
+  const programs = {
+    _format: 'mars-barn-autopilot',
+    version: 1,
+    created: new Date().toISOString(),
+    task_decision: autopilotPrograms.task_decision || DEFAULT_AUTOPILOT.task_decision,
+    task_override: autopilotPrograms.task_override || DEFAULT_AUTOPILOT.task_override,
+  };
+  const blob = new Blob([JSON.stringify(programs, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'autopilot-programs.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  state.log.push('💾 Autopilot programs exported');
+}
+
+function importAutopilotCartridge(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(data.task_decision) autopilotPrograms.task_decision = data.task_decision;
+      if(data.task_override) autopilotPrograms.task_override = data.task_override;
+      initAutopilotEditors();
+      const st = document.getElementById('autopilot-status');
+      if(st) st.textContent = '✓ Programs loaded from ' + file.name;
+      state.log.push(`📂 Autopilot programs imported from ${file.name}`);
+    }catch(err){
+      alert('Failed to load autopilot programs: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
 }
 
 const ROBOT_PLEAS = [
