@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>First Principles to Mars — Slide Deck</title>
+<meta name="description" content="From brainstem to Mars colony. How to build living simulations with echo frames, reflex arcs, and data sloshing.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--card:#161b22;--text:#c9d1d9;--dim:#484f58;--cyan:#79c0ff;
+--green:#3fb950;--yellow:#d29922;--red:#da3633;--blue:#58a6ff;--purple:#a371f7;
+--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+--mono:'SFMono-Regular',Consolas,monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden;height:100vh}
+.slide{position:absolute;top:0;left:0;right:0;bottom:0;display:none;flex-direction:column;
+justify-content:center;align-items:center;padding:60px 80px;text-align:center;
+transition:opacity 0.4s}
+.slide.active{display:flex}
+.slide h1{font-size:48px;color:#fff;letter-spacing:4px;margin-bottom:16px;
+text-shadow:0 0 40px rgba(88,166,255,0.3)}
+.slide h2{font-size:36px;color:var(--cyan);letter-spacing:2px;margin-bottom:24px}
+.slide h3{font-size:24px;color:var(--green);margin-bottom:16px}
+.slide p{font-size:20px;line-height:1.6;max-width:800px;color:var(--text);margin:8px 0}
+.slide .big{font-size:28px;color:#fff;font-weight:700}
+.slide .dim{color:var(--dim);font-size:16px;margin-top:16px}
+.slide .stat{display:inline-block;margin:0 24px;text-align:center}
+.slide .stat .val{font-size:48px;font-weight:700;color:var(--cyan)}
+.slide .stat .lbl{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.slide code{background:rgba(88,166,255,0.1);color:var(--cyan);padding:2px 8px;border-radius:4px;
+font-family:var(--mono);font-size:0.85em}
+.slide pre{background:#0a0e14;border:1px solid #30363d;border-radius:8px;padding:20px 24px;
+text-align:left;font-size:15px;line-height:1.5;font-family:var(--mono);color:var(--text);
+max-width:700px;width:100%;margin:16px 0;overflow-x:auto}
+.slide .cols{display:flex;gap:32px;max-width:900px;text-align:left}
+.slide .col{flex:1;background:var(--card);border:1px solid #30363d;border-radius:10px;padding:20px}
+.slide .col h3{font-size:16px;margin-bottom:8px}
+.slide .col p{font-size:14px;line-height:1.5}
+.slide .layer{text-align:left;max-width:700px;width:100%;margin:4px 0;padding:12px 16px;
+border-radius:6px;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+.slide .emoji{font-size:40px;margin-bottom:12px}
+.slide ul{text-align:left;font-size:18px;line-height:2;max-width:700px}
+.slide li{margin:4px 0}
+.nav-dots{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--dim);cursor:pointer;transition:all 0.2s}
+.dot.active{background:var(--cyan);transform:scale(1.3)}
+.slide-num{position:fixed;bottom:24px;right:24px;font-size:12px;color:var(--dim);z-index:100;
+font-family:var(--mono)}
+.controls{position:fixed;bottom:20px;left:24px;font-size:11px;color:var(--dim);z-index:100}
+.brand{position:fixed;top:20px;left:24px;font-size:11px;color:var(--dim);letter-spacing:1px;z-index:100}
+</style>
+</head>
+<body>
+
+<div class="brand">FIRST PRINCIPLES TO MARS</div>
+<div class="controls">← → or click to navigate</div>
+
+<!-- SLIDE 0: Title -->
+<div class="slide active" id="s0">
+<div class="emoji">🔴</div>
+<h1>FIRST PRINCIPLES TO MARS</h1>
+<p class="big">An Oregon Trail for Mars.</p>
+<p>Real physics. Real weather. Real decisions. Real consequences.</p>
+<div class="dim">The Rappter Playbook — From Brainstem to Mars Colony</div>
+</div>
+
+<!-- SLIDE 1: The Problem -->
+<div class="slide" id="s1">
+<h2>The Problem</h2>
+<p class="big">A Mars colony can't call home.</p>
+<p>Earth is 4-24 minutes away by radio. By the time Houston hears the alarm, the crew is already dead or saved. The colony must survive <strong>autonomously</strong>.</p>
+<p class="dim">Can an AI governor keep a colony alive without human intervention?<br>That's the question. That's the scoreboard.</p>
+</div>
+
+<!-- SLIDE 2: The Game -->
+<div class="slide" id="s2">
+<h2>The Game Loop</h2>
+<p>Choose mission → Real Mars seeds start → AI runs colony →<br>Tasks arrive → You decide → Consequences cascade →<br>Colony lives or dies → Post-mortem → Repeat</p>
+<div style="margin-top:24px">
+<div class="stat"><div class="val">8</div><div class="lbl">Missions</div></div>
+<div class="stat"><div class="val">299</div><div class="lbl">Tests</div></div>
+<div class="stat"><div class="val">29</div><div class="lbl">Modules</div></div>
+<div class="stat"><div class="val">0</div><div class="lbl">Dependencies</div></div>
+</div>
+</div>
+
+<!-- SLIDE 3: Real Mars -->
+<div class="slide" id="s3">
+<h2>Real Mars Weather</h2>
+<p class="big">Every session starts with <em>today's</em> actual Mars conditions.</p>
+<p>Temperature, dust opacity, solar irradiance, wind, season — all from NASA data models (Viking, Curiosity, Perseverance, MCD v6.1).</p>
+<p>Play tomorrow and it's different. <strong>Infinitely replayable.</strong></p>
+<div class="dim">Mars is currently in Autumn Equinox season. Dust τ varies 0.3-0.9 depending on the sol.</div>
+</div>
+
+<!-- SLIDE 4: Data Sloshing -->
+<div class="slide" id="s4">
+<h2>Data Sloshing</h2>
+<p>Output of Frame N → Input of Frame N+1</p>
+<pre>state, delta = tick(state)
+echo = {frame: N, delta, events, visual, inertia}
+echo_history.append(echo)
+# Frame N+1 reads all of frames 0..N
+# Context accumulates. The colony gets smarter.</pre>
+<p class="dim">One tick is dumb. A thousand ticks with accumulated context is intelligent.</p>
+</div>
+
+<!-- SLIDE 5: The Nervous System -->
+<div class="slide" id="s5">
+<h2>The Nervous System</h2>
+<div class="cols">
+<div class="col"><h3 style="color:var(--purple)">🧠 Cortex</h3><p>Sol tick. Expensive. Production, consumption, events, AI decisions. Runs every 0.5-5s.</p></div>
+<div class="col"><h3 style="color:var(--cyan)">🫀 Brainstem</h3><p>Echo frame. Structured delta. Inertia signal. CRI computation. "I can feel my heartbeat."</p></div>
+<div class="col"><h3 style="color:var(--green)">⚡ Spinal Cord</h3><p>Reflex arcs. Pre-computed IF/THEN rules. Fire between sols. Move muscles, not just flash lights.</p></div>
+<div class="col"><h3 style="color:var(--yellow)">🏃 Patrol</h3><p>Runs at ~20Hz. Reads standing orders. Applies continuous visual + behavioral effects. Never sleeps.</p></div>
+</div>
+</div>
+
+<!-- SLIDE 6: Echo Frame -->
+<div class="slide" id="s6">
+<h2>The Echo Frame</h2>
+<pre>{
+  frame: 47,
+  utc: "2026-03-31T22:00:00Z",
+  delta: {o2: -0.3, h2o: -1.2, food: -4500, power: +12},
+  events: [{type: "dust_storm", severity: 0.6}],
+  inertia: {o2_velocity: -0.15, trend: "decelerating"},
+  reflexes_fired: [{id: "o2_trajectory", intensity: 0.7}],
+  cri: 38, cri_grade: "ELEVATED",
+  visual: {dust_storm: true, night: false}
+}</pre>
+<p class="dim">Every heartbeat produces this. Tasks, visuals, and reflexes all read the echo — not raw state.</p>
+</div>
+
+<!-- SLIDE 7: Inertia -->
+<div class="slide" id="s7">
+<h2>Inertia — The Derivative</h2>
+<p class="big">Not just WHERE things are.<br>HOW they're CHANGING.</p>
+<p>O₂ at 15 days = a snapshot.<br>O₂ was 20 days, now 15, dropping at 5/sol = a <strong>trajectory</strong>.</p>
+<p style="color:var(--red);font-size:22px;margin-top:16px">The body doesn't wait until the hand is burned.<br>It fires when the temperature is <em>rising</em>.</p>
+</div>
+
+<!-- SLIDE 8: Reflex Arcs -->
+<div class="slide" id="s8">
+<h2>10 Reflex Arcs</h2>
+<ul>
+<li>💨 <strong>O₂ trajectory</strong> → auto-boost ISRU before you see the task</li>
+<li>⚡ <strong>Power drain</strong> → auto-shed non-essential loads</li>
+<li>🏥 <strong>Crew declining</strong> → auto-ration, micro-recovery</li>
+<li>🔄 <strong>System flip</strong> → reallocate toward reversed system</li>
+<li>📈 <strong>CRI rising</strong> → shift to survival mode proportional to stress</li>
+<li>🌪️ <strong>Dust storm</strong> → pause outdoor operations</li>
+<li>☢️ <strong>Solar flare</strong> → auto-shelter crew</li>
+<li>🌙 <strong>Night + power low</strong> → reduce greenhouse, conserve for dawn</li>
+<li>🌱 <strong>Food emergency</strong> → emergency greenhouse boost</li>
+<li>🤖 <strong>Robot down</strong> → healthy robots compensate (at wear cost)</li>
+</ul>
+</div>
+
+<!-- SLIDE 9: CRI -->
+<div class="slide" id="s9">
+<h2>Colony Risk Index</h2>
+<p class="big">A VIX for Mars.</p>
+<p>10 variables. Range 0-100. Computed by LisPy VM every sol.<br>Higher CRI = higher probability of failures.</p>
+<div style="margin-top:20px">
+<div class="layer" style="background:rgba(63,185,80,0.1);border-left:3px solid var(--green)"><span><strong>0-15</strong> LOW</span><span style="color:var(--dim)">Colony nominal</span></div>
+<div class="layer" style="background:rgba(88,166,255,0.1);border-left:3px solid var(--blue)"><span><strong>16-30</strong> MODERATE</span><span style="color:var(--dim)">Watch trajectories</span></div>
+<div class="layer" style="background:rgba(210,153,34,0.1);border-left:3px solid var(--yellow)"><span><strong>31-50</strong> ELEVATED</span><span style="color:var(--dim)">Reflexes active</span></div>
+<div class="layer" style="background:rgba(218,54,51,0.1);border-left:3px solid var(--red)"><span><strong>51-70</strong> HIGH</span><span style="color:var(--dim)">Cascading risk</span></div>
+<div class="layer" style="background:rgba(218,54,51,0.2);border-left:3px solid var(--red)"><span><strong>71-100</strong> CRITICAL</span><span style="color:var(--dim)">Survival mode</span></div>
+</div>
+</div>
+
+<!-- SLIDE 10: Papers Please -->
+<div class="slide" id="s10">
+<h2>Papers Please: Mission Control</h2>
+<p class="big">The AI runs the colony. You handle the exceptions.</p>
+<p>Tasks emerge from echo data — the autonomous system tried to handle it, couldn't, and is escalating to you. Countdown timer. Approve, deny, or let the AI default (usually the worse option).</p>
+<div class="cols" style="margin-top:20px">
+<div class="col"><h3 style="color:var(--red)">Decide</h3><p>O₂ reroute, water crisis, pressure leak, ISRU catalyst, solar tracking, radiation dosimetry</p></div>
+<div class="col"><h3 style="color:var(--yellow)">Override</h3><p>Guide robots through physical procedures with light delay. Stuck bolts, panel cleaning, antenna alignment, airlock seals</p></div>
+<div class="col"><h3 style="color:var(--green)">Rescue</h3><p>Robot tipped over — dispatch another robot. Wrong approach = both stuck. Slow and diagnostic wins.</p></div>
+</div>
+</div>
+
+<!-- SLIDE 11: Manual Override -->
+<div class="slide" id="s11">
+<h2>Manual Override</h2>
+<p>Robot can't unscrew a bolt. You send commands with light delay.</p>
+<pre>🧴 APPLY PENETRANT  → "Soaking..."        [3s delay]
+⏳ WAIT 30s          → "Wicked into threads" [3s delay]
+🔥 HEAT CYCLE        → "Thermal expansion"   [3s delay]
+🔧 EXTRACT CCW       → "Bolt extracted!"     [3s delay]
+
+🔧 EXTRACT CW  ← TRAP: wrong direction, threads stripped
+💪 FORCE        ← TRAP: bolt head shears off</pre>
+<p class="dim">The correct path is always: slow, diagnostic-first, methodical.<br>That's real remote ops. The skill IS the game.</p>
+</div>
+
+<!-- SLIDE 12: Feedback Loop -->
+<div class="slide" id="s12">
+<h2>The Feedback Loop</h2>
+<p class="big">The colony's reactions become input to its next thought.</p>
+<pre>Frame N → echo → reflex arcs fire → logged with UTC
+Frame N+1 → echo includes reflexes_fired[]
+→ "ISRU was auto-boosted but O₂ still dropping"
+→ "Reflexes aren't enough. Escalate to player."
+→ Task generated.</pre>
+<p class="dim">The organism tried to handle it. It couldn't. Now it needs mission control.</p>
+</div>
+
+<!-- SLIDE 13: The 3D Twin -->
+<div class="slide" id="s13">
+<h2>3D Digital Twin</h2>
+<p class="big">The 3D scene IS the sim. Not decoration.</p>
+<ul>
+<li>🤖 Robots match your crew config — 4 bots = 4 rovers with name tags</li>
+<li>👷 Crew figures in EVA suits, role-colored</li>
+<li>💡 Path lights ON when healthy, OFF when rationing → flashlights come out</li>
+<li>📷 Camera snaps to robot POV when task arrives</li>
+<li>🌪️ Fog thickens with dust storm severity</li>
+<li>🌙 Real Mars LMST day/night cycle</li>
+</ul>
+</div>
+
+<!-- SLIDE 14: Post-Mortem -->
+<div class="slide" id="s14">
+<h2>Every Death Is a Lesson</h2>
+<p>The post-mortem traces the full causal chain:</p>
+<div class="cols">
+<div class="col"><h3 style="color:var(--red)">What Happened</h3><p>Decision chain · Unintended consequences · Ambient hazards · Reflex history</p></div>
+<div class="col"><h3 style="color:var(--yellow)">Colony State</h3><p>Individual crew HP/morale/rad · System degradation · Final CRI · Resource reserves</p></div>
+<div class="col"><h3 style="color:var(--green)">What Would Help</h3><p>Specific, actionable analysis · Autonomy grade (F → MARS-READY)</p></div>
+</div>
+<p class="dim" style="margin-top:16px">Understand WHY → Write better LisPy governor → Try again → Beat the scoreboard</p>
+</div>
+
+<!-- SLIDE 15: For Educators -->
+<div class="slide" id="s15">
+<h2>For Educators</h2>
+<ul>
+<li>🔬 <strong>Physics</strong> — real Mars atmosphere, solar irradiance, thermal dynamics, radiation</li>
+<li>⚙️ <strong>Engineering</strong> — resource management, failure cascades, system dependencies</li>
+<li>💻 <strong>CS</strong> — write your own governor AI in LisPy (sandboxed Lisp)</li>
+<li>🤖 <strong>Robotics</strong> — physical twin hardware spec, same state model</li>
+<li>🎲 <strong>Game Theory</strong> — multi-colony trade, Prisoner's Dilemma</li>
+<li>📊 <strong>Data Science</strong> — genetic evolution, Monte Carlo scoring, confidence intervals</li>
+<li>🧠 <strong>Systems Thinking</strong> — nervous system architecture, emergence, feedback loops</li>
+</ul>
+<p class="dim">Zero dependencies. Runs in any browser. Works offline. Open source.</p>
+</div>
+
+<!-- SLIDE 16: Play It -->
+<div class="slide" id="s16">
+<div class="emoji">🚀</div>
+<h1>PLAY IT NOW</h1>
+<p class="big"><a href="viewer.html" style="color:var(--cyan)">kody-w.github.io/mars-barn-opus</a></p>
+<p>Pick a mission. Configure your crew. Survive — or learn why you didn't.</p>
+<div style="margin-top:32px">
+<div class="stat"><div class="val" style="font-size:36px">📖</div><div class="lbl"><a href="playbook.html">Read the Playbook</a></div></div>
+<div class="stat"><div class="val" style="font-size:36px">📜</div><div class="lbl"><a href="https://github.com/kody-w/mars-barn-opus/blob/main/CONSTITUTION.md">Constitution</a></div></div>
+<div class="stat"><div class="val" style="font-size:36px">💻</div><div class="lbl"><a href="https://github.com/kody-w/mars-barn-opus">Source Code</a></div></div>
+</div>
+<p class="dim" style="margin-top:24px">Python 3.9+ stdlib only. 299 tests. The code is the argument.</p>
+</div>
+
+<div class="nav-dots" id="dots"></div>
+<div class="slide-num" id="slide-num">1 / 17</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+let current=0;
+
+function showSlide(n){
+  current=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,i)=>{s.classList.toggle('active',i===current)});
+  document.querySelectorAll('.dot').forEach((d,i)=>{d.classList.toggle('active',i===current)});
+  document.getElementById('slide-num').textContent=`${current+1} / ${slides.length}`;
+}
+
+// Build dots
+const dotsEl=document.getElementById('dots');
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=()=>showSlide(i);
+  dotsEl.appendChild(d);
+});
+
+// Keyboard nav
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')showSlide(current+1);
+  if(e.key==='ArrowLeft')showSlide(current-1);
+});
+
+// Click nav (left half = back, right half = forward)
+document.addEventListener('click',e=>{
+  if(e.target.closest('.nav-dots,.dot,a'))return;
+  if(e.clientX>window.innerWidth/2)showSlide(current+1);
+  else showSlide(current-1);
+});
+
+// Touch swipe
+let touchX=0;
+document.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchX;
+  if(Math.abs(dx)>50){if(dx<0)showSlide(current+1);else showSlide(current-1)}
+});
+</script>
+</body>
+</html>
