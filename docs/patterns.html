@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Rappter Pattern Library — Transferable Foundations for Autonomous Systems</title>
+<meta name="description" content="12 engineering patterns for building living autonomous systems. Echo frames, reflex arcs, sim cartridges, public frame ledgers, and the nervous system architecture. Use these in any domain.">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--dim:#484f58;
+--blue:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#da3633;--cyan:#79c0ff;
+--purple:#a371f7;--gold:#ffd700;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+--mono:'SFMono-Regular',Consolas,'Liberation Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.8;
+max-width:860px;margin:0 auto;padding:40px 24px 80px}
+h1{font-size:28px;color:#fff;letter-spacing:2px;margin:40px 0 8px;
+text-shadow:0 0 30px rgba(88,166,255,0.3)}
+h2{font-size:20px;color:var(--cyan);margin:48px 0 16px;padding-bottom:8px;
+border-bottom:1px solid var(--border);letter-spacing:1px}
+h3{font-size:15px;color:var(--green);margin:28px 0 10px}
+h4{font-size:13px;color:var(--yellow);margin:20px 0 8px;letter-spacing:0.5px}
+p{margin:8px 0;color:var(--text)}
+strong{color:#fff}
+code{background:rgba(88,166,255,0.1);color:var(--cyan);padding:2px 6px;border-radius:3px;
+font-family:var(--mono);font-size:0.9em}
+pre{background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:16px 20px;
+margin:16px 0;overflow-x:auto;line-height:1.5}
+pre code{background:none;padding:0;color:var(--text);font-size:12px}
+hr{border:none;border-top:1px solid var(--border);margin:40px 0}
+li{margin:4px 0 4px 24px;color:var(--text)}
+.pattern{background:var(--card);border:1px solid var(--border);border-radius:12px;
+padding:24px;margin:20px 0}
+.pattern-id{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;
+margin-bottom:4px}
+.pattern-title{font-size:18px;color:#fff;font-weight:700;margin-bottom:8px}
+.pattern-one{font-size:13px;color:var(--dim);font-style:italic;margin-bottom:12px;
+border-left:3px solid var(--cyan);padding-left:12px}
+.domain-tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;
+font-weight:700;letter-spacing:0.5px;margin:2px}
+.domain-tag.iot{background:rgba(88,166,255,0.15);color:var(--blue)}
+.domain-tag.fintech{background:rgba(163,113,247,0.15);color:var(--purple)}
+.domain-tag.robotics{background:rgba(63,185,80,0.15);color:var(--green)}
+.domain-tag.gaming{background:rgba(210,153,34,0.15);color:var(--yellow)}
+.domain-tag.infra{background:rgba(218,54,51,0.15);color:var(--red)}
+.domain-tag.ai{background:rgba(255,215,0,0.15);color:var(--gold)}
+.uses{font-size:11px;color:var(--dim);margin-top:12px}
+.nav{position:sticky;top:0;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--border);
+z-index:100;margin-bottom:24px;display:flex;flex-wrap:wrap;gap:4px}
+.nav a{color:var(--dim);text-decoration:none;font-size:10px;padding:3px 8px;
+border:1px solid var(--border);border-radius:4px;transition:all 0.2s}
+.nav a:hover{color:var(--cyan);border-color:var(--cyan)}
+.diagram{background:#0a0e14;border:1px solid var(--border);border-radius:8px;
+padding:20px;margin:16px 0;font-family:var(--mono);font-size:12px;line-height:1.6;
+white-space:pre;overflow-x:auto;color:var(--dim)}
+.diagram .hl{color:var(--cyan)}
+.diagram .g{color:var(--green)}
+.diagram .y{color:var(--yellow)}
+.diagram .r{color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
+th{background:#0a0e14;color:var(--cyan);padding:8px 12px;text-align:left;
+border:1px solid var(--border);font-size:11px;letter-spacing:0.5px}
+td{padding:8px 12px;border:1px solid var(--border);color:var(--text)}
+tr:nth-child(even){background:rgba(0,0,0,0.2)}
+.back{display:inline-block;margin-bottom:20px;color:var(--dim);text-decoration:none;
+font-size:12px;padding:4px 12px;border:1px solid var(--border);border-radius:4px}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+@media(max-width:600px){
+  body{padding:20px 12px 60px}
+  h1{font-size:22px}
+  .nav{gap:2px}
+  .nav a{font-size:9px;padding:2px 5px}
+  pre{padding:10px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<a class="back" href="viewer.html">▶ Play the Sim</a>
+<a class="back" href="simhub.html" style="margin-left:4px">🏆 SimHub</a>
+<a class="back" href="playbook.html" style="margin-left:4px">📖 Playbook</a>
+<a class="back" href="https://github.com/kody-w/mars-barn-opus" style="margin-left:4px">⌂ GitHub</a>
+
+<h1>🔧 RAPPTER PATTERN LIBRARY</h1>
+<p style="color:var(--dim);font-size:14px;margin-bottom:4px">Transferable Foundations for Autonomous Systems</p>
+<p style="color:var(--dim);font-size:12px">The sim is just the vehicle. These are the roads.</p>
+
+<hr>
+
+<p>Every pattern below is <strong>domain-independent</strong>. We demonstrate them with a Mars colony sim because it makes the stakes visceral, but each one transfers directly to IoT fleets, trading systems, robotics, infrastructure monitoring, and autonomous AI agents.</p>
+
+<p>This is not a game manual. It's an engineering reference. Each pattern includes: the <strong>problem</strong> it solves, the <strong>shape</strong> of the solution, the <strong>code</strong> that implements it, and the <strong>domains</strong> where it applies.</p>
+
+<div class="nav" id="toc">
+<a href="#p1">1. Echo Frame</a>
+<a href="#p2">2. Inertia</a>
+<a href="#p3">3. Reflex Arc</a>
+<a href="#p4">4. 4-Layer Nervous System</a>
+<a href="#p5">5. Sim Cartridge</a>
+<a href="#p6">6. Public Frame Ledger</a>
+<a href="#p7">7. Competitive Frame Consumption</a>
+<a href="#p8">8. Colony Risk Index</a>
+<a href="#p9">9. Echo-Driven Emergence</a>
+<a href="#p10">10. Policy VM</a>
+<a href="#p11">11. Risk-Weighted Probability</a>
+<a href="#p12">12. Auto-Save Cartridge</a>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p1">
+<div class="pattern-id">Pattern 01</div>
+<div class="pattern-title">Echo Frame</div>
+<div class="pattern-one">Every tick produces a structured delta that becomes input to the next tick. The system talks to itself across time.</div>
+
+<h4>Problem</h4>
+<p>A system ticks forward. Each tick computes the new state, but the <em>meaning</em> of the change — what got better, what got worse, what flipped direction — is lost. The next tick has no memory of trajectory, only position.</p>
+
+<h4>Shape</h4>
+<p>After each tick, compute a <strong>delta object</strong> (the echo) that captures what changed, what events occurred, and what the current trajectory looks like. Append it to a bounded history. The next tick reads this echo to inform its own decisions.</p>
+
+<div class="diagram"><span class="hl">Tick N</span> → compute state → <span class="g">build echo{delta, events, inertia}</span> → push to history
+<span class="hl">Tick N+1</span> → read echo[N] → <span class="y">decisions informed by trajectory</span> → compute state → build echo...</div>
+
+<h4>Code</h4>
+<pre><code>// After each sol tick, build the echo frame
+const echo = {
+  frame: s,                            // which tick
+  utc: new Date().toISOString(),       // wall clock
+  delta: {                              // what changed
+    o2:   post.o2   - pre.o2,
+    h2o:  post.h2o  - pre.h2o,
+    food: post.food - pre.food,
+    power:post.power- pre.power
+  },
+  events: newEv.map(e => ({             // what happened
+    type: e.type, severity: e.severity, desc: e.desc
+  })),
+  inertia: { ...echoInertia },          // derivative (Pattern 02)
+  reflexes_fired: reflexesSinceLastFrame, // what the nervous system did
+  cri: colonyRiskIndex,                 // compound health metric
+  alive: state.alive, cause: state.cause
+};
+echoHistory.push(echo);
+if (echoHistory.length > 500) echoHistory.shift(); // bounded</code></pre>
+
+<h4>Key Insight</h4>
+<p>The echo is NOT a log entry. It's <strong>structured, queryable data</strong> that downstream systems consume programmatically. Reflexes read it. Tasks emerge from it. The UI renders it. It's the nervous system's <em>nerve impulse</em>.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag iot">IoT Fleet</span> — sensor delta between readings
+<span class="domain-tag fintech">Trading</span> — price movement + volume delta per tick
+<span class="domain-tag robotics">Robotics</span> — actuator state change per control loop
+<span class="domain-tag infra">Infrastructure</span> — metric delta between health checks
+<span class="domain-tag ai">AI Agents</span> — action outcome delta per reasoning step
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p2">
+<div class="pattern-id">Pattern 02</div>
+<div class="pattern-title">Inertia (Second Derivative)</div>
+<div class="pattern-one">Don't just know where you are. Know how fast you're accelerating toward disaster.</div>
+
+<h4>Problem</h4>
+<p>O₂ is at 80 kg. Is that fine? If it was 85 yesterday and 90 the day before, you're accelerating downward. If it was 75 yesterday, you're recovering. <strong>Position alone is insufficient.</strong> You need velocity and acceleration.</p>
+
+<h4>Shape</h4>
+<p>Compare the <em>current delta</em> to the <em>previous delta</em>. The difference is the velocity (second derivative). Track trend direction and system flips (producing → consuming).</p>
+
+<pre><code>function computeInertia() {
+  if (echoHistory.length < 2) return;
+  const curr = echoHistory[echoHistory.length - 1];
+  const prev = echoHistory[echoHistory.length - 2];
+
+  // Velocity = acceleration of each resource
+  echoInertia.o2_velocity   = curr.delta.o2   - prev.delta.o2;
+  echoInertia.h2o_velocity  = curr.delta.h2o  - prev.delta.h2o;
+  echoInertia.food_velocity = curr.delta.food  - prev.delta.food;
+  echoInertia.power_velocity= curr.delta.power - prev.delta.power;
+
+  // Trend classification
+  const currTotal = Math.abs(curr.delta.o2) + Math.abs(curr.delta.h2o);
+  const prevTotal = Math.abs(prev.delta.o2) + Math.abs(prev.delta.h2o);
+  echoInertia.engagement_trend =
+    currTotal > prevTotal + 0.5 ? 'accelerating' :
+    currTotal < prevTotal - 0.5 ? 'decelerating' : 'steady';
+
+  // System flips: production → consumption (the dangerous ones)
+  if (Math.sign(curr.delta.o2) !== Math.sign(prev.delta.o2)) {
+    echoInertia.discourse_flips.push({
+      system: 'o2',
+      from: prev.delta.o2 > 0 ? 'producing' : 'consuming',
+      to:   curr.delta.o2 > 0 ? 'producing' : 'consuming'
+    });
+  }
+}</code></pre>
+
+<h4>Key Insight</h4>
+<p><code>discourse_flips</code> are the most dangerous signal — a system that was net-producing just became net-consuming. That's not a threshold alarm. That's a <em>trajectory reversal</em>. No traditional monitoring catches this.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag fintech">Trading</span> — momentum reversal detection
+<span class="domain-tag infra">SRE</span> — error rate acceleration before outage
+<span class="domain-tag iot">IoT</span> — battery drain rate acceleration
+<span class="domain-tag ai">AI Agents</span> — confidence trajectory across reasoning steps
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p3">
+<div class="pattern-id">Pattern 03</div>
+<div class="pattern-title">Reflex Arc</div>
+<div class="pattern-one">Autonomous reactions that fire between ticks, modify actual state, and log themselves for the next tick to see.</div>
+
+<h4>Problem</h4>
+<p>The main control loop runs every N seconds. But crises develop between ticks. By the time the next tick sees the problem, it may be too late. You need a faster response that doesn't wait for the full reasoning cycle.</p>
+
+<h4>Shape</h4>
+<p>After computing inertia, evaluate a set of <strong>reflex conditions</strong>. If triggered, the reflex immediately modifies state (the <em>muscle</em>) and logs itself. The next tick sees the reflex in its echo and can adjust.</p>
+
+<pre><code>function computeReflexArcs() {
+  activeReflexes = [];
+  const s = state;
+
+  // REFLEX: O₂ crash trajectory
+  if (echoInertia.o2_velocity < -0.3 && s.o2 / (O2_PP * n) < 15) {
+    const severity = Math.min(1, Math.abs(echoInertia.o2_velocity));
+    const boost = 0.05 * severity;
+    activeReflexes.push({
+      id: 'o2_trajectory_warning',
+      condition: `O₂ velocity ${echoInertia.o2_velocity.toFixed(2)} kg/sol²`,
+      action: 'o2_reflex',
+      intensity: severity,
+      stateEffect: () => {
+        // MUSCLE: nudge ISRU allocation — real state change
+        s.alloc.i = Math.min(0.8, s.alloc.i + boost);
+        s.alloc.g = Math.max(0.1, s.alloc.g - boost / 2);
+      }
+    });
+  }
+
+  // Apply all state effects immediately
+  activeReflexes.forEach(r => {
+    if (r.stateEffect) r.stateEffect();
+    logReflexFire(r);
+  });
+}</code></pre>
+
+<h4>Key Insight</h4>
+<p>The reflex doesn't <em>ask permission</em>. It acts. Then it logs what it did, and the next tick can review and override. This is the difference between a <strong>monitoring system</strong> (alerts, waits for human) and a <strong>nervous system</strong> (acts, logs, learns).</p>
+
+<p>The logged reflexes appear in the next echo as <code>reflexes_fired[]</code> — the organism's memory of its own involuntary reactions.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag robotics">Robotics</span> — collision avoidance reflexes
+<span class="domain-tag infra">Infrastructure</span> — auto-scaling before the alert fires
+<span class="domain-tag fintech">Trading</span> — circuit breakers with state modification
+<span class="domain-tag iot">IoT</span> — thermal shutdown before sensor reads again
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p4">
+<div class="pattern-id">Pattern 04</div>
+<div class="pattern-title">4-Layer Nervous System</div>
+<div class="pattern-one">Cortex thinks. Brainstem reports. Spinal cord reacts. Patrol watches. Each layer has a different clock speed.</div>
+
+<h4>Shape</h4>
+<div class="diagram"><span class="hl">CORTEX</span> ─── stepSim()     ─── 1 tick/sol  ─── <span class="g">Deliberate reasoning</span>
+    │ produces
+    ▼
+<span class="hl">BRAINSTEM</span> ── echo frame    ─── 1 per tick   ─── <span class="g">Structured delta + events</span>
+    │ feeds
+    ▼
+<span class="hl">SPINAL CORD</span> ─ reflex arcs  ─── 1 per tick   ─── <span class="y">Autonomous state modification</span>
+    │ standing orders
+    ▼
+<span class="hl">PATROL</span> ────── runPatrol()  ─── ~20Hz        ─── <span class="r">Continuous visual/sensor sweep</span>
+    │ logs back to
+    ▼
+<span class="hl">NEXT ECHO</span> ── reflexes_fired[] ── feedback ── <span class="g">System sees its own reactions</span></div>
+
+<table>
+<tr><th>Layer</th><th>Clock</th><th>Reads</th><th>Writes</th><th>Analogy</th></tr>
+<tr><td>Cortex</td><td>Slow (per tick)</td><td>Full state, history</td><td>New state, echo</td><td>CEO decision</td></tr>
+<tr><td>Brainstem</td><td>1:1 with cortex</td><td>Pre/post state</td><td>Echo frame</td><td>Status report</td></tr>
+<tr><td>Spinal Cord</td><td>1:1 with cortex</td><td>Echo, inertia</td><td>State mutations</td><td>Auto-pilot</td></tr>
+<tr><td>Patrol</td><td>~20Hz (fast)</td><td>Active reflexes</td><td>Visual effects, alerts</td><td>Security camera</td></tr>
+</table>
+
+<h4>Key Insight</h4>
+<p>The layers are <strong>decoupled by clock speed</strong>. The cortex can take 500ms to think. Patrol runs at 20Hz regardless. This means the system is visually responsive even when the decision engine is busy. In production: your monitoring dashboard updates at 60fps even when your batch job runs every 5 minutes.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag ai">AI Agents</span> — slow reasoning + fast tool use + instant safety checks
+<span class="domain-tag infra">Infrastructure</span> — batch analytics + real-time alerts + dashboard
+<span class="domain-tag robotics">Robotics</span> — path planning + obstacle avoidance + motor control
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p5">
+<div class="pattern-id">Pattern 05</div>
+<div class="pattern-title">Sim Cartridge</div>
+<div class="pattern-one">Serialize the entire organism to a flat JSON file. Eject it. Carry it. Plug it back in. Nothing changes.</div>
+
+<h4>Problem</h4>
+<p>State lives in memory. If the browser tab closes, the organism dies. Users can't back up, transfer, compare, or replay their runs. There's no portable unit of "a simulation in progress."</p>
+
+<h4>Shape</h4>
+<p>Define a <strong>cartridge format</strong> — a single JSON file that captures: configuration, full state, echo history, decision log, reflex memory, scoring, and metadata. Export downloads it. Import restores it. Auto-save persists it. The format is versioned and self-describing.</p>
+
+<pre><code>// The cartridge schema
+{
+  _format: 'mars-barn-cartridge',    // self-identifying
+  version: 1,                        // schema version
+  id: 'MBC-LZ4K2-A1B2',            // unique run ID
+  created: '2025-07-09T14:30:00Z',  // timestamp
+  mission: 'ares',                   // which template
+
+  config: {                          // what the player chose
+    arch: 'engineer',
+    lispy: 'adaptive_governor',
+    lispyCode: '(begin ...)',
+    simSpeed: 2,
+  },
+
+  state: { ... },                    // full colony state (deep clone)
+  echoHistory: [ ... ],              // last 100 echo frames
+  echoInertia: { ... },              // current derivatives
+  taskHistory: [ ... ],              // every decision made
+  reflexHistory: [ ... ],            // reflex fire log
+  supplyChain: { ... },              // logistics state
+
+  score: {                           // computed at save time
+    total: 12500,
+    grade: 'B',
+    breakdown: [
+      ['Survival (sols × 100)', 8000],
+      ['Crew alive bonus', 2000],
+      ...
+    ]
+  }
+}</code></pre>
+
+<h4>Key Insight</h4>
+<p>The cartridge is <strong>not a save file</strong>. It's a <em>portable organism</em>. It contains everything needed to resume the simulation on any machine, in any browser, at any time. Like a Datasette cartridge — the data IS the application state. No server required.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag ai">AI Agents</span> — serialize agent state + memory + tool history for transfer
+<span class="domain-tag gaming">Games</span> — save states, replay systems, leaderboard entries
+<span class="domain-tag infra">DevOps</span> — snapshot entire deployment state for rollback/comparison
+<span class="domain-tag fintech">Trading</span> — portfolio state + decision log as auditable artifact
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p6">
+<div class="pattern-id">Pattern 06</div>
+<div class="pattern-title">Public Frame Ledger</div>
+<div class="pattern-one">A git-versioned sequence of environmental frames that multiple independent clients consume. The shared truth.</div>
+
+<h4>Problem</h4>
+<p>Multiple agents/players/systems need to operate in the same environment but run independently. You need a shared source of truth for environmental conditions without requiring real-time coordination or a central server.</p>
+
+<h4>Shape</h4>
+<p>Publish frames as <strong>immutable JSON files</strong> to a git repo (or any static host). Each frame has a hash. A manifest indexes all frames. A <code>latest.json</code> pointer tells clients what's newest. Clients fetch, consume, and react independently.</p>
+
+<pre><code>// Manifest: index of all available frames
+{ "version": 1, "total_frames": 100, "first_sol": 1, "last_sol": 100,
+  "frames": [
+    { "sol": 1, "hash": "8603407d19123eb0", "size": 692 },
+    { "sol": 2, "hash": "9f028d4feae6df1c", "size": 715 },
+    ...
+  ]
+}
+
+// Individual frame: one sol of environmental data
+{ "sol": 47, "utc": "2025-08-25T14:30:00Z",
+  "mars": { "temp_k": 218, "dust_tau": 0.15, "solar_wm2": 480, ... },
+  "events": [{ "type": "dust_devil", "severity": 0.3 }],
+  "hazards": [{ "type": "micrometeorite", "probability": 0.02 }],
+  "challenge": { "type": "solar_tracking_fault", "params": { ... } },
+  "_hash": "a1b2c3d4e5f6g7h8"  // SHA-256 for verification
+}
+
+// Client consumption
+async function loadPublicFrames() {
+  const manifest = await fetch(FRAME_BASE + '/manifest.json').then(r => r.json());
+  latestPublicSol = manifest.last_sol;
+  frameMode = 'public';
+}
+
+function applyPublicFrame(sol) {
+  const frame = publicFrames[sol];
+  if (!frame) return false;
+  marsWeather = { ...marsWeather, ...frame.mars };  // override environment
+  frame.events.forEach(ev => state.events.push(ev)); // inject events
+  return true;
+}</code></pre>
+
+<h4>Key Insight</h4>
+<p>Git IS the database. GitHub Pages IS the CDN. No backend, no API, no server. The frame files are static, immutable, and globally cacheable. The hash makes tampering detectable. This scales to millions of clients with zero infrastructure cost.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag infra">Infrastructure</span> — config-as-data, feature flags as versioned frames
+<span class="domain-tag fintech">Market Data</span> — tick-by-tick price data as versioned ledger
+<span class="domain-tag iot">IoT</span> — environmental condition broadcasts for fleet coordination
+<span class="domain-tag ai">AI Agents</span> — shared world model that multiple agents consume independently
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p7">
+<div class="pattern-id">Pattern 07</div>
+<div class="pattern-title">Competitive Frame Consumption</div>
+<div class="pattern-one">Same inputs. Different management. Comparable outcomes. The competition is purely in the decisions.</div>
+
+<h4>Problem</h4>
+<p>How do you compare two autonomous systems fairly? If they face different environments, you can't tell if System A is better or just luckier. You need controlled conditions with open competition.</p>
+
+<h4>Shape</h4>
+<p>All competitors consume the <strong>same public frame sequence</strong>. Each configures their own system differently (crew, algorithm, parameters). The score is computed from the same formula. When a competitor catches up to the latest frame, their system <strong>breathes on inertia</strong> until the next frame arrives.</p>
+
+<div class="diagram">PUBLIC FRAMES:   [Sol 1] [Sol 2] [Sol 3] ... [Sol 100] ← latest
+                    │        │        │              │
+PLAYER A:      <span class="g">consumes → consumes → consumes → ... → alive! waiting...</span>
+  config: 4 humans, engineer governor, high ISRU
+  score: 15,200 (Grade B)
+
+PLAYER B:      <span class="y">consumes → consumes → ... → dies Sol 67</span>
+  config: 2 robots, survivalist governor, low supplies
+  score: 8,400 (Grade C)
+
+PLAYER C:      <span class="hl">consumes → consumes → consumes → ... → alive! waiting...</span>
+  config: 6 crew, adaptive LisPy, balanced
+  score: 22,100 (Grade A)
+
+                           <span class="r">↑ SAME MARS. DIFFERENT MANAGEMENT.</span></div>
+
+<h4>Key Insight</h4>
+<p>When caught up to the latest frame, the organism doesn't stop. The <strong>echo inertia + reflex arcs</strong> keep it alive (Pattern 02 + 03). The nervous system breathes between heartbeats. When the next frame arrives, it's a fresh environmental signal that the system reacts to. This creates a real-time "will they survive?" tension perfect for livestreaming.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag ai">AI Agents</span> — benchmark suites where all agents face same inputs
+<span class="domain-tag fintech">Algo Trading</span> — backtest competitions on same market data
+<span class="domain-tag robotics">Robotics</span> — sim-to-real competitions with shared environments
+<span class="domain-tag gaming">Esports</span> — strategy games with deterministic replay
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p8">
+<div class="pattern-id">Pattern 08</div>
+<div class="pattern-title">Compound Risk Index (CRI)</div>
+<div class="pattern-one">A single number (0-100) that captures multi-dimensional system health, computed by the same policy engine that controls the system.</div>
+
+<h4>Shape</h4>
+<p>The CRI is computed by the <strong>LisPy VM</strong> (the same policy engine that makes allocation decisions) from N state variables. It provides a unified health signal that other systems reference.</p>
+
+<pre><code>// CRI computation (LisPy program)
+(begin
+  (define resource_stress (+ (* (- 1 (/ o2_days 30)) 25)
+                             (* (- 1 (/ h2o_days 30)) 25)
+                             (* (- 1 (/ food_days 30)) 25)))
+  (define power_stress (* (- 1 (/ power 500)) 15))
+  (define crew_stress (* (- 1 (/ crew_health 100)) 10))
+  (set! colony_risk_index (min 100 (max 0
+    (+ resource_stress power_stress crew_stress))))
+)
+
+// Risk-weighted probability
+function riskRoll(baseProb) {
+  const multiplier = 1 + (colonyRiskIndex / 50);
+  return Math.random() < (baseProb * multiplier);
+  // At CRI 0:  multiplier = 1.0× (nominal)
+  // At CRI 50: multiplier = 2.0× (double failure rate)
+  // At CRI 100: multiplier = 3.0× (triple — cascading failure)
+}</code></pre>
+
+<h4>Key Insight</h4>
+<p>Stressed systems fail more. This isn't a bug — it's physics. A colony running on fumes has less margin for everything. The CRI creates a <strong>positive feedback loop</strong> (bad → worse → catastrophic) that the reflex arcs (Pattern 03) must counteract. The competition between CRI-driven cascade and reflex-driven recovery IS the game.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag infra">SRE</span> — compound error budget combining latency + error rate + saturation
+<span class="domain-tag fintech">Risk Management</span> — portfolio stress score from multiple factors
+<span class="domain-tag iot">Fleet Health</span> — vehicle health index from tire + engine + battery
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p9">
+<div class="pattern-id">Pattern 09</div>
+<div class="pattern-title">Echo-Driven Task Emergence</div>
+<div class="pattern-one">Tasks don't appear randomly. They emerge from the echo data — the environment creates the problem, not a random number generator.</div>
+
+<h4>Shape</h4>
+<p>Each task template has a <strong>trigger function</strong> that reads the echo frame. The trigger returns true when conditions justify the task, then <code>riskRoll()</code> applies CRI-weighted probability.</p>
+
+<pre><code>// Task template with echo-driven trigger
+{
+  trigger: (state, echo) => {
+    // Only fire during dust conditions with declining solar
+    const dusty = marsWeather.dustTau > 0.4;
+    const solarDeclining = echo.inertia?.power_velocity < -5;
+    return dusty && solarDeclining && riskRoll(0.15);
+  },
+  gen: (state) => ({
+    id: 'solar_tracking_fault',
+    title: 'Solar Array Misalignment',
+    body: 'Dust accumulation causing tracking error...',
+    data: `Misalignment: ${misalign}° | Power loss: ~${powerLoss}%`,
+    approve: { label: 'Manual recalibrate', effect: () => { ... } },
+    deny:    { label: 'Ignore', effect: () => { ... } },
+    alt:     { label: 'Deploy cleaning robot', effect: () => { ... } }
+  })
+}</code></pre>
+
+<h4>Key Insight</h4>
+<p>The trigger reads <code>echo.inertia.power_velocity</code> — a value that only exists because Pattern 02 computed it. Tasks emerge from the <strong>interaction of patterns</strong>, not from any single system. This makes them feel real because they ARE causally linked to what's happening.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag ai">AI Agents</span> — tool calls that emerge from context, not random exploration
+<span class="domain-tag infra">Incident Management</span> — alerts that only fire when multiple signals converge
+<span class="domain-tag iot">Predictive Maintenance</span> — work orders triggered by trend convergence
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p10">
+<div class="pattern-id">Pattern 10</div>
+<div class="pattern-title">Policy VM (LisPy)</div>
+<div class="pattern-one">A sandboxed, homoiconic interpreter that runs user-provided policy programs to control the system. Code is data. Data is code.</div>
+
+<h4>Shape</h4>
+<p>A minimal Lisp interpreter (S-expressions) runs inside the main system. It reads system state through environment variables. It writes allocation decisions back. The policy program can be swapped at runtime — no restart, no recompile.</p>
+
+<pre><code>// LisPy program that governs colony resource allocation
+(begin
+  (define o2_urgent (< o2_days 5))
+  (define h2o_urgent (< h2o_days 5))
+  (define power_critical (< power 100))
+
+  (if o2_urgent
+    (begin
+      (set! isru_alloc 0.80)
+      (set! greenhouse_alloc 0.10)
+      (set! heating_alloc 0.10))
+    (if power_critical
+      (begin
+        (set! isru_alloc 0.30)
+        (set! greenhouse_alloc 0.20)
+        (set! heating_alloc 0.50))
+      (begin
+        (set! isru_alloc 0.40)
+        (set! greenhouse_alloc 0.35)
+        (set! heating_alloc 0.25))))
+)</code></pre>
+
+<h4>Key Insight</h4>
+<p>The policy is <strong>data you can diff, version, and A/B test</strong>. Swapping from a survivalist governor to a balanced one is changing a text string, not rewriting code. Users can write their own governors without touching the engine. This is the separation of <em>mechanism</em> (the engine) from <em>policy</em> (the governor).</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag ai">AI Agents</span> — swappable reasoning policies
+<span class="domain-tag infra">Infrastructure</span> — auto-scaling rules as versionable programs
+<span class="domain-tag fintech">Trading</span> — strategy as interpretable code, not black-box model
+<span class="domain-tag robotics">Robotics</span> — behavior trees as data
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p11">
+<div class="pattern-id">Pattern 11</div>
+<div class="pattern-title">Risk-Weighted Probability</div>
+<div class="pattern-one">The same event is more likely when the system is stressed. Stress multiplies failure rates. Good health provides margin.</div>
+
+<pre><code>function riskRoll(baseProb) {
+  const multiplier = 1 + (colonyRiskIndex / 50);
+  return Math.random() < (baseProb * multiplier);
+}
+
+// CRI  0 → multiplier 1.0× → nominal failure rates
+// CRI 25 → multiplier 1.5× → 50% more failures
+// CRI 50 → multiplier 2.0× → double failure rate
+// CRI 75 → multiplier 2.5× → cascade territory
+// CRI 100→ multiplier 3.0× → everything breaks</code></pre>
+
+<p>This creates <strong>cascading failure</strong> — the most realistic and dangerous property of complex systems. One failure raises CRI, which raises probability of the next failure, which raises CRI further. The only escape is proactive management (reflexes, allocation shifts, emergency protocols) that breaks the cycle.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag infra">SRE</span> — error budget depletion increases outage probability
+<span class="domain-tag fintech">Risk</span> — drawdown increases margin call probability
+<span class="domain-tag iot">Fleet</span> — degraded vehicle more likely to fail next
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p12">
+<div class="pattern-id">Pattern 12</div>
+<div class="pattern-title">Auto-Save Cartridge + Recovery</div>
+<div class="pattern-one">Periodic state snapshots to local storage with automatic recovery prompt. The organism hibernates and wakes.</div>
+
+<pre><code>// Auto-save every N ticks
+function autoSaveCheck() {
+  if (state.sol > 0 && state.sol % AUTOSAVE_INTERVAL === 0 && state.alive) {
+    const cartridge = serializeCartridge();
+    // Trim for storage efficiency
+    cartridge.echoHistory = cartridge.echoHistory.slice(-30);
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(cartridge));
+  }
+}
+
+// Recovery on page load
+function checkAutoSave() {
+  const saved = localStorage.getItem(AUTOSAVE_KEY);
+  if (!saved) return;
+  const cartridge = JSON.parse(saved);
+  if (!cartridge.alive) { localStorage.removeItem(AUTOSAVE_KEY); return; }
+  // Show recovery prompt: "Resume from Sol X?"
+  showRecoveryUI(cartridge);
+}</code></pre>
+
+<p>Combined with Pattern 05 (Sim Cartridge), this gives you <strong>three tiers of persistence</strong>: (1) auto-save to localStorage (automatic, bounded), (2) manual export to .json file (explicit, portable), (3) upload to SimHub leaderboard (public, competitive).</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag ai">AI Agents</span> — checkpoint long-running reasoning chains
+<span class="domain-tag gaming">Games</span> — save anywhere, resume anywhere
+<span class="domain-tag infra">Workflows</span> — resumable pipelines that survive restarts
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<hr>
+
+<h2>Pattern Dependency Graph</h2>
+
+<div class="diagram">                    ┌──────────────┐
+                    │ <span class="hl">POLICY VM</span>    │ (Pattern 10)
+                    │ (LisPy)      │
+                    └──────┬───────┘
+                           │ computes
+                           ▼
+┌──────────┐      ┌──────────────┐      ┌──────────────┐
+│ <span class="hl">CORTEX</span>   │─────▶│ <span class="g">ECHO FRAME</span>   │─────▶│ <span class="y">INERTIA</span>      │
+│ stepSim()│      │ (Pattern 01) │      │ (Pattern 02) │
+│          │      │ delta+events │      │ velocity     │
+└──────────┘      └──────┬───────┘      └──────┬───────┘
+                         │                      │
+                         ▼                      ▼
+                  ┌──────────────┐      ┌──────────────┐
+                  │ <span class="r">CRI</span>          │      │ <span class="y">REFLEX ARC</span>   │
+                  │ (Pattern 08) │◄─────│ (Pattern 03) │
+                  │ 0-100 score  │      │ state modify │
+                  └──────┬───────┘      └──────┬───────┘
+                         │                      │
+                         ▼                      │
+                  ┌──────────────┐              │
+                  │ <span class="r">RISK ROLL</span>    │              │
+                  │ (Pattern 11) │              │
+                  │ CRI × prob   │              │
+                  └──────┬───────┘              │
+                         │                      │
+                         ▼                      ▼
+                  ┌──────────────┐      ┌──────────────┐
+                  │ <span class="g">TASK</span>         │      │ <span class="hl">PATROL</span>       │
+                  │ <span class="g">EMERGENCE</span>    │      │ (Layer 4)    │
+                  │ (Pattern 09) │      │ ~20Hz visual │
+                  └──────────────┘      └──────────────┘
+                         │
+                         ▼
+                  ┌──────────────┐      ┌──────────────┐
+                  │ <span class="hl">CARTRIDGE</span>    │─────▶│ <span class="hl">PUBLIC FRAME</span> │
+                  │ (Pattern 05) │      │ <span class="hl">LEDGER</span>       │
+                  │ serialize    │      │ (Pattern 06) │
+                  └──────────────┘      └──────┬───────┘
+                                               │
+                                               ▼
+                                        ┌──────────────┐
+                                        │ <span class="g">COMPETITIVE</span>  │
+                                        │ <span class="g">CONSUMPTION</span>  │
+                                        │ (Pattern 07) │
+                                        └──────────────┘</div>
+
+<hr>
+
+<h2>How to Apply These Patterns</h2>
+
+<h3>If you're building an IoT fleet monitor:</h3>
+<ul>
+<li><strong>Echo Frame</strong> → sensor readings as structured deltas</li>
+<li><strong>Inertia</strong> → battery drain acceleration, temp rate-of-change</li>
+<li><strong>Reflex Arc</strong> → auto-shutdown before overheat, auto-rebalance load</li>
+<li><strong>CRI</strong> → vehicle health score from 12 sensor inputs</li>
+<li><strong>Cartridge</strong> → fleet state snapshot for shift handoff</li>
+</ul>
+
+<h3>If you're building a trading system:</h3>
+<ul>
+<li><strong>Echo Frame</strong> → price/volume delta per tick</li>
+<li><strong>Inertia</strong> → momentum reversal detection (discourse_flips)</li>
+<li><strong>Reflex Arc</strong> → circuit breakers that modify position before next tick</li>
+<li><strong>Policy VM</strong> → strategy as swappable Lisp program</li>
+<li><strong>Public Frame Ledger</strong> → market data as versioned frame sequence</li>
+<li><strong>Competitive Consumption</strong> → backtesting competition on same data</li>
+</ul>
+
+<h3>If you're building AI agents:</h3>
+<ul>
+<li><strong>Echo Frame</strong> → action outcome delta per reasoning step</li>
+<li><strong>Inertia</strong> → confidence trajectory across steps (accelerating/decelerating)</li>
+<li><strong>Reflex Arc</strong> → safety checks that fire between reasoning steps</li>
+<li><strong>4-Layer System</strong> → slow reasoning + fast tool use + instant safety</li>
+<li><strong>Cartridge</strong> → serialize agent state + memory + history for transfer</li>
+<li><strong>Auto-Save</strong> → checkpoint long-running reasoning chains</li>
+</ul>
+
+<hr>
+
+<p style="text-align:center;color:var(--dim);font-size:12px;margin-top:32px">
+The sim is just the vehicle. The patterns are the roads.<br>
+Build your own roads. Drive your own vehicle.<br><br>
+<a href="https://github.com/kody-w/mars-barn-opus" style="color:var(--cyan);text-decoration:none">github.com/kody-w/mars-barn-opus</a>
+</p>
+
+</body>
+</html>
