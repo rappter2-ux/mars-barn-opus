@@ -320,10 +320,35 @@ Type (help) for commands. Type (prompt-list) for prompt library.
         </div>
       </div>
 
+      <!-- Compete -->
+      <div style="background:rgba(0,255,245,0.03);border:1px solid var(--cyan);border-radius:8px;padding:12px;margin-bottom:12px">
+        <div style="font-size:10px;color:var(--cyan);letter-spacing:1px;margin-bottom:8px">⚔️ COMPETE — Run the Gauntlet In-Browser</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <select id="gov-mission" style="background:#0a0a0a;border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:10px;padding:4px">
+            <option value="optimus">Optimus (4 robots)</option>
+            <option value="hybrid">Hybrid (2H + 4R)</option>
+            <option value="ares">Ares I (4 humans)</option>
+            <option value="garden">Garden (6 crew)</option>
+            <option value="skeleton">Skeleton (2 humans)</option>
+          </select>
+          <select id="gov-build" style="background:#0a0a0a;border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:10px;padding:4px">
+            <option value="repair-solar">Repair Bay → 3× Solar</option>
+            <option value="solar-water">Solar → Water → ISRU → Greenhouse</option>
+            <option value="solar-green">Solar × 2 → Greenhouse → ISRU</option>
+            <option value="balanced">Balanced (one of each)</option>
+          </select>
+          <button onclick="runBrowserGauntlet(1)" style="padding:4px 12px;background:none;border:1px solid var(--green);color:var(--green);font-family:var(--mono);font-size:10px;cursor:pointer;border-radius:4px">▶ 1 RUN</button>
+          <button onclick="runBrowserGauntlet(10)" style="padding:4px 12px;background:none;border:1px solid var(--yellow);color:var(--yellow);font-family:var(--mono);font-size:10px;cursor:pointer;border-radius:4px">▶ 10 RUNS</button>
+          <button onclick="runBrowserGauntlet(100)" style="padding:4px 12px;background:none;border:1px solid var(--red);color:var(--red);font-family:var(--mono);font-size:10px;cursor:pointer;border-radius:4px">⚔️ OFFICIAL (100)</button>
+        </div>
+        <div id="gov-run-progress" style="font-size:10px;color:var(--dim)"></div>
+        <div id="gov-run-result" style="margin-top:8px;font-size:10px"></div>
+      </div>
+
       <!-- Leaderboard -->
       <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:12px">
         <div style="font-size:10px;color:var(--cyan);letter-spacing:1px;margin-bottom:8px">🏆 GAUNTLET LEADERBOARD (Monte Carlo)</div>
-        <div id="gov-leaderboard" style="font-size:10px;color:var(--dim)">Run gauntlet to see results...</div>
+        <div id="gov-leaderboard" style="font-size:10px;color:var(--dim)">Run the gauntlet above to post your score</div>
       </div>
     </div>
   </div>
@@ -737,12 +762,183 @@ function drawGovDustChart(){
 }
 
 function govGauntlet(){
-  document.getElementById('gov-leaderboard').innerHTML =
-    '<div style="color:var(--yellow)">⚔️ Running gauntlet requires CLI: <code>node tools/gauntlet.js --monte-carlo 100</code></div>' +
-    '<div style="margin-top:8px">Current best:</div>' +
-    '<div style="color:var(--cyan);margin-top:4px">Optimus (4 robots) · 315 median sols · Grade A · 0% survival at 501 sols</div>' +
-    '<div style="color:var(--red);margin-top:4px">LEADERBOARD EMPTY — nobody alive at Sol 501</div>' +
-    '<div style="margin-top:8px;color:var(--dim)">To compete: evolve governor LisPy to handle v2 perchlorate + radiation + abrasion</div>';
+  runBrowserGauntlet(100);
+}
+
+// ── In-Browser Gauntlet Runner ──
+// Runs the ACTUAL sim against loaded frames. Same rules as tools/gauntlet.js.
+const SIM={O2:0.84,H2O:2.5,FOOD:2500,PCRIT:50,PA:15,EF:0.22,SH:12.3,IO:2.8,IH:1.2,GK:3500};
+
+function simSolIrr(sol,dust){const y=sol%669,a=2*Math.PI*(y-445)/669;return 589*(1+0.09*Math.cos(a))*Math.max(0.3,Math.cos(2*Math.PI*y/669)*0.5+0.5)*(dust?0.25:1)}
+
+const MISSIONS_SIM={
+  optimus:{power:800,crew:[{n:'OPT-01',bot:true,hp:100},{n:'OPT-02',bot:true,hp:100},{n:'OPT-03',bot:true,hp:100},{n:'OPT-04',bot:true,hp:100}]},
+  hybrid:{o2:150,h2o:400,food:400000,power:800,crew:[{n:'Chen',bot:false,hp:97},{n:'Rod',bot:false,hp:96},{n:'OPT-01',bot:true,hp:100},{n:'OPT-02',bot:true,hp:100},{n:'OPT-03',bot:true,hp:100},{n:'OPT-04',bot:true,hp:100}]},
+  ares:{o2:100,h2o:300,food:300000,power:500,crew:[{n:'Chen',bot:false,hp:97},{n:'Rod',bot:false,hp:96},{n:'Okafor',bot:false,hp:98},{n:'Johan',bot:false,hp:95}]},
+  garden:{o2:300,h2o:900,food:900000,power:1000,crew:[{n:'Chen',bot:false,hp:97},{n:'Rod',bot:false,hp:96},{n:'Okafor',bot:false,hp:98},{n:'Johan',bot:false,hp:95},{n:'OPT-01',bot:true,hp:100},{n:'OPT-02',bot:true,hp:100}]},
+  skeleton:{o2:25,h2o:75,food:75000,power:300,crew:[{n:'Chen',bot:false,hp:97},{n:'Rod',bot:false,hp:96}]}
+};
+
+const BUILD_ORDERS={
+  'repair-solar':['repair_bay','solar_farm','solar_farm','solar_farm'],
+  'solar-water':['solar_farm','water_extractor','isru_plant','greenhouse_dome'],
+  'solar-green':['solar_farm','solar_farm','greenhouse_dome','isru_plant'],
+  'balanced':['solar_farm','isru_plant','greenhouse_dome','water_extractor']
+};
+
+function simOneRun(mKey, buildKey, frames, seed){
+  let R=(()=>{let s=seed&0xFFFFFFFF;return()=>{s=(s*1664525+1013904223)&0xFFFFFFFF;return s/0xFFFFFFFF}})();
+  const m=MISSIONS_SIM[mKey]||MISSIONS_SIM.optimus;
+  const build=BUILD_ORDERS[buildKey]||BUILD_ORDERS['repair-solar'];
+  const bSols=[5,12,22,40];
+  const st={power:m.power||800,o2:m.o2||0,h2o:m.h2o||0,food:m.food||0,se:1,ie:1,ge:1,it:293,
+    crew:m.crew.map(c=>({...c,a:true})),ev:[],mod:[]};
+  let mi=0,cri=5;
+
+  const maxSol=Object.keys(frames).length?Math.max(...Object.keys(frames).map(Number)):0;
+  if(!maxSol) return {sols:0,alive:false,cause:'no frames',crew:0,cri:0,modules:0};
+
+  for(let sol=1;sol<=maxSol;sol++){
+    const f=frames[sol];const ac=st.crew.filter(c=>c.a),n=ac.length,nh=ac.filter(c=>!c.bot).length;
+    if(!n) return {sols:sol,alive:false,cause:'no crew',crew:0,cri,modules:st.mod.length};
+
+    if(f){
+      if(f.events)for(const e of f.events)if(!st.ev.some(x=>x.t===e.type))st.ev.push({t:e.type,sv:e.severity||0.5,r:e.duration_sols||3});
+      if(f.hazards)for(const h of f.hazards){
+        if(h.type==='equipment_fatigue'&&h.target==='solar_array')st.se=Math.max(0.1,st.se-(h.degradation||0.005));
+        if(h.type==='dust_accumulation')st.se=Math.max(0.1,st.se-(h.degradation||0.01));
+        if(h.type==='perchlorate_corrosion')st.ie=Math.max(0.3,st.ie-(h.degradation||0.005));
+        if(h.type==='regolith_abrasion')st.se=Math.max(0.3,st.se-(h.degradation||0.003));
+        if(h.type==='electrostatic_dust')st.se=Math.max(0.3,st.se-(h.degradation||0.002));
+        if(h.type==='thermal_fatigue')st.power=Math.max(0,st.power-5);
+        if(h.type==='radiation_seu'){const t=ac.filter(c=>c.a);if(t.length)t[0].hp-=3}
+        if(h.type==='battery_degradation')st.power*=0.98;
+      }
+    }
+    st.ev=st.ev.filter(e=>{e.r--;return e.r>0});
+    if(R()<0.012){st.ie*=(1-0.02);st.power=Math.max(0,st.power-2)}
+
+    if(st.mod.includes('repair_bay')){st.se=Math.min(1,st.se+0.005);st.ie=Math.min(1,st.ie+0.003)}
+
+    const isDust=st.ev.some(e=>e.t==='dust_storm');
+    const sb=1+st.mod.filter(x=>x==='solar_farm').length*0.4;
+    st.power+=simSolIrr(sol,isDust)*SIM.PA*SIM.EF*SIM.SH/1000*st.se*sb;
+
+    const o2d=nh>0?st.o2/(SIM.O2*nh):999,hd=nh>0?st.h2o/(SIM.H2O*nh):999,fd=nh>0?st.food/(SIM.FOOD*nh):999;
+    let hi=0.18,ii=0.40,gi=0.42;
+    if(st.power<60){hi=0.65;ii=0.18;gi=0.17}
+    else if(o2d<5){hi=0.05;ii=0.85;gi=0.10}
+    else if(hd<8){hi=0.08;ii=0.70;gi=0.22}
+    else if(fd<12){hi=0.10;ii=0.25;gi=0.65}
+    else if(st.power<200){hi=0.38;ii=0.32;gi=0.30}
+
+    if(st.power>SIM.PCRIT*0.3){const ib=1+st.mod.filter(x=>x==='isru_plant').length*0.4;st.o2+=SIM.IO*st.ie*Math.min(1.5,ii*2)*ib;st.h2o+=SIM.IH*st.ie*Math.min(1.5,ii*2)*ib}
+    st.h2o+=st.mod.filter(x=>x==='water_extractor').length*3;
+    if(st.power>SIM.PCRIT*0.3&&st.h2o>5){const gb=1+st.mod.filter(x=>x==='greenhouse_dome').length*0.5;st.food+=SIM.GK*st.ge*Math.min(1.5,gi*2)*gb}
+
+    st.o2=Math.max(0,st.o2-nh*SIM.O2);st.h2o=Math.max(0,st.h2o-nh*SIM.H2O);st.food=Math.max(0,st.food-nh*SIM.FOOD);
+    st.power=Math.max(0,st.power-n*5-st.mod.length*3);
+    st.it=Math.max(200,Math.min(310,st.it+(st.power*hi*0.5>10?0.5:-0.5)));
+
+    ac.forEach(c=>{if(!c.bot){if(st.o2<SIM.O2*2)c.hp-=5;if(st.food<SIM.FOOD*2)c.hp-=3}
+      if(st.it<250)c.hp-=(c.bot?0.3:2);if(st.power<=0)c.hp-=(c.bot?1:0.5);
+      c.hp=Math.min(100,c.hp+(c.bot?0.5:0.3));if(c.hp<=0)c.a=false});
+
+    if(bSols.includes(sol)&&mi<build.length&&st.power>30){st.mod.push(build[mi]);mi++}
+    cri=Math.min(100,Math.max(0,5+(st.power<50?25:st.power<150?10:0)+st.ev.length*6+(o2d<5?20:0)+(hd<5?20:0)+(fd<5?20:0)));
+
+    if(st.o2<=0&&nh>0) return {sols:sol,alive:false,cause:'O₂',crew:st.crew.filter(c=>c.a).length,cri,modules:st.mod.length};
+    if(st.food<=0&&nh>0) return {sols:sol,alive:false,cause:'starvation',crew:st.crew.filter(c=>c.a).length,cri,modules:st.mod.length};
+    if(st.h2o<=0&&nh>0) return {sols:sol,alive:false,cause:'dehydration',crew:st.crew.filter(c=>c.a).length,cri,modules:st.mod.length};
+    if(!st.crew.filter(c=>c.a).length) return {sols:sol,alive:false,cause:'all offline',crew:0,cri,modules:st.mod.length};
+  }
+  return {sols:maxSol,alive:true,cause:null,crew:st.crew.filter(c=>c.a).length,
+    hp:Math.round(st.crew.filter(c=>c.a).reduce((s,c)=>s+c.hp,0)/Math.max(1,st.crew.filter(c=>c.a).length)),
+    cri,modules:st.mod.length};
+}
+
+async function runBrowserGauntlet(runs){
+  const prog=document.getElementById('gov-run-progress');
+  const result=document.getElementById('gov-run-result');
+  const lb=document.getElementById('gov-leaderboard');
+  const mKey=document.getElementById('gov-mission').value;
+  const bKey=document.getElementById('gov-build').value;
+
+  prog.innerHTML='<span style="color:var(--yellow)">Loading frames...</span>';
+  result.innerHTML='';
+
+  // Load frames if not cached
+  if(!govFrameData.length) await govLoadFrames();
+  if(!govFrameData.length){prog.innerHTML='<span style="color:var(--red)">Failed to load frames</span>';return}
+
+  // Index frames by sol
+  const frames={};
+  govFrameData.forEach(f=>{frames[f.sol]=f});
+
+  prog.innerHTML=`<span style="color:var(--yellow)">Running ${runs} gauntlet${runs>1?'s':''}...</span>`;
+
+  // Run async so UI updates
+  await new Promise(r=>setTimeout(r,50));
+
+  const results=[];
+  const t0=performance.now();
+  for(let i=0;i<runs;i++){
+    results.push(simOneRun(mKey,bKey,frames,i*7919+1));
+    if(i%10===9){
+      prog.innerHTML=`<span style="color:var(--yellow)">Run ${i+1}/${runs}...</span>`;
+      await new Promise(r=>setTimeout(r,0));
+    }
+  }
+  const elapsed=Math.round(performance.now()-t0);
+
+  const alive=results.filter(r=>r.alive);
+  const dead=results.filter(r=>!r.alive);
+  const solsSorted=results.map(r=>r.sols).sort((a,b)=>a-b);
+  const medianSols=solsSorted[Math.floor(runs/2)];
+  const minCrew=Math.min(...results.map(r=>r.crew));
+  const medMods=results.map(r=>r.modules).sort((a,b)=>a-b)[Math.floor(runs/2)];
+  const survRate=alive.length/runs;
+  const p75CRI=results.map(r=>r.cri).sort((a,b)=>a-b)[Math.floor(runs*0.75)];
+  const score=Math.round(medianSols*100+minCrew*500+medMods*150+survRate*20000-p75CRI*10);
+  const grade=score>=80000?'S+':score>=50000?'S':score>=30000?'A':score>=15000?'B':score>=5000?'C':score>=1000?'D':'F';
+  const viable=survRate>=0.5;
+  const gradeCol=grade[0]==='S'?'var(--gold)':grade==='A'?'var(--green)':grade==='B'?'var(--cyan)':grade==='C'?'var(--yellow)':'var(--red)';
+
+  prog.innerHTML=`<span style="color:var(--green)">✓ ${runs} runs completed in ${elapsed}ms</span>`;
+
+  result.innerHTML=`
+    <div style="text-align:center;padding:12px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px">
+      <div style="font-size:36px;font-weight:700;color:${gradeCol}">${grade}</div>
+      <div style="font-size:18px;color:var(--cyan);margin:4px 0">${score.toLocaleString()} pts</div>
+      <div style="font-size:11px;color:var(--dim)">${mKey} · ${bKey} · ${runs} runs</div>
+      <div style="font-size:12px;margin-top:8px;color:${viable?'var(--green)':'var(--red)'}">${viable?'🟢 LEADERBOARD ALIVE':'☠ NON-VIABLE'} (${(survRate*100).toFixed(0)}% survival)</div>
+      <div style="margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:10px">
+        <div>Median: ${medianSols} sols</div>
+        <div>Min crew: ${minCrew}</div>
+        <div>P75 CRI: ${p75CRI}</div>
+      </div>
+      ${dead.length?'<div style="margin-top:6px;font-size:9px;color:var(--dim)">Deaths: '+[...new Set(dead.map(d=>d.cause))].join(', ')+'</div>':''}
+    </div>`;
+
+  // Update leaderboard
+  const lbKey='lispy-os-leaderboard';
+  let entries=[];
+  try{entries=JSON.parse(localStorage.getItem(lbKey)||'[]')}catch(e){}
+  entries.push({mission:mKey,build:bKey,score,grade,medianSols,survRate:Math.round(survRate*100),runs,date:new Date().toISOString()});
+  entries.sort((a,b)=>b.score-a.score);
+  entries.length=Math.min(entries.length,20);
+  localStorage.setItem(lbKey,JSON.stringify(entries));
+
+  lb.innerHTML=entries.map((e,i)=>{
+    const gc=e.grade[0]==='S'?'color:var(--gold)':e.grade==='A'?'color:var(--green)':e.grade==='B'?'color:var(--cyan)':'color:var(--yellow)';
+    return `<div style="display:flex;gap:8px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.03)">
+      <span style="width:20px;color:var(--dim)">${i+1}</span>
+      <span style="flex:1">${e.mission} · ${e.build}</span>
+      <span style="${gc};font-weight:700">${e.grade}</span>
+      <span style="color:var(--cyan);width:60px;text-align:right">${e.score.toLocaleString()}</span>
+      <span style="color:${e.survRate>=50?'var(--green)':'var(--red)'};">${e.survRate}%</span>
+    </div>`;
+  }).join('');
 }
 
 // Click desktop to close start menu
