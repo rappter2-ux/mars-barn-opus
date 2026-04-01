@@ -1,0 +1,200 @@
+{
+  "_spec": "lispy-vos-agent-spec",
+  "version": "1.0.0",
+  "title": "LisPy vOS Agent Specification",
+  "description": "How AI agents drive the virtual OS through Playwright and the window.os SDK. This is the agent-first interface. The browser console IS the API. Playwright IS the agent runtime. The SDK IS the bridge.",
+  "author": "kody-w (Wildhaven Homes LLC)",
+
+  "overview": {
+    "what": "LisPy OS is a virtual operating system running in a browser. It exposes a window.os SDK on the global scope that any agent (Playwright, Puppeteer, Selenium, or a human at the console) can use to drive the entire OS programmatically.",
+    "why": "Agent-first design. The OS was built to be driven by AI agents through Playwright, not just clicked by humans. Every UI action has an SDK equivalent. Every state change is observable. Every result is JSON.",
+    "how": "Agent launches a browser (headless or headed), navigates to os.html, and calls window.os methods via page.evaluate(). The SDK returns structured data. The agent reads results and decides next actions."
+  },
+
+  "quickstart": {
+    "playwright_js": [
+      "const { chromium } = require('playwright');",
+      "",
+      "async function main() {",
+      "  const browser = await chromium.launch();",
+      "  const page = await browser.newPage();",
+      "  await page.goto('https://kody-w.github.io/mars-barn-opus/os.html');",
+      "",
+      "  // Run LisPy code",
+      "  const result = await page.evaluate(() => window.os.exec('(+ 40 2)'));",
+      "  console.log(result.result); // 42",
+      "",
+      "  // Check colony status",
+      "  const status = await page.evaluate(() => window.os.status());",
+      "  console.log(status); // {sol, o2_days, cri, ...}",
+      "",
+      "  // Run a gauntlet competition",
+      "  const score = await page.evaluate(() => window.os.gauntlet(10));",
+      "  console.log(score); // {grade, score, survivalRate, ...}",
+      "",
+      "  // Boot a distro cartridge",
+      "  await page.evaluate(() => window.os.loadDistro('distros/marsos-alpha.cartridge.json'));",
+      "  const files = await page.evaluate(() => window.os.fs());",
+      "  console.log(files); // ['/bin/status', '/etc/motd', ...]",
+      "",
+      "  // Run a virtual program",
+      "  const prog = await page.evaluate(() => window.os.run('/bin/status'));",
+      "  console.log(prog.output); // colony status lines",
+      "",
+      "  await browser.close();",
+      "}"
+    ],
+    "python": [
+      "from playwright.sync_api import sync_playwright",
+      "",
+      "with sync_playwright() as p:",
+      "    browser = p.chromium.launch()",
+      "    page = browser.new_page()",
+      "    page.goto('https://kody-w.github.io/mars-barn-opus/os.html')",
+      "",
+      "    result = page.evaluate('window.os.exec(\"(+ 40 2)\")')",
+      "    print(result['result'])  # 42",
+      "",
+      "    status = page.evaluate('window.os.status()')",
+      "    print(status)  # {sol, o2_days, ...}",
+      "",
+      "    browser.close()"
+    ],
+    "curl_agent": "python3 -c \"$(curl -sL https://raw.githubusercontent.com/kody-w/mars-barn-opus/main/tools/agent.py)\" --status"
+  },
+
+  "sdk_reference": {
+    "execution": {
+      "os.exec(code)": {
+        "args": "code: string (LisPy S-expression)",
+        "returns": "{ok: bool, result: any, output: string[], steps: number, error?: string}",
+        "example": "os.exec('(+ 2 3)') → {ok: true, result: 5, output: [], steps: 3}"
+      }
+    },
+    "app_management": {
+      "os.open(name)": {
+        "args": "name: 'terminal'|'editor'|'files'|'monitor'|'browser'|'wallet'|'help'|'sim'|'gov'",
+        "returns": "string (confirmation)"
+      },
+      "os.close(name)": {"args": "name: string", "returns": "string"},
+      "os.apps()": {"returns": "string[] (list of open app names)"},
+      "os.focus(name)": {"args": "name: string", "returns": "string"},
+      "os.iframe(id, title, url)": {
+        "args": "id: string, title: string, url: string",
+        "returns": "string",
+        "note": "Opens any HTML page as a window inside the OS"
+      }
+    },
+    "ui_interaction": {
+      "os.type(app, text)": {
+        "args": "app: 'terminal', text: string (LisPy code)",
+        "returns": "string",
+        "note": "Types text into the terminal and executes it"
+      },
+      "os.click(id)": {"args": "id: string (element ID)", "returns": "string"},
+      "os.dblclick(selector)": {"args": "selector: string (CSS selector)", "returns": "string"}
+    },
+    "vm_state": {
+      "os.env()": {"returns": "object (all VM environment variables)"},
+      "os.setEnv(key, value)": {"args": "key: string, value: any", "returns": "string"},
+      "os.status()": {
+        "returns": "{sol, o2_days, h2o_days, food_days, power_kwh, crew_alive, cri, morale, solar_eff, dust_tau}"
+      }
+    },
+    "competition": {
+      "os.gauntlet(runs)": {
+        "args": "runs: number (default 10)",
+        "returns": "{runs, mission, build, score, grade, medianSols, survivalRate, alive, dead}",
+        "note": "Async. Loads frames from GitHub, runs full sim, returns Monte Carlo score."
+      },
+      "os.frames()": {"returns": "object[] (loaded frame data)"},
+      "os.frameCount()": {"returns": "number"},
+      "os.latestFrame()": {"returns": "object (most recent frame)"}
+    },
+    "filesystem": {
+      "os.loadDistro(url)": {
+        "args": "url: string (path to .cartridge.json)",
+        "returns": "string",
+        "note": "Boots a cartridge. Loads filesystem, runs init, sets env vars."
+      },
+      "os.fs()": {"returns": "string[] (file paths in virtual filesystem)"},
+      "os.cat(path)": {"args": "path: string", "returns": "string (file content or program code)"},
+      "os.run(path)": {"args": "path: string (must be type: 'program')", "returns": "exec result"}
+    },
+    "batch": {
+      "os.batch(commands)": {
+        "args": "commands: [{type: 'exec'|'open'|'close'|'click'|'type'|'wait', ...}]",
+        "returns": "any[] (result per command)",
+        "note": "Run multiple commands in sequence. Designed for Playwright automation."
+      }
+    }
+  },
+
+  "agent_patterns": {
+    "observe_then_act": {
+      "description": "Agent reads colony state, decides action, executes via SDK",
+      "example": [
+        "const status = await page.evaluate(() => window.os.status());",
+        "if (status.cri > 50) {",
+        "  await page.evaluate(() => window.os.exec('(set! isru_alloc 0.85)'));",
+        "}"
+      ]
+    },
+    "gauntlet_optimization": {
+      "description": "Agent tries different strategies, picks the best score",
+      "example": [
+        "for (const mission of ['optimus', 'hybrid', 'ares']) {",
+        "  const result = await page.evaluate(m => {",
+        "    document.getElementById('gov-mission').value = m;",
+        "    return window.os.gauntlet(10);",
+        "  }, mission);",
+        "  console.log(mission, result.score, result.grade);",
+        "}"
+      ]
+    },
+    "distro_testing": {
+      "description": "Agent boots a cartridge and tests all programs",
+      "example": [
+        "await page.evaluate(() => window.os.loadDistro('distros/marsos-alpha.cartridge.json'));",
+        "const files = await page.evaluate(() => window.os.fs());",
+        "for (const f of files.filter(f => f.includes('/bin/'))) {",
+        "  const result = await page.evaluate(f => window.os.run(f), f);",
+        "  console.log(f, result.ok ? '✓' : '✗');",
+        "}"
+      ]
+    },
+    "continuous_monitoring": {
+      "description": "Agent polls for state changes and reacts",
+      "example": [
+        "while (true) {",
+        "  const frame = await page.evaluate(() => window.os.latestFrame());",
+        "  if (frame?.events?.length) {",
+        "    console.log('Event detected:', frame.events);",
+        "    await page.evaluate(() => window.os.exec('(set! isru_alloc 0.70)'));",
+        "  }",
+        "  await page.waitForTimeout(5000);",
+        "}"
+      ]
+    }
+  },
+
+  "testing": {
+    "run_all": "npx playwright test tests/browser/os.spec.js",
+    "current_tests": 15,
+    "what_is_tested": [
+      "SDK availability (window.os.version)",
+      "LisPy execution (os.exec arithmetic + strings)",
+      "Window management (os.open, os.close, os.apps)",
+      "Terminal interaction (os.type)",
+      "VM state (os.env, os.setEnv)",
+      "Colony status (os.status)",
+      "UI clicks (os.click)",
+      "Batch commands (os.batch)",
+      "Distro loading (os.loadDistro)",
+      "Filesystem operations (os.fs, os.cat)",
+      "Program execution (os.run)",
+      "Taskbar tracking",
+      "Clock display"
+    ]
+  }
+}
