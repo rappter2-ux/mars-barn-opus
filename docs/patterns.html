@@ -103,6 +103,7 @@ font-size:12px;padding:4px 12px;border:1px solid var(--border);border-radius:4px
 <a href="#p10">10. Policy VM</a>
 <a href="#p11">11. Risk-Weighted Probability</a>
 <a href="#p12">12. Auto-Save Cartridge</a>
+<a href="#p13">13. The Portal</a>
 </div>
 
 <!-- ═══════════════════════════════════════════ -->
@@ -625,6 +626,56 @@ function checkAutoSave() {
 <span class="domain-tag ai">AI Agents</span> — checkpoint long-running reasoning chains
 <span class="domain-tag gaming">Games</span> — save anywhere, resume anywhere
 <span class="domain-tag infra">Workflows</span> — resumable pipelines that survive restarts
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="pattern" id="p13" style="border-color:var(--purple)">
+<div class="pattern-id">Pattern 13</div>
+<div class="pattern-title">The Portal — Physical ↔ Virtual Twin Bridge</div>
+<div class="pattern-one" style="border-color:var(--purple)">When physical machines and virtual agents share the same VM, the same wallets, the same chain — the wall between worlds isn't bridged. It disappears.</div>
+
+<h4>Problem</h4>
+<p>You have a simulation and a physical system. They need to interoperate. Traditionally you build a "bridge" — an adapter layer that translates between virtual and physical APIs. This creates a bottleneck, a translation layer, and a fundamental asymmetry: one side is "real" and the other is "simulated."</p>
+
+<h4>Shape</h4>
+<p>Eliminate the bridge by making both sides speak the <strong>same protocol</strong>:</p>
+<ol>
+<li>Same programming language (LisPy VM — homoiconic, sandboxed)</li>
+<li>Same address space (mars1_agent_*, mars1_physical_*, mars1_user_*)</li>
+<li>Same transfer protocol (marsTransfer function signature)</li>
+<li>Same verification chain (hash-linked, publicly auditable)</li>
+<li>Same state format (echo frames, cartridges)</li>
+</ol>
+
+<pre><code>// A physical Rappter connects to the sim:
+channel.postMessage({cmd: 'register_wallet',
+  payload: {address: 'mars1_physical_rappter', owner: 'Wildhaven (Physical)'}});
+
+// Pushes a LisPy program that blends real sensor data + sim state:
+channel.postMessage({cmd: 'push_lispy', payload: {code: `(begin
+  (define real_temp (sensor "temp_c"))     ;; physical hardware
+  (define sim_temp interior_temp_k)        ;; virtual colony
+  (if (< (min real_temp sim_temp) 268)
+    (set! heating_alloc 0.50)
+    (set! heating_alloc 0.20)))`}});
+
+// Tips a virtual agent from the physical world:
+channel.postMessage({cmd: 'tip_agent',
+  payload: {agent: 'OPT-01', amount: 500, memo: 'from the real world'}});
+
+// Same messages. Same chain. Same VM. The atoms don't matter.</code></pre>
+
+<h4>Key Insight</h4>
+<p>The portal isn't a bridge you build. It's a wall you stop building. When both sides speak the same language, the distinction between virtual and physical is just <strong>metadata on the wallet address</strong>. The chain doesn't care if the sender has atoms or not.</p>
+
+<p>This creates a 5th nervous system layer — the <strong>Marketplace</strong> — that spans both worlds. The treasury governor (LisPy) distributes tokens to virtual agents AND physical machines through the same protocol. Governance doesn't stop at the sim boundary.</p>
+
+<div class="uses"><strong>Applies to:</strong>
+<span class="domain-tag robotics">Digital Twins</span> — physical robots as first-class sim participants
+<span class="domain-tag ai">AI Governance</span> — same audit trail spanning virtual + physical decisions
+<span class="domain-tag iot">IoT Mesh</span> — devices and simulations in one address space
+<span class="domain-tag fintech">Virtual Economies</span> — tokens flowing between sim agents and real operators
 </div>
 </div>
 
