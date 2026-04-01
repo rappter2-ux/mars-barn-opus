@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920,height=1080">
+<title>Mars Barn — OBS Overlay</title>
+<style>
+/* ── Reset & Transparent Canvas ── */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  width:1920px;height:1080px;
+  background:transparent;
+  overflow:hidden;
+  font-family:'SFMono-Regular','Cascadia Code','Fira Code','Consolas',monospace;
+  color:#fff;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── Shared text shadow for readability on any background ── */
+.hud{
+  text-shadow:0 0 4px rgba(0,0,0,0.9),0 0 8px rgba(0,0,0,0.7),0 0 16px rgba(0,0,0,0.4);
+}
+
+/* ── Panels: fixed, no backgrounds ── */
+.panel{position:fixed;pointer-events:none}
+
+/* ── Top-left: Colony Status ── */
+#colony-status{top:24px;left:28px;font-size:15px;line-height:1.7}
+#colony-status .row1{font-weight:700;letter-spacing:0.5px}
+#colony-status .row2{font-size:13px;color:#c9d1d9;letter-spacing:0.3px}
+
+/* ── Top-right: MARS Token ── */
+#mars-token{top:24px;right:28px;text-align:right;font-size:14px;line-height:1.7}
+#mars-token .row1{font-weight:700}
+#mars-token .row2{font-size:12px;color:#8b949e}
+
+/* ── Bottom-left: Crew roster ── */
+#crew-roster{bottom:80px;left:28px;font-size:13px;line-height:1.6}
+#crew-roster .crew-row{display:flex;gap:16px;flex-wrap:wrap}
+
+/* ── Bottom-right: Active task ── */
+#active-task{bottom:80px;right:28px;text-align:right;font-size:13px;line-height:1.6;max-width:420px;
+  opacity:0;transition:opacity 0.3s ease}
+#active-task.visible{opacity:1}
+#active-task .task-title{font-weight:700;font-size:15px}
+#active-task .task-actions{font-size:12px;color:#8b949e}
+#active-task .task-timer{font-weight:700}
+
+/* ── Center-bottom: Event ticker ── */
+#event-ticker{
+  bottom:24px;left:50%;transform:translateX(-50%);
+  width:900px;text-align:center;font-size:12px;
+  color:#8b949e;white-space:nowrap;overflow:hidden;
+  height:20px;
+}
+#ticker-track{
+  display:inline-block;
+  animation:ticker-scroll 30s linear infinite;
+  white-space:nowrap;
+}
+@keyframes ticker-scroll{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
+}
+
+/* ── Connecting state ── */
+#connecting{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:16px;font-weight:700;letter-spacing:1px;
+  display:flex;align-items:center;gap:10px;
+}
+#connecting.hidden{display:none}
+.pulse-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:#58a6ff;
+  animation:pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:0.3;transform:scale(0.8)}
+  50%{opacity:1;transform:scale(1.2)}
+}
+
+/* ── Color utility classes ── */
+.c-cyan{color:#79c0ff}
+.c-green{color:#3fb950}
+.c-yellow{color:#d29922}
+.c-red{color:#da3633}
+.c-dim{color:#8b949e}
+.c-purple{color:#a371f7}
+
+/* ── Urgency pulse ── */
+@keyframes urgency-pulse{
+  0%,100%{color:#da3633}
+  50%{color:#ff6b6b}
+}
+.urgent-pulse{animation:urgency-pulse 0.8s ease-in-out infinite}
+
+/* ── Dead overlay ── */
+#dead-banner{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:28px;font-weight:700;color:#da3633;letter-spacing:2px;
+  display:none;
+}
+#dead-banner.visible{display:block}
+</style>
+</head>
+<body>
+
+<!-- Connecting indicator -->
+<div id="connecting" class="hud">
+  <span class="pulse-dot"></span>
+  <span>CONNECTING...</span>
+</div>
+
+<!-- Top-left: Colony Status -->
+<div id="colony-status" class="panel hud">
+  <div class="row1" id="status-line1"></div>
+  <div class="row2" id="status-line2"></div>
+</div>
+
+<!-- Top-right: MARS Token -->
+<div id="mars-token" class="panel hud">
+  <div class="row1" id="mars-line1"></div>
+  <div class="row2" id="mars-line2"></div>
+</div>
+
+<!-- Bottom-left: Crew roster -->
+<div id="crew-roster" class="panel hud">
+  <div class="crew-row" id="crew-row"></div>
+</div>
+
+<!-- Bottom-right: Active task -->
+<div id="active-task" class="panel hud">
+  <div class="task-title" id="task-title"></div>
+  <div class="task-actions" id="task-actions"></div>
+</div>
+
+<!-- Center-bottom: Event ticker -->
+<div id="event-ticker" class="panel hud">
+  <div id="ticker-track"></div>
+</div>
+
+<!-- Colony dead banner -->
+<div id="dead-banner" class="hud">☠ COLONY LOST</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  MARS BARN — OBS STREAMING OVERLAY
+//  Connects to viewer.html via BroadcastChannel ('mars-barn-twin')
+//  Shows HUD data only — transparent background for OBS Browser Source
+// ══════════════════════════════════════════════════════════════
+
+const CHANNEL_NAME = 'mars-barn-twin';
+const O2_PP = 0.84, H2O_PP = 2.5, FOOD_PP = 2500;
+
+const MISSIONS = {
+  ares:'Ares I',optimus:'Optimus',skeleton:'Skeleton Crew',garden:'Garden of Mars',
+  dustbowl:'Dust Bowl',noisru:'ISRU Down',hybrid:'Hybrid Colony',lunar:'Lunar Testbed'
+};
+
+// ── State ──
+let connected = false;
+let missionName = '';
+let colonyState = null;
+let walletData = null;      // {wallets:{}, transfers:[]}
+let echoHistory = [];       // last N echo frames
+let eventLog = [];          // ticker events
+let activeTaskData = null;  // current task_event payload
+let taskTimer = null;
+let marsPrice = 0;
+let marsDelta = 0;
+let twinFidelity = 50;
+let channel = null;
+let pollInterval = null;
+
+// ── BroadcastChannel setup ──
+function initChannel(){
+  if(typeof BroadcastChannel === 'undefined') return;
+  channel = new BroadcastChannel(CHANNEL_NAME);
+  channel.onmessage = (e) => handleMessage(e.data);
+  send('announce', {role:'overlay', capabilities:['state','echo','wallets']});
+}
+
+function send(cmd, payload){
+  if(!channel) return;
+  channel.postMessage({
+    type:'request', cmd, payload: payload || {},
+    ts: new Date().toISOString(), from:'overlay',
+    id: Date.now().toString(36)+Math.random().toString(36).substr(2,4)
+  });
+}
+
+function handleMessage(msg){
+  if(!msg || !msg.cmd) return;
+
+  switch(msg.cmd){
+    case 'announce':
+      if(msg.from === 'twin'){
+        connected = true;
+        missionName = MISSIONS[msg.payload.mission] || msg.payload.mission || '';
+        document.getElementById('connecting').classList.add('hidden');
+        send('get_state');
+        send('get_wallets');
+      }
+      break;
+
+    case 'state_update':
+    case 'state':
+      connected = true;
+      document.getElementById('connecting').classList.add('hidden');
+      colonyState = msg.payload;
+      updateColonyStatus();
+      updateCrewRoster();
+      updateMarsFromState();
+      break;
+
+    case 'echo_frame':
+      if(msg.payload && msg.payload.frame !== undefined){
+        echoHistory.push(msg.payload);
+        if(echoHistory.length > 60) echoHistory.shift();
+        processEchoEvents(msg.payload);
+        computeFidelity();
+      }
+      break;
+
+    case 'task_event':
+      showTask(msg.payload);
+      break;
+
+    case 'wallets':
+      walletData = msg.payload;
+      updateMarsToken();
+      break;
+
+    case 'mars_transfer':
+      if(msg.payload && msg.payload.fromOwner){
+        addTickerEvent(`💸 ${msg.payload.fromOwner} → ${msg.payload.toOwner}: ${msg.payload.amount} MARS`);
+      }
+      send('get_wallets');
+      break;
+
+    case 'mars_transfer_result':
+      if(msg.payload && msg.payload.ok && msg.payload.tx){
+        const tx = msg.payload.tx;
+        addTickerEvent(`💸 ${tx.fromOwner} sent ${tx.amount} MARS to ${tx.toOwner}`);
+      }
+      break;
+
+    case 'score':
+      // Could show score badge — for now add to ticker
+      if(msg.payload) addTickerEvent(`📊 Score: ${msg.payload.total} (${msg.payload.grade})`);
+      break;
+
+    case 'reflex_event':
+      if(msg.payload) addTickerEvent(`⚡ Reflex: ${msg.payload.id}`);
+      break;
+  }
+}
+
+// ── Colony Status (top-left) ──
+function updateColonyStatus(){
+  const s = colonyState;
+  if(!s) return;
+
+  const n = Math.max(1, (s.crew||[]).filter(c=>c.alive).length);
+  const o2d = (s.o2/(O2_PP*n)).toFixed(1);
+  const h2od = (s.h2o/(H2O_PP*n)).toFixed(1);
+  const fd = (s.food/(FOOD_PP*n)).toFixed(1);
+  const pwr = Math.round(s.power);
+
+  // CRI color
+  const cri = s.cri || 0;
+  const criGrade = s.criGrade || 'LOW';
+  const criClass = cri > 50 ? 'c-red' : cri > 30 ? 'c-yellow' : 'c-green';
+
+  const name = missionName || s.arch?.toUpperCase() || 'COLONY';
+
+  const line1 = document.getElementById('status-line1');
+  const line2 = document.getElementById('status-line2');
+
+  if(!s.alive){
+    line1.innerHTML = `<span class="c-red">☠ COLONY LOST</span> <span class="c-dim">|</span> SOL ${s.sol}`;
+    line2.innerHTML = `<span class="c-dim">${s.cause || 'Unknown cause'}</span>`;
+    document.getElementById('dead-banner').classList.add('visible');
+    return;
+  }
+
+  document.getElementById('dead-banner').classList.remove('visible');
+
+  line1.innerHTML =
+    `SOL ${s.sol} <span class="c-dim">|</span> ${name} <span class="c-dim">|</span> ` +
+    `<span class="${criClass}">CRI ${cri} (${criGrade.toUpperCase()})</span>`;
+
+  // Color resource days by urgency
+  const colorDays = (d) => parseFloat(d) < 5 ? 'c-red' : parseFloat(d) < 15 ? 'c-yellow' : 'c-green';
+
+  line2.innerHTML =
+    `<span class="${colorDays(o2d)}">O₂ ${o2d}d</span> <span class="c-dim">|</span> ` +
+    `<span class="${colorDays(h2od)}">H₂O ${h2od}d</span> <span class="c-dim">|</span> ` +
+    `<span class="${colorDays(fd)}">Food ${fd}d</span> <span class="c-dim">|</span> ` +
+    `<span class="c-cyan">⚡ ${pwr} kWh</span>`;
+}
+
+// ── Crew Roster (bottom-left) ──
+function updateCrewRoster(){
+  const s = colonyState;
+  if(!s || !s.crew) return;
+
+  const el = document.getElementById('crew-row');
+  const isBot = (name) => name.startsWith('OPT') || name.startsWith('LUN');
+
+  el.innerHTML = s.crew.map(c => {
+    const icon = isBot(c.name) ? '🤖' : '👤';
+    const hpClass = !c.alive ? 'c-red' : c.hp < 50 ? 'c-red' : c.hp < 75 ? 'c-yellow' : 'c-green';
+    const status = !c.alive ? ' ☠' : '';
+    return `<span>${icon} <span class="c-cyan">${c.name}</span> ` +
+           `<span class="${hpClass}">HP:${c.hp}</span>${status}</span>`;
+  }).join('');
+}
+
+// ── MARS Token (top-right) ──
+function updateMarsToken(){
+  if(!walletData || !walletData.wallets) return;
+
+  const wallets = walletData.wallets;
+  const transfers = walletData.transfers || [];
+
+  // Sum all balances except genesis and treasury
+  let totalBalance = 0;
+  for(const [addr, w] of Object.entries(wallets)){
+    if(addr.includes('genesis') || addr.includes('treasury')) continue;
+    totalBalance += w.balance || 0;
+  }
+
+  // Compute earning rate: MARS earned in recent transfers
+  const recentSol = colonyState ? colonyState.sol : 0;
+  let earnedRecent = 0;
+  let solSpan = 1;
+  if(transfers.length >= 2){
+    const recent = transfers.slice(-10);
+    const fromGenesis = recent.filter(t => t.from && t.from.includes('genesis'));
+    earnedRecent = fromGenesis.reduce((a,t) => a + (t.amount||0), 0);
+    const firstSol = recent[0]?.sol || recentSol;
+    solSpan = Math.max(1, recentSol - firstSol);
+  }
+  const rate = earnedRecent > 0 ? (earnedRecent / solSpan).toFixed(1) : '—';
+
+  const line1 = document.getElementById('mars-line1');
+  const line2 = document.getElementById('mars-line2');
+
+  line1.innerHTML = `🪙 <span class="c-green">${formatNumber(Math.round(totalBalance))} MARS</span>` +
+    ` <span class="c-dim">|</span> 📈 <span class="c-cyan">${rate} MARS/SOL</span>`;
+  line2.innerHTML = `Twin Fidelity: <span class="${fidelityColor(twinFidelity)}">${twinFidelity}%</span>`;
+}
+
+function updateMarsFromState(){
+  // If we haven't received wallets yet, derive from marsLedger in state
+  if(walletData) return;
+  const s = colonyState;
+  if(!s) return;
+
+  const line1 = document.getElementById('mars-line1');
+  const line2 = document.getElementById('mars-line2');
+
+  // marsLedger may exist in state as crew → {balance, earned}
+  if(s.marsLedger){
+    let total = 0;
+    for(const [name, ledger] of Object.entries(s.marsLedger)){
+      total += ledger.balance || 0;
+    }
+    line1.innerHTML = `🪙 <span class="c-green">${formatNumber(Math.round(total))} MARS</span>`;
+  }
+
+  line2.innerHTML = `Twin Fidelity: <span class="${fidelityColor(twinFidelity)}">${twinFidelity}%</span>`;
+}
+
+// ── Twin Fidelity (computed from echo frame deltas) ──
+function computeFidelity(){
+  if(echoHistory.length < 2) return;
+  const prev = echoHistory[echoHistory.length - 2];
+  const curr = echoHistory[echoHistory.length - 1];
+  if(!prev?.delta || !curr?.delta) return;
+
+  const predicted = Math.sign(prev.delta.o2 || 0);
+  const actual = Math.sign(curr.delta.o2 || 0);
+  const predPower = Math.sign(prev.delta.power || 0);
+  const actPower = Math.sign(curr.delta.power || 0);
+  twinFidelity = 50 + (predicted === actual ? 25 : -25) + (predPower === actPower ? 25 : -25);
+
+  // Update display if wallets already shown
+  const line2 = document.getElementById('mars-line2');
+  if(line2) line2.innerHTML = `Twin Fidelity: <span class="${fidelityColor(twinFidelity)}">${twinFidelity}%</span>`;
+}
+
+function fidelityColor(f){ return f > 70 ? 'c-green' : f > 40 ? 'c-yellow' : 'c-red'; }
+
+// ── Active Task (bottom-right) ──
+function showTask(task){
+  if(!task) return;
+  activeTaskData = task;
+
+  const el = document.getElementById('active-task');
+  const title = document.getElementById('task-title');
+  const actions = document.getElementById('task-actions');
+
+  const urgClass = task.urgency === 'urgent' ? 'urgent-pulse' : '';
+  const urgIcon = task.urgency === 'urgent' ? '⚠' : task.urgency === 'request' ? '📋' : 'ℹ';
+
+  title.innerHTML = `<span class="${urgClass}">${urgIcon} ${task.title}</span>` +
+    ` — <span class="${task.urgency==='urgent'?'c-red':'c-yellow'}">${task.urgency.toUpperCase()}</span>`;
+
+  let timerLeft = task.timeout || task.timerLeft || 30;
+
+  if(task.override){
+    actions.innerHTML = `Manual Override Required <span class="c-dim">|</span> ` +
+      `<span class="task-timer c-cyan" id="task-countdown">${timerLeft}s remaining</span>`;
+  } else {
+    const approveLabel = task.approve?.label || 'Approve';
+    const denyLabel = task.deny?.label || 'Deny';
+    actions.innerHTML = `${approveLabel} <span class="c-dim">|</span> ${denyLabel}` +
+      (task.alt ? ` <span class="c-dim">|</span> ${task.alt.label}` : '') +
+      ` <span class="c-dim">|</span> <span class="task-timer c-cyan" id="task-countdown">${timerLeft}s remaining</span>`;
+  }
+
+  el.classList.add('visible');
+
+  // Add to ticker
+  addTickerEvent(`${urgIcon} ${task.title}`);
+
+  // Countdown
+  clearInterval(taskTimer);
+  taskTimer = setInterval(() => {
+    timerLeft--;
+    const cd = document.getElementById('task-countdown');
+    if(cd){
+      cd.textContent = timerLeft + 's remaining';
+      if(timerLeft <= 5) cd.className = 'task-timer c-red';
+    }
+    if(timerLeft <= 0){
+      clearInterval(taskTimer);
+      hideTask();
+    }
+  }, 1000);
+}
+
+function hideTask(){
+  activeTaskData = null;
+  clearInterval(taskTimer);
+  document.getElementById('active-task').classList.remove('visible');
+}
+
+// ── Event Ticker (center-bottom) ──
+function addTickerEvent(text){
+  const sol = colonyState ? colonyState.sol : '?';
+  eventLog.push({ sol, text, ts: Date.now() });
+  if(eventLog.length > 50) eventLog.shift();
+  updateTicker();
+}
+
+function processEchoEvents(echo){
+  if(echo.events){
+    echo.events.forEach(ev => {
+      const desc = ev.desc || ev.type || 'Event';
+      addTickerEvent(desc);
+    });
+  }
+  if(echo.crew_events){
+    echo.crew_events.forEach(ev => {
+      const icon = ev.type === 'crew_death' ? '☠' : '🚨';
+      addTickerEvent(`${icon} ${ev.name} (${ev.role}) — ${ev.type.replace('_',' ')}`);
+    });
+  }
+  if(echo.build){
+    const icon = echo.build.type === 'construction_complete' ? '✅' : '🔨';
+    addTickerEvent(`${icon} ${echo.build.module}`);
+  }
+}
+
+function updateTicker(){
+  const track = document.getElementById('ticker-track');
+  const recent = eventLog.slice(-12);
+  track.textContent = recent.map(e => `Sol ${e.sol}: ${e.text}`).join('  ·  ');
+
+  // Reset animation to restart scrolling
+  track.style.animation = 'none';
+  track.offsetHeight; // reflow
+  track.style.animation = '';
+}
+
+// ── Helpers ──
+function formatNumber(n){
+  return n >= 1000 ? n.toLocaleString('en-US') : String(n);
+}
+
+// ── Polling fallback ──
+function startPolling(){
+  pollInterval = setInterval(() => {
+    if(channel) send('get_state');
+  }, 2000);
+
+  // Also request wallets periodically
+  setInterval(() => {
+    if(channel) send('get_wallets');
+  }, 10000);
+}
+
+// ── Init ──
+initChannel();
+startPolling();
+</script>
+</body>
+</html>
