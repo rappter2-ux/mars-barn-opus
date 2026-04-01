@@ -1,8 +1,15 @@
 {
   "_protocol": "rappter-engine-manifest",
-  "version": 1,
-  "description": "Manifest for a public repo that receives output from a private Rappter engine. The engine pulls this manifest, reads the chain state, computes the next frame, and pushes it back. The engine IP stays private. The output is static and public.",
+  "version": 2,
+  "description": "Manifest for a public repo that receives output from a private Rappter engine. The engine pulls this manifest, reads the chain state, computes the next frame, and pushes it back. The engine IP stays private. The output is static and public. The cryptographic signatures authenticate that output came from an authorized engine owned by Wildhaven Homes LLC.",
   
+  "authority": {
+    "owner": "Wildhaven Homes LLC",
+    "engine": "Rappter Engine",
+    "public_key_id": "wildhaven-rappter-v1",
+    "description": "Every frame pushed by an authorized engine carries a signature. Chain nodes verify this signature against the public key registered here. Unauthorized engines cannot produce valid signatures. The private key lives on the engine hardware — never in any repo."
+  },
+
   "repo": {
     "owner": "kody-w",
     "name": "mars-barn-opus",
@@ -35,7 +42,7 @@
       "5_generate_frame": "Engine runs its private algorithms to produce the next frame",
       "6_hash_frame": "SHA-256 of frame content (before hash insertion) for anti-tamper",
       "7_link_chain": "prevHash = hash of previous frame → extends the chain",
-      "8_sign_vote": "Engine signs the frame with its node ID → attribution"
+      "8_sign_frame": "Engine signs frame with its private key → proves authorship by Wildhaven Homes LLC"
     },
     "push": {
       "9_write_frame": "PUT data/frames/sol-NNNN.json → the new frame",
