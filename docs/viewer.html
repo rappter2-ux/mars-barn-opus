@@ -1750,7 +1750,8 @@ function generateRunAttestation(){
 
 let marsWallets = {};   // address → {owner, balance, type, created}
 let marsTransfers = []; // full transfer log (the transaction history)
-const USER_WALLET = 'mars1_user_' + (typeof cartridgeId !== 'undefined' ? cartridgeId : 'local');
+let cartridgeId = null; // moved here — needed by USER_WALLET
+const USER_WALLET = 'mars1_user_' + (typeof cartridgeId !== 'undefined' && cartridgeId ? cartridgeId : 'local');
 const GENESIS_WALLET = 'mars1_genesis_wildhaven';
 
 // ── Treasury Governor (LisPy) ──
@@ -3694,6 +3695,8 @@ let currentZoom='planet';
 let groundScene=null,groundCamera=null,groundRenderer=null,groundAnimId=null;
 let groundRobots=[], groundCrew=[];
 let cameraPOV=null; // {target: mesh, returnAt: timestamp} — for robot POV lock
+let activeMission = null;
+let pendingConfig = null;
 
 // ── FPS free-walk state ──
 let fpsPlayer={x:0,y:1.7,z:5,yaw:0,pitch:0};
@@ -6391,8 +6394,7 @@ const MISSIONS = {
                {name:'LUN-02',role:'SCI',hp:100,fat:0,mor:100,rad:0,alive:true,st:'Nominal'}]}
 };
 
-let activeMission = null;
-let pendingConfig = null; // holds the mission key being configured
+// activeMission + pendingConfig declared earlier (with globe/state vars)
 
 const GOV_ARCHETYPES = ['engineer','scientist','survivalist','commander','diplomat','philosopher','contrarian','wildcard','merchant','hermit'];
 const GOV_DESCS = {engineer:'Systems optimizer',scientist:'Evidence-based',survivalist:'Hoarder',commander:'Military discipline',
@@ -6799,7 +6801,7 @@ resetState();
 const CARTRIDGE_VERSION = 1;
 const AUTOSAVE_KEY = 'mars-barn-autosave';
 const AUTOSAVE_INTERVAL = 10; // auto-save every N sols
-let cartridgeId = null;
+// cartridgeId declared earlier (near USER_WALLET)
 
 function generateCartridgeId(){
   const ts = Date.now().toString(36);
