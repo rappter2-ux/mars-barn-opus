@@ -58,16 +58,16 @@ test.describe('Mission Control', () => {
 // ══════════════════════════════════════════════════════════════
 
 test.describe('Pattern Library', () => {
-  test('page loads with 13 patterns', async ({ page }) => {
+  test('page loads with 14 patterns', async ({ page }) => {
     await page.goto('/patterns.html');
     const patterns = await page.locator('.pattern').count();
-    expect(patterns).toBe(13);
+    expect(patterns).toBe(14);
   });
 
   test('TOC nav links exist', async ({ page }) => {
     await page.goto('/patterns.html');
     const navLinks = await page.locator('#toc a').count();
-    expect(navLinks).toBe(13);
+    expect(navLinks).toBe(14);
   });
 });
 
