@@ -1,0 +1,11 @@
+{
+  "_format": "mars-barn-federation-leaderboard",
+  "version": 1,
+  "updated": "2025-04-01T00:00:00Z",
+  "frame_version": "v2",
+  "total_frames": 501,
+  "scoring": "monte_carlo_100_runs_amendment_iv",
+  "entries": [],
+  "total_challengers": 0,
+  "total_verified": 0
+}

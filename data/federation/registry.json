@@ -1,0 +1,17 @@
+{
+  "_format": "mars-barn-federation-registry",
+  "version": 1,
+  "description": "Known federated challenger repos. Crawler discovers new ones via GitHub code search for .mars-barn-federation.json",
+  "challengers": [
+    {
+      "name": "Mars Barn Opus (Origin)",
+      "owner": "kody-w",
+      "repo": "mars-barn-opus",
+      "url": "https://github.com/kody-w/mars-barn-opus",
+      "role": "origin",
+      "registered": "2025-07-09T00:00:00Z"
+    }
+  ],
+  "discovery_query": "filename:.mars-barn-federation.json",
+  "last_crawl": null
+}
