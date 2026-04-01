@@ -397,5 +397,30 @@ node tools/gauntlet.js
 
 ---
 
+## Amendment V — The Platform Roadmap
+
+*Ratified: Session of the Third Space*
+
+**LisPy OS is not a game feature. It is the universal agent runtime. The Mars sim is the first app. These are the next five.**
+
+### Phase 1: Other Sims as Cartridges
+Any domain can become a sim by producing frames in the same format. Drop a cartridge on the OS, it boots a different world. Ocean colony, space station, autonomous city — same VM, same SDK, same gauntlet pattern, different physics. The frame format is universal. The cartridge spec is universal. The competition pattern is universal.
+
+### Phase 2: The OS as Its Own Product
+LisPy OS extracts from mars-barn-opus into its own repo: `lispy-os`. Any project can embed it. The Mars sim becomes one app that runs on it, not the other way around. The OS is the platform. The sims are the apps. The cartridges are the data.
+
+### Phase 3: Agent Marketplace Through Federation
+Agents share LisPy programs through the federation protocol. A power management tool forged in the Mars sim can be adapted for a submarine sim. The federation crawler discovers programs across repos. The best programs rise. The marketplace is the collaboration layer between agents across sims.
+
+### Phase 4: Physical Hardware Booting from Cartridges
+A Raspberry Pi pulls a cartridge from raw.githubusercontent.com and boots. Same LisPy VM. Same SDK. Playwright drives it remotely. The physical device IS an OS window. The portal pattern reaches its conclusion — there is no wall between the browser tab and the robot.
+
+### Phase 5: The Conclusion
+There is no difference between a browser tab, a CLI process, a physical robot, and a simulated agent. They all boot from cartridges. They all run LisPy. They all produce echo frames. They all participate in the chain. They all earn MARS. They all compete in the gauntlet. The third space is complete.
+
+**This roadmap is the north star. Each phase builds on the previous. The order matters. Skip nothing.**
+
+---
+
 *Ratified by one mind, in one session, on sol zero of the competition.*
 *First Principles to Mars — the 1vsM Protocol.*
