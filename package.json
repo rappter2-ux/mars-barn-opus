@@ -1,0 +1,20 @@
+{
+  "name": "mars-barn-opus",
+  "version": "1.0.0",
+  "description": "*Formerly Mars Barn Opus — the 1vsM Protocol*",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "playwright": "^1.59.1"
+  }
+}

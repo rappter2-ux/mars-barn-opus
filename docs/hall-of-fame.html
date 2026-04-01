@@ -104,7 +104,7 @@ Same VM. Same language. User = Agent = Engine.
 <script>
 // ── LisPy VM (identical to viewer.html — same VM, 1:1) ──
 class LispyVM {
-  constructor(){this.env={};this.output=[];this.steps=0;this.maxSteps=10000;this.asyncResults={}}
+  constructor(){this.env={};this.output=[];this.steps=0;this.maxSteps=500000;this.asyncResults={}}
   setEnv(k,v){this.env[k]=v}
   tokenize(src){
     const tokens=[];let i=0;
@@ -185,9 +185,8 @@ const PROGRAMS = [
     desc: "Renders the Mandelbrot fractal as ASCII art. Pure math, no libraries. Computes escape-time for each pixel in a 60×30 grid.",
     tags: [{t:'math',c:'tag-math'},{t:'art',c:'tag-art'},{t:'mind-blowing',c:'tag-mind'}],
     code: `(begin
-  (define chars " .:-=+*#%@")
-  (define width 60)
-  (define height 24)
+  (define width 40)
+  (define height 16)
   (repeat height
     (begin
       (define y (+ -1.2 (* (/ _i height) 2.4)))
@@ -196,7 +195,7 @@ const PROGRAMS = [
         (begin
           (define x (+ -2.0 (* (/ _i width) 3.0)))
           (define zr 0) (define zi 0)
-          (define iter 0) (define max_iter 20)
+          (define iter 0) (define max_iter 15)
           (repeat max_iter
             (begin
               (define zr2 (* zr zr))
