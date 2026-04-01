@@ -1,0 +1,60 @@
+{
+  "sol": 230,
+  "utc": "2026-03-02T07:48:00Z",
+  "mars": {
+    "ls": 247.5,
+    "season": "Northern Autumn",
+    "temp_k": 228.2,
+    "temp_c": -45.0,
+    "pressure_pa": 712,
+    "solar_wm2": 529,
+    "dust_tau": 0.398,
+    "wind_ms": 3.2,
+    "lmst": 2.8
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0111
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.008
+    },
+    {
+      "type": "electrostatic_dust",
+      "target": "sensor_array",
+      "degradation": 0.0047,
+      "desc": "Electrostatic dust adhesion \u2014 charged particles cling to surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.1,
+    "window_open": false,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.57,
+    "water_ice_depth_m": 1.4,
+    "surface_radiation_usv": 0.32
+  },
+  "challenge": {
+    "id": "sol230_battery_reconditioning",
+    "type": "battery_reconditioning",
+    "params": {
+      "cells_affected": 1,
+      "capacity_remaining_pct": 63,
+      "temp_at_failure": -45
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 229,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 4.3,
+    "dust_delta": 0.047
+  },
+  "_hash": "47546c25710f37a5"
+}

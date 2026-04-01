@@ -1,0 +1,65 @@
+{
+  "sol": 358,
+  "utc": "2026-07-11T20:16:48Z",
+  "mars": {
+    "ls": 314.6,
+    "season": "Northern Winter",
+    "temp_k": 213.2,
+    "temp_c": -59.9,
+    "pressure_pa": 719,
+    "solar_wm2": 534,
+    "dust_tau": 0.233,
+    "wind_ms": 6.5,
+    "lmst": 16.9
+  },
+  "events": [
+    {
+      "type": "dust_storm",
+      "severity": 0.72,
+      "duration_sols": 18,
+      "desc": "Regional dust storm approaching from the north"
+    },
+    {
+      "type": "dust_devil",
+      "severity": 0.17,
+      "duration_sols": 1,
+      "desc": "Dust devil spotted near habitat perimeter"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0065
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "isru_unit",
+      "degradation": 0.0062
+    },
+    {
+      "type": "perchlorate_corrosion",
+      "target": "actuator_joint",
+      "degradation": 0.0053,
+      "desc": "Perchlorate salt corrosion on mechanical joints"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 4.2,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.61,
+    "water_ice_depth_m": 2.1,
+    "surface_radiation_usv": 0.51
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 357,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 8.9,
+    "dust_delta": -0.044
+  },
+  "_hash": "8ee888c8230a8296"
+}

@@ -1,0 +1,59 @@
+{
+  "sol": 429,
+  "utc": "2026-09-22T19:08:24Z",
+  "mars": {
+    "ls": 351.8,
+    "season": "Northern Winter",
+    "temp_k": 196.5,
+    "temp_c": -76.7,
+    "pressure_pa": 736,
+    "solar_wm2": 500,
+    "dust_tau": 0.122,
+    "wind_ms": 4.2,
+    "lmst": 19.4
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0104
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "solar_array",
+      "degradation": 0.0052
+    },
+    {
+      "type": "perchlorate_corrosion",
+      "target": "actuator_joint",
+      "degradation": 0.0081,
+      "desc": "Perchlorate salt corrosion on mechanical joints"
+    },
+    {
+      "type": "thermal_fatigue",
+      "target": "comm_module",
+      "degradation": 0.0097,
+      "cycles": 429,
+      "desc": "Thermal cycling fatigue \u2014 57K daily swing on electronics"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 9.7,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.51,
+    "water_ice_depth_m": 1.4,
+    "surface_radiation_usv": 0.63
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 428,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": -9.1,
+    "dust_delta": -0.018
+  },
+  "_hash": "d93e2208634dfadb"
+}

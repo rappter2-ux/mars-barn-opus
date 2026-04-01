@@ -1,0 +1,53 @@
+{
+  "sol": 269,
+  "utc": "2026-04-11T09:32:24Z",
+  "mars": {
+    "ls": 268.0,
+    "season": "Northern Autumn",
+    "temp_k": 210.4,
+    "temp_c": -62.8,
+    "pressure_pa": 710,
+    "solar_wm2": 582,
+    "dust_tau": 0.479,
+    "wind_ms": 3.0,
+    "lmst": 1.8
+  },
+  "events": [
+    {
+      "type": "cold_snap",
+      "severity": 0.46,
+      "duration_sols": 10,
+      "desc": "Extreme cold \u2014 battery and actuator performance degraded"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0071
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0096
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 11.1,
+    "window_open": false,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.5,
+    "water_ice_depth_m": 2.0,
+    "surface_radiation_usv": 0.84
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 268,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -13.0,
+    "dust_delta": -0.036
+  },
+  "_hash": "596e800728e120ea"
+}

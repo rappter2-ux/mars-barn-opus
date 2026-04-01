@@ -1,0 +1,64 @@
+{
+  "sol": 267,
+  "utc": "2026-04-09T08:13:12Z",
+  "mars": {
+    "ls": 266.9,
+    "season": "Northern Autumn",
+    "temp_k": 218.1,
+    "temp_c": -55.0,
+    "pressure_pa": 710,
+    "solar_wm2": 513,
+    "dust_tau": 0.355,
+    "wind_ms": 5.0,
+    "lmst": 3.1
+  },
+  "events": [
+    {
+      "type": "dust_storm",
+      "severity": 0.9,
+      "duration_sols": 19,
+      "desc": "Regional dust storm approaching from the north"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0173
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "wheel_assembly",
+      "degradation": 0.0098
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0071
+    },
+    {
+      "type": "electrostatic_dust",
+      "target": "sensor_array",
+      "degradation": 0.0031,
+      "desc": "Electrostatic dust adhesion \u2014 charged particles cling to surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 11.3,
+    "window_open": false,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.75,
+    "water_ice_depth_m": 1.2,
+    "surface_radiation_usv": 0.57
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 266,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 2.8,
+    "dust_delta": -0.057
+  },
+  "_hash": "2561daa5e03d78b1"
+}

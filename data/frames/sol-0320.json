@@ -1,0 +1,60 @@
+{
+  "sol": 320,
+  "utc": "2026-06-02T19:12:00Z",
+  "mars": {
+    "ls": 294.7,
+    "season": "Northern Winter",
+    "temp_k": 212.6,
+    "temp_c": -60.5,
+    "pressure_pa": 713,
+    "solar_wm2": 568,
+    "dust_tau": 0.48,
+    "wind_ms": 5.4,
+    "lmst": 17.2
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0151
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0096
+    },
+    {
+      "type": "perchlorate_corrosion",
+      "target": "actuator_joint",
+      "degradation": 0.0051,
+      "desc": "Perchlorate salt corrosion on mechanical joints"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 7.4,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.89,
+    "water_ice_depth_m": 1.9,
+    "surface_radiation_usv": 0.77
+  },
+  "challenge": {
+    "id": "sol320_software_watchdog_reset",
+    "type": "software_watchdog_reset",
+    "params": {
+      "subsystem": "motor",
+      "reboot_count": 2,
+      "memory_errors": 12
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 319,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 8.9,
+    "dust_delta": 0.069
+  },
+  "_hash": "53c0a96e25fcf14d"
+}

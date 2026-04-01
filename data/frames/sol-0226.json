@@ -1,0 +1,46 @@
+{
+  "sol": 226,
+  "utc": "2026-02-26T05:09:36Z",
+  "mars": {
+    "ls": 245.4,
+    "season": "Northern Autumn",
+    "temp_k": 225.4,
+    "temp_c": -47.7,
+    "pressure_pa": 713,
+    "solar_wm2": 547,
+    "dust_tau": 0.428,
+    "wind_ms": 7.0,
+    "lmst": 5.3
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0151
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0086
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.2,
+    "window_open": false,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.87,
+    "water_ice_depth_m": 1.6,
+    "surface_radiation_usv": 0.39
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 225,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 5.0,
+    "dust_delta": 0.058
+  },
+  "_hash": "9dae27a5f2cfd810"
+}

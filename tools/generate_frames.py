@@ -185,7 +185,7 @@ CHALLENGE_TYPES = [
 ]
 
 
-def generate_challenge(sol, rng):
+def generate_challenge(sol, rng, mars=None):
     if sol % 5 != 0 and not (sol < 10 and sol % 3 == 0):
         return None
     ch_type = rng.choice(CHALLENGE_TYPES)
@@ -210,7 +210,7 @@ def generate_challenge(sol, rng):
                   'obscuration_pct': round(10 + rng.next() * 50), 'cause': rng.choice(['dust', 'abrasion', 'frost'])}
     elif ch_type == 'battery_reconditioning':
         params = {'cells_affected': rng.randint(1, 4), 'capacity_remaining_pct': round(50 + rng.next() * 40),
-                  'temp_at_failure': round(mars['temp_c'])}
+                  'temp_at_failure': round(mars['temp_c']) if mars else -50}
     elif ch_type == 'software_watchdog_reset':
         params = {'subsystem': rng.choice(['nav', 'comm', 'motor', 'science', 'thermal']),
                   'reboot_count': rng.randint(1, 5), 'memory_errors': rng.randint(1, 12)}
@@ -222,7 +222,7 @@ def generate_frame(sol, rng, prev_mars=None):
     events = generate_events(sol, mars, rng)
     hazards = generate_hazards(sol, mars, rng)
     earth_delay = 4 + 10 * abs(math.sin(math.radians(sol * 0.5)))
-    challenge = generate_challenge(sol, rng)
+    challenge = generate_challenge(sol, rng, mars)
 
     echo = {
         'prev_sol': sol - 1 if sol > 1 else None,

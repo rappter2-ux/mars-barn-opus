@@ -1,0 +1,53 @@
+{
+  "sol": 205,
+  "utc": "2026-02-04T15:18:00Z",
+  "mars": {
+    "ls": 234.4,
+    "season": "Northern Autumn",
+    "temp_k": 221.7,
+    "temp_c": -51.5,
+    "pressure_pa": 716,
+    "solar_wm2": 603,
+    "dust_tau": 0.408,
+    "wind_ms": 6.3,
+    "lmst": 18.8
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0092
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0082
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.8,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.5,
+    "water_ice_depth_m": 1.1,
+    "surface_radiation_usv": 0.51
+  },
+  "challenge": {
+    "id": "sol205_water_recycler_fault",
+    "type": "water_recycler_fault",
+    "params": {
+      "efficiency_drop": 0.32,
+      "filter_age_sols": 35
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 204,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -6.1,
+    "dust_delta": 0.019
+  },
+  "_hash": "dc683878070eded2"
+}

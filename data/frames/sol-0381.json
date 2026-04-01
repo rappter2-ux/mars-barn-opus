@@ -1,0 +1,48 @@
+{
+  "sol": 381,
+  "utc": "2026-08-04T11:27:36Z",
+  "mars": {
+    "ls": 326.6,
+    "season": "Northern Winter",
+    "temp_k": 207.6,
+    "temp_c": -65.6,
+    "pressure_pa": 724,
+    "solar_wm2": 472,
+    "dust_tau": 0.133,
+    "wind_ms": 6.1,
+    "lmst": 2.1
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0136
+    },
+    {
+      "type": "battery_degradation",
+      "target": "battery_pack",
+      "degradation": 0.0056,
+      "capacity_loss_pct": 0.22,
+      "desc": "Battery capacity loss from cold cycling at -65.6\u00b0C"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 5.8,
+    "window_open": false,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.78,
+    "water_ice_depth_m": 0.9,
+    "surface_radiation_usv": 0.93
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 380,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": -1.8,
+    "dust_delta": -0.133
+  },
+  "_hash": "87efd15c6b5a5145"
+}

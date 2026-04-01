@@ -1,0 +1,53 @@
+{
+  "sol": 469,
+  "utc": "2026-11-02T21:32:24Z",
+  "mars": {
+    "ls": 12.8,
+    "season": "Northern Spring",
+    "temp_k": 194.8,
+    "temp_c": -78.3,
+    "pressure_pa": 747,
+    "solar_wm2": 485,
+    "dust_tau": 0.148,
+    "wind_ms": 2.8,
+    "lmst": 17.8
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0061
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "isru_unit",
+      "degradation": 0.0092
+    },
+    {
+      "type": "thermal_fatigue",
+      "target": "battery_cell",
+      "degradation": 0.0098,
+      "cycles": 469,
+      "desc": "Thermal cycling fatigue \u2014 58K daily swing on electronics"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 12.1,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.76,
+    "water_ice_depth_m": 1.0,
+    "surface_radiation_usv": 0.68
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 468,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": -3.6,
+    "dust_delta": -0.052
+  },
+  "_hash": "12df4723306436da"
+}

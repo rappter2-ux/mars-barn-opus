@@ -1,0 +1,57 @@
+{
+  "sol": 303,
+  "utc": "2026-05-16T07:58:48Z",
+  "mars": {
+    "ls": 285.8,
+    "season": "Northern Winter",
+    "temp_k": 208.3,
+    "temp_c": -64.8,
+    "pressure_pa": 711,
+    "solar_wm2": 515,
+    "dust_tau": 0.316,
+    "wind_ms": 6.6,
+    "lmst": 4.1
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0102
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "solar_array",
+      "degradation": 0.0023
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0063
+    },
+    {
+      "type": "electrostatic_dust",
+      "target": "solar_array",
+      "degradation": 0.0011,
+      "desc": "Electrostatic dust adhesion \u2014 charged particles cling to surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 8.8,
+    "window_open": false,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.63,
+    "water_ice_depth_m": 2.0,
+    "surface_radiation_usv": 0.77
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 302,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -9.6,
+    "dust_delta": -0.057
+  },
+  "_hash": "5ca36f40d106a46d"
+}

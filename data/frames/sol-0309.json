@@ -1,0 +1,59 @@
+{
+  "sol": 309,
+  "utc": "2026-05-22T11:56:24Z",
+  "mars": {
+    "ls": 288.9,
+    "season": "Northern Winter",
+    "temp_k": 219.1,
+    "temp_c": -54.1,
+    "pressure_pa": 712,
+    "solar_wm2": 562,
+    "dust_tau": 0.511,
+    "wind_ms": 2.8,
+    "lmst": 0.2
+  },
+  "events": [
+    {
+      "type": "dust_storm",
+      "severity": 0.71,
+      "duration_sols": 3,
+      "desc": "Regional dust storm approaching from the north"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0115
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0102
+    },
+    {
+      "type": "perchlorate_corrosion",
+      "target": "wheel_bearing",
+      "degradation": 0.0048,
+      "desc": "Perchlorate salt corrosion on mechanical joints"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 8.3,
+    "window_open": false,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.52,
+    "water_ice_depth_m": 1.2,
+    "surface_radiation_usv": 0.47
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 308,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 4.5,
+    "dust_delta": 0.064
+  },
+  "_hash": "8041c333dbd8d901"
+}

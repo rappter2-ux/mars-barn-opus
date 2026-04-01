@@ -1,0 +1,60 @@
+{
+  "sol": 450,
+  "utc": "2026-10-14T09:00:00Z",
+  "mars": {
+    "ls": 2.8,
+    "season": "Northern Spring",
+    "temp_k": 196.5,
+    "temp_c": -76.6,
+    "pressure_pa": 741,
+    "solar_wm2": 501,
+    "dust_tau": 0.182,
+    "wind_ms": 3.5,
+    "lmst": 6.0
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0074
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "hab_seal",
+      "degradation": 0.0075
+    },
+    {
+      "type": "perchlorate_corrosion",
+      "target": "tool_gripper",
+      "degradation": 0.0087,
+      "desc": "Perchlorate salt corrosion on mechanical joints"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 11.1,
+    "window_open": false,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.51,
+    "water_ice_depth_m": 1.1,
+    "surface_radiation_usv": 0.64
+  },
+  "challenge": {
+    "id": "sol450_software_watchdog_reset",
+    "type": "software_watchdog_reset",
+    "params": {
+      "subsystem": "science",
+      "reboot_count": 1,
+      "memory_errors": 7
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 449,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": -1.7,
+    "dust_delta": 0.064
+  },
+  "_hash": "52760672ed896073"
+}

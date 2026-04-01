@@ -1,0 +1,67 @@
+{
+  "sol": 420,
+  "utc": "2026-09-13T13:12:00Z",
+  "mars": {
+    "ls": 347.1,
+    "season": "Northern Winter",
+    "temp_k": 200.3,
+    "temp_c": -72.8,
+    "pressure_pa": 733,
+    "solar_wm2": 470,
+    "dust_tau": 0.237,
+    "wind_ms": 4.4,
+    "lmst": 1.2
+  },
+  "events": [
+    {
+      "type": "cold_snap",
+      "severity": 0.71,
+      "duration_sols": 3,
+      "desc": "Extreme cold \u2014 battery and actuator performance degraded"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0194
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "wheel_assembly",
+      "degradation": 0.0082
+    },
+    {
+      "type": "battery_degradation",
+      "target": "battery_pack",
+      "degradation": 0.0063,
+      "capacity_loss_pct": 0.22,
+      "desc": "Battery capacity loss from cold cycling at -72.8\u00b0C"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 9.0,
+    "window_open": false,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.58,
+    "water_ice_depth_m": 0.9,
+    "surface_radiation_usv": 0.48
+  },
+  "challenge": {
+    "id": "sol420_solar_tracking_fault",
+    "type": "solar_tracking_fault",
+    "params": {
+      "misalignment_deg": 22.4,
+      "dust_factor": 1.5
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 419,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 0.5,
+    "dust_delta": 0.092
+  },
+  "_hash": "16b774c889ec1bca"
+}

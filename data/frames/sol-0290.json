@@ -1,0 +1,71 @@
+{
+  "sol": 290,
+  "utc": "2026-05-02T23:24:00Z",
+  "mars": {
+    "ls": 279.0,
+    "season": "Northern Winter",
+    "temp_k": 224.1,
+    "temp_c": -49.0,
+    "pressure_pa": 710,
+    "solar_wm2": 537,
+    "dust_tau": 0.33,
+    "wind_ms": 5.5,
+    "lmst": 12.4
+  },
+  "events": [
+    {
+      "type": "thermal_cycle",
+      "severity": 0.53,
+      "delta_k": 18,
+      "desc": "Extreme thermal cycling \u2014 structural stress warning"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0169
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "antenna",
+      "degradation": 0.0079
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0066
+    },
+    {
+      "type": "regolith_abrasion",
+      "target": "lidar_sensor",
+      "degradation": 0.0053,
+      "desc": "Fine regolith abrasion on optical surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 9.7,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.9,
+    "water_ice_depth_m": 1.8,
+    "surface_radiation_usv": 0.84
+  },
+  "challenge": {
+    "id": "sol290_solar_tracking_fault",
+    "type": "solar_tracking_fault",
+    "params": {
+      "misalignment_deg": 11.0,
+      "dust_factor": 1.4
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 289,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -2.9,
+    "dust_delta": -0.097
+  },
+  "_hash": "209ab0541bc32927"
+}

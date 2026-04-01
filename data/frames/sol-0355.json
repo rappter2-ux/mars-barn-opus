@@ -1,0 +1,61 @@
+{
+  "sol": 355,
+  "utc": "2026-07-08T18:18:00Z",
+  "mars": {
+    "ls": 313.0,
+    "season": "Northern Winter",
+    "temp_k": 209.5,
+    "temp_c": -63.7,
+    "pressure_pa": 718,
+    "solar_wm2": 507,
+    "dust_tau": 0.293,
+    "wind_ms": 6.1,
+    "lmst": 18.8
+  },
+  "events": [
+    {
+      "type": "solar_flare",
+      "severity": 0.76,
+      "duration_sols": 2,
+      "desc": "Solar particle event detected \u2014 elevated radiation"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0187
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "antenna",
+      "degradation": 0.0048
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 4.4,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.78,
+    "water_ice_depth_m": 2.0,
+    "surface_radiation_usv": 0.63
+  },
+  "challenge": {
+    "id": "sol355_nav_sensor_degradation",
+    "type": "nav_sensor_degradation",
+    "params": {
+      "sensor": "rear_hazcam",
+      "obscuration_pct": 35,
+      "cause": "dust"
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 354,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -6.8,
+    "dust_delta": 0.05
+  },
+  "_hash": "35b2ff3340f3c6ea"
+}

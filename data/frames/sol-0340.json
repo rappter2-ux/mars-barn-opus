@@ -1,0 +1,61 @@
+{
+  "sol": 340,
+  "utc": "2026-06-23T08:24:00Z",
+  "mars": {
+    "ls": 305.2,
+    "season": "Northern Winter",
+    "temp_k": 217.5,
+    "temp_c": -55.6,
+    "pressure_pa": 715,
+    "solar_wm2": 507,
+    "dust_tau": 0.345,
+    "wind_ms": 4.9,
+    "lmst": 4.4
+  },
+  "events": [
+    {
+      "type": "dust_storm",
+      "severity": 0.68,
+      "duration_sols": 4,
+      "desc": "Regional dust storm approaching from the north"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0069
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0069
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 5.7,
+    "window_open": false,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.53,
+    "water_ice_depth_m": 2.1,
+    "surface_radiation_usv": 0.33
+  },
+  "challenge": {
+    "id": "sol340_battery_reconditioning",
+    "type": "battery_reconditioning",
+    "params": {
+      "cells_affected": 1,
+      "capacity_remaining_pct": 85,
+      "temp_at_failure": -56
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 339,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 6.8,
+    "dust_delta": -0.027
+  },
+  "_hash": "05d39c06d10e9d1d"
+}

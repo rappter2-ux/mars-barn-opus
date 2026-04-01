@@ -1,0 +1,53 @@
+{
+  "sol": 391,
+  "utc": "2026-08-14T18:03:36Z",
+  "mars": {
+    "ls": 331.9,
+    "season": "Northern Winter",
+    "temp_k": 204.4,
+    "temp_c": -68.7,
+    "pressure_pa": 726,
+    "solar_wm2": 504,
+    "dust_tau": 0.148,
+    "wind_ms": 6.5,
+    "lmst": 19.7
+  },
+  "events": [
+    {
+      "type": "dust_storm",
+      "severity": 0.36,
+      "duration_sols": 9,
+      "desc": "Regional dust storm approaching from the north"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0085
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "antenna",
+      "degradation": 0.0042
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 6.7,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.89,
+    "water_ice_depth_m": 1.6,
+    "surface_radiation_usv": 0.45
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 390,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": -2.9,
+    "dust_delta": -0.099
+  },
+  "_hash": "d7829793e893ea31"
+}

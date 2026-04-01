@@ -1,0 +1,53 @@
+{
+  "sol": 209,
+  "utc": "2026-02-08T17:56:24Z",
+  "mars": {
+    "ls": 236.5,
+    "season": "Northern Autumn",
+    "temp_k": 228.5,
+    "temp_c": -44.7,
+    "pressure_pa": 715,
+    "solar_wm2": 560,
+    "dust_tau": 0.337,
+    "wind_ms": 7.0,
+    "lmst": 16.2
+  },
+  "events": [
+    {
+      "type": "dust_devil",
+      "severity": 0.33,
+      "duration_sols": 1,
+      "desc": "Dust devil spotted near habitat perimeter"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0095
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0067
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.7,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.81,
+    "water_ice_depth_m": 1.7,
+    "surface_radiation_usv": 0.42
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 208,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -0.3,
+    "dust_delta": -0.032
+  },
+  "_hash": "193150adaa964b28"
+}

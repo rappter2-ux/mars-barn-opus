@@ -1,0 +1,55 @@
+{
+  "sol": 465,
+  "utc": "2026-10-29T18:54:00Z",
+  "mars": {
+    "ls": 10.7,
+    "season": "Northern Spring",
+    "temp_k": 209.5,
+    "temp_c": -63.7,
+    "pressure_pa": 746,
+    "solar_wm2": 452,
+    "dust_tau": 0.152,
+    "wind_ms": 3.4,
+    "lmst": 20.4
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0127
+    },
+    {
+      "type": "perchlorate_corrosion",
+      "target": "solar_gimbal",
+      "degradation": 0.0085,
+      "desc": "Perchlorate salt corrosion on mechanical joints"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 11.9,
+    "window_open": false,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.57,
+    "water_ice_depth_m": 1.6,
+    "surface_radiation_usv": 0.43
+  },
+  "challenge": {
+    "id": "sol465_nav_sensor_degradation",
+    "type": "nav_sensor_degradation",
+    "params": {
+      "sensor": "front_hazcam",
+      "obscuration_pct": 55,
+      "cause": "abrasion"
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 464,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": 2.4,
+    "dust_delta": 0.001
+  },
+  "_hash": "01f8c91e73312cc8"
+}

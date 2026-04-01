@@ -1,0 +1,60 @@
+{
+  "sol": 310,
+  "utc": "2026-05-23T12:36:00Z",
+  "mars": {
+    "ls": 289.4,
+    "season": "Northern Winter",
+    "temp_k": 209.4,
+    "temp_c": -63.7,
+    "pressure_pa": 712,
+    "solar_wm2": 551,
+    "dust_tau": 0.441,
+    "wind_ms": 3.4,
+    "lmst": 23.6
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.016
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0088
+    },
+    {
+      "type": "regolith_abrasion",
+      "target": "lidar_sensor",
+      "degradation": 0.0064,
+      "desc": "Fine regolith abrasion on optical surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 8.2,
+    "window_open": false,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.73,
+    "water_ice_depth_m": 2.1,
+    "surface_radiation_usv": 0.51
+  },
+  "challenge": {
+    "id": "sol310_nav_sensor_degradation",
+    "type": "nav_sensor_degradation",
+    "params": {
+      "sensor": "rear_hazcam",
+      "obscuration_pct": 50,
+      "cause": "dust"
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 309,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -9.7,
+    "dust_delta": -0.07
+  },
+  "_hash": "1e03a07c3423c301"
+}

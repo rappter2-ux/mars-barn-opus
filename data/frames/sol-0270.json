@@ -1,0 +1,65 @@
+{
+  "sol": 270,
+  "utc": "2026-04-12T10:12:00Z",
+  "mars": {
+    "ls": 268.5,
+    "season": "Northern Autumn",
+    "temp_k": 222.7,
+    "temp_c": -50.5,
+    "pressure_pa": 710,
+    "solar_wm2": 530,
+    "dust_tau": 0.444,
+    "wind_ms": 2.8,
+    "lmst": 1.2
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0091
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "hab_seal",
+      "degradation": 0.0047
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0089
+    },
+    {
+      "type": "electrostatic_dust",
+      "target": "solar_array",
+      "degradation": 0.0045,
+      "desc": "Electrostatic dust adhesion \u2014 charged particles cling to surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 11.1,
+    "window_open": false,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.56,
+    "water_ice_depth_m": 1.4,
+    "surface_radiation_usv": 0.79
+  },
+  "challenge": {
+    "id": "sol270_software_watchdog_reset",
+    "type": "software_watchdog_reset",
+    "params": {
+      "subsystem": "comm",
+      "reboot_count": 3,
+      "memory_errors": 4
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 269,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 12.3,
+    "dust_delta": -0.035
+  },
+  "_hash": "ec4f2ba64cbebb52"
+}

@@ -1,0 +1,59 @@
+{
+  "sol": 210,
+  "utc": "2026-02-09T18:36:00Z",
+  "mars": {
+    "ls": 237.0,
+    "season": "Northern Autumn",
+    "temp_k": 226.2,
+    "temp_c": -46.9,
+    "pressure_pa": 715,
+    "solar_wm2": 534,
+    "dust_tau": 0.375,
+    "wind_ms": 4.6,
+    "lmst": 15.6
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0069
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0075
+    },
+    {
+      "type": "electrostatic_dust",
+      "target": "solar_array",
+      "degradation": 0.0014,
+      "desc": "Electrostatic dust adhesion \u2014 charged particles cling to surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.7,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.72,
+    "water_ice_depth_m": 2.2,
+    "surface_radiation_usv": 0.73
+  },
+  "challenge": {
+    "id": "sol210_radiation_dosimetry",
+    "type": "radiation_dosimetry",
+    "params": {
+      "cumulative_msv": 112,
+      "rate_usv_h": 1.05
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 209,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -2.3,
+    "dust_delta": 0.038
+  },
+  "_hash": "dc8308b5a12f5e4a"
+}

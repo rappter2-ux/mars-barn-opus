@@ -1,0 +1,57 @@
+{
+  "sol": 296,
+  "utc": "2026-05-09T03:21:36Z",
+  "mars": {
+    "ls": 282.1,
+    "season": "Northern Winter",
+    "temp_k": 212.2,
+    "temp_c": -61.0,
+    "pressure_pa": 711,
+    "solar_wm2": 559,
+    "dust_tau": 0.366,
+    "wind_ms": 4.8,
+    "lmst": 8.5
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0179
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "antenna",
+      "degradation": 0.0057
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0073
+    },
+    {
+      "type": "electrostatic_dust",
+      "target": "sensor_array",
+      "degradation": 0.0039,
+      "desc": "Electrostatic dust adhesion \u2014 charged particles cling to surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 9.3,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.74,
+    "water_ice_depth_m": 0.9,
+    "surface_radiation_usv": 0.84
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 295,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 1.7,
+    "dust_delta": -0.025
+  },
+  "_hash": "b582b1144853a4c0"
+}

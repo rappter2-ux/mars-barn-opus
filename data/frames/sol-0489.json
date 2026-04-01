@@ -1,0 +1,47 @@
+{
+  "sol": 489,
+  "utc": "2026-11-23T10:44:24Z",
+  "mars": {
+    "ls": 23.2,
+    "season": "Northern Spring",
+    "temp_k": 206.3,
+    "temp_c": -66.8,
+    "pressure_pa": 752,
+    "solar_wm2": 441,
+    "dust_tau": 0.149,
+    "wind_ms": 4.3,
+    "lmst": 5.0
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0156
+    },
+    {
+      "type": "electrostatic_dust",
+      "target": "antenna_feed",
+      "degradation": 0.0031,
+      "desc": "Electrostatic dust adhesion \u2014 charged particles cling to surfaces"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.0,
+    "window_open": false,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.54,
+    "water_ice_depth_m": 1.1,
+    "surface_radiation_usv": 0.78
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 488,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": -1.3,
+    "dust_delta": -0.042
+  },
+  "_hash": "c0a909bfbc6fcc35"
+}

@@ -1,0 +1,52 @@
+{
+  "sol": 308,
+  "utc": "2026-05-21T11:16:48Z",
+  "mars": {
+    "ls": 288.4,
+    "season": "Northern Winter",
+    "temp_k": 214.6,
+    "temp_c": -58.5,
+    "pressure_pa": 712,
+    "solar_wm2": 525,
+    "dust_tau": 0.447,
+    "wind_ms": 4.7,
+    "lmst": 0.9
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.017
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0089
+    },
+    {
+      "type": "perchlorate_corrosion",
+      "target": "wheel_bearing",
+      "degradation": 0.0066,
+      "desc": "Perchlorate salt corrosion on mechanical joints"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 8.4,
+    "window_open": false,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.87,
+    "water_ice_depth_m": 1.1,
+    "surface_radiation_usv": 0.43
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 307,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -1.0,
+    "dust_delta": 0.112
+  },
+  "_hash": "2f4846f56dc3e6ba"
+}

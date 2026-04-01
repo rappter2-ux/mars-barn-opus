@@ -1,0 +1,53 @@
+{
+  "sol": 295,
+  "utc": "2026-05-08T02:42:00Z",
+  "mars": {
+    "ls": 281.6,
+    "season": "Northern Winter",
+    "temp_k": 210.5,
+    "temp_c": -62.7,
+    "pressure_pa": 711,
+    "solar_wm2": 566,
+    "dust_tau": 0.391,
+    "wind_ms": 4.2,
+    "lmst": 9.2
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0115
+    },
+    {
+      "type": "dust_accumulation",
+      "target": "solar_array",
+      "degradation": 0.0078
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 9.4,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.83,
+    "water_ice_depth_m": 1.8,
+    "surface_radiation_usv": 0.97
+  },
+  "challenge": {
+    "id": "sol295_radiation_dosimetry",
+    "type": "radiation_dosimetry",
+    "params": {
+      "cumulative_msv": 71,
+      "rate_usv_h": 0.79
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 294,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": 1.1,
+    "dust_delta": -0.044
+  },
+  "_hash": "97bb7cb0ba571f37"
+}

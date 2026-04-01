@@ -1,0 +1,60 @@
+{
+  "sol": 212,
+  "utc": "2026-02-11T19:55:12Z",
+  "mars": {
+    "ls": 238.1,
+    "season": "Northern Autumn",
+    "temp_k": 229.0,
+    "temp_c": -44.1,
+    "pressure_pa": 715,
+    "solar_wm2": 580,
+    "dust_tau": 0.298,
+    "wind_ms": 5.8,
+    "lmst": 14.3
+  },
+  "events": [
+    {
+      "type": "solar_flare",
+      "severity": 0.62,
+      "duration_sols": 1,
+      "desc": "Solar particle event detected \u2014 elevated radiation"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0092
+    },
+    {
+      "type": "electrostatic_dust",
+      "target": "sensor_array",
+      "degradation": 0.003,
+      "desc": "Electrostatic dust adhesion \u2014 charged particles cling to surfaces"
+    },
+    {
+      "type": "radiation_seu",
+      "target": "motor_controller",
+      "severity": 0.39,
+      "desc": "Radiation single-event upset \u2014 bit flip in robot computer"
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 13.6,
+    "window_open": true,
+    "bandwidth_kbps": 16
+  },
+  "terrain": {
+    "regolith_hardness": 0.67,
+    "water_ice_depth_m": 2.1,
+    "surface_radiation_usv": 0.72
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 211,
+    "global_dust_trend": "rising",
+    "solar_efficiency_trend": "declining",
+    "temp_delta": -2.1,
+    "dust_delta": -0.082
+  },
+  "_hash": "27573e3d43c70bc5"
+}
