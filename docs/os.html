@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LisPy OS — Virtual Operating System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1a1a2e;--panel:#16213e;--border:#0f3460;--text:#e0e0e0;--cyan:#00fff5;
+--green:#00ff88;--yellow:#ffcc00;--red:#ff4444;--purple:#bf00ff;--dim:#6a6a8a;
+--mono:'SFMono-Regular',Consolas,'Liberation Mono',monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);overflow:hidden;height:100vh;
+user-select:none}
+
+/* Desktop */
+.desktop{position:fixed;top:0;left:0;right:0;bottom:32px;padding:16px;
+display:flex;flex-wrap:wrap;align-content:flex-start;gap:16px}
+.desktop-icon{width:72px;text-align:center;cursor:pointer;padding:8px 4px;border-radius:8px;
+transition:all 0.15s}
+.desktop-icon:hover{background:rgba(0,255,245,0.1)}
+.desktop-icon .icon{font-size:32px;margin-bottom:4px}
+.desktop-icon .label{font-size:9px;color:var(--text);word-wrap:break-word}
+
+/* Taskbar */
+.taskbar{position:fixed;bottom:0;left:0;right:0;height:32px;background:var(--panel);
+border-top:1px solid var(--border);display:flex;align-items:center;padding:0 8px;gap:4px;z-index:1000}
+.taskbar-start{padding:2px 12px;background:linear-gradient(135deg,var(--cyan),var(--purple));
+color:#000;font-weight:700;font-size:10px;border-radius:4px;cursor:pointer;letter-spacing:1px}
+.taskbar-start:hover{filter:brightness(1.2)}
+.taskbar-app{padding:2px 10px;background:rgba(255,255,255,0.05);border:1px solid var(--border);
+border-radius:3px;font-size:9px;color:var(--dim);cursor:pointer;max-width:120px;overflow:hidden;
+text-overflow:ellipsis;white-space:nowrap}
+.taskbar-app:hover{background:rgba(255,255,255,0.1)}
+.taskbar-app.active{background:rgba(0,255,245,0.1);color:var(--cyan);border-color:var(--cyan)}
+.taskbar-clock{margin-left:auto;font-size:10px;color:var(--dim);padding:0 8px}
+
+/* Windows */
+.window{position:absolute;background:var(--panel);border:1px solid var(--border);
+border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:300px;min-height:200px;
+display:none;overflow:hidden}
+.window.open{display:block}
+.window.focused{z-index:100;border-color:var(--cyan);box-shadow:0 8px 32px rgba(0,255,245,0.15)}
+.window-title{height:28px;background:rgba(0,0,0,0.3);display:flex;align-items:center;
+padding:0 8px;cursor:move;gap:6px}
+.window-title .title{flex:1;font-size:10px;color:var(--text);letter-spacing:0.5px}
+.window-title .btn{width:12px;height:12px;border-radius:50%;cursor:pointer;border:none}
+.btn-close{background:var(--red)}.btn-min{background:var(--yellow)}.btn-max{background:var(--green)}
+.window-body{padding:8px;overflow:auto;height:calc(100% - 28px);font-size:11px}
+
+/* Terminal */
+.terminal{background:#0a0a0a;color:var(--green);padding:8px;height:100%;overflow-y:auto;
+font-size:11px;line-height:1.6}
+.terminal .prompt{color:var(--cyan)}
+.terminal .output{color:var(--text);white-space:pre-wrap}
+.terminal .error{color:var(--red)}
+.terminal input{background:transparent;border:none;color:var(--green);font-family:var(--mono);
+font-size:11px;outline:none;width:calc(100% - 60px);caret-color:var(--cyan)}
+
+/* File Manager */
+.file-list{list-style:none}
+.file-item{padding:4px 8px;display:flex;gap:8px;align-items:center;cursor:pointer;border-radius:4px}
+.file-item:hover{background:rgba(0,255,245,0.05)}
+.file-item .name{flex:1;font-size:11px}
+.file-item .size{font-size:9px;color:var(--dim)}
+
+/* Editor */
+.editor-area{width:100%;height:calc(100% - 32px);background:#0a0a0a;color:var(--cyan);
+border:none;font-family:var(--mono);font-size:11px;padding:8px;resize:none;outline:none}
+.editor-bar{height:32px;background:rgba(0,0,0,0.3);display:flex;align-items:center;padding:0 8px;gap:4px}
+.editor-bar button{padding:2px 8px;background:none;border:1px solid var(--border);color:var(--dim);
+font-family:var(--mono);font-size:9px;cursor:pointer;border-radius:3px}
+.editor-bar button:hover{color:var(--cyan);border-color:var(--cyan)}
+
+/* Colony Monitor */
+.monitor-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px}
+.monitor-card{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;padding:8px}
+.monitor-card .label{font-size:8px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.monitor-card .value{font-size:18px;font-weight:700;color:var(--cyan);margin-top:2px}
+
+/* Start Menu */
+.start-menu{position:fixed;bottom:32px;left:0;width:240px;background:var(--panel);
+border:1px solid var(--border);border-radius:8px 8px 0 0;display:none;z-index:2000;
+box-shadow:0 -4px 20px rgba(0,0,0,0.5)}
+.start-menu.open{display:block}
+.start-item{padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px}
+.start-item:hover{background:rgba(0,255,245,0.08)}
+.start-item .icon{font-size:16px}
+.start-section{padding:4px 12px;font-size:8px;color:var(--dim);letter-spacing:1px;
+text-transform:uppercase;border-top:1px solid var(--border);margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- Desktop Icons -->
+<div class="desktop" id="desktop">
+  <div class="desktop-icon" ondblclick="openApp('terminal')"><div class="icon">🖥️</div><div class="label">Terminal</div></div>
+  <div class="desktop-icon" ondblclick="openApp('files')"><div class="icon">📁</div><div class="label">Files</div></div>
+  <div class="desktop-icon" ondblclick="openApp('editor')"><div class="icon">📝</div><div class="label">LisPy Editor</div></div>
+  <div class="desktop-icon" ondblclick="openApp('monitor')"><div class="icon">📡</div><div class="label">Colony Monitor</div></div>
+  <div class="desktop-icon" ondblclick="openApp('browser')"><div class="icon">🌐</div><div class="label">Frame Browser</div></div>
+  <div class="desktop-icon" ondblclick="openApp('wallet')"><div class="icon">💰</div><div class="label">MARS Wallet</div></div>
+  <div class="desktop-icon" ondblclick="openApp('help')"><div class="icon">📖</div><div class="label">LISPY.md</div></div>
+  <div class="desktop-icon" ondblclick="window.open('viewer.html')"><div class="icon">🔴</div><div class="label">Launch Sim</div></div>
+</div>
+
+<!-- Start Menu -->
+<div class="start-menu" id="start-menu">
+  <div style="padding:12px;border-bottom:1px solid var(--border)">
+    <div style="font-size:13px;color:var(--cyan);font-weight:700;letter-spacing:1px">LisPy OS</div>
+    <div style="font-size:9px;color:var(--dim)">Virtual Operating System · Mars Barn Opus</div>
+  </div>
+  <div class="start-item" onclick="openApp('terminal')"><span class="icon">🖥️</span> Terminal</div>
+  <div class="start-item" onclick="openApp('editor')"><span class="icon">📝</span> LisPy Editor</div>
+  <div class="start-item" onclick="openApp('files')"><span class="icon">📁</span> File Manager</div>
+  <div class="start-item" onclick="openApp('monitor')"><span class="icon">📡</span> Colony Monitor</div>
+  <div class="start-item" onclick="openApp('browser')"><span class="icon">🌐</span> Frame Browser</div>
+  <div class="start-item" onclick="openApp('wallet')"><span class="icon">💰</span> MARS Wallet</div>
+  <div class="start-section">Links</div>
+  <div class="start-item" onclick="window.open('viewer.html')"><span class="icon">🔴</span> Launch Sim</div>
+  <div class="start-item" onclick="window.open('simhub.html')"><span class="icon">🏆</span> SimHub</div>
+  <div class="start-item" onclick="window.open('hall-of-fame.html')"><span class="icon">🏅</span> Hall of Fame</div>
+  <div class="start-item" onclick="window.open('patterns.html')"><span class="icon">🔧</span> Patterns</div>
+  <div class="start-item" onclick="window.open('blog/')"><span class="icon">📡</span> Blog</div>
+  <div class="start-item" onclick="window.open('control.html')"><span class="icon">◉</span> Mission Control</div>
+</div>
+
+<!-- Taskbar -->
+<div class="taskbar">
+  <div class="taskbar-start" onclick="toggleStart()">◆ LISPY</div>
+  <div id="taskbar-apps"></div>
+  <div class="taskbar-clock" id="clock"></div>
+</div>
+
+<!-- Window: Terminal -->
+<div class="window" id="win-terminal" style="width:600px;height:400px;top:40px;left:60px">
+  <div class="window-title" onmousedown="startDrag(event,'win-terminal')">
+    <div class="btn btn-close" onclick="closeApp('terminal')"></div>
+    <div class="btn btn-min"></div>
+    <div class="btn btn-max"></div>
+    <div class="title">🖥️ Terminal — LisPy VM</div>
+  </div>
+  <div class="window-body" style="padding:0">
+    <div class="terminal" id="term-output">
+<span class="prompt">LisPy OS v1.0</span>
+<span class="output">Type LisPy expressions or commands. Tab to autocomplete.
+Type (help) for commands. Type (prompt-list) for prompt library.
+</span>
+    </div>
+    <div style="display:flex;padding:4px 8px;background:#0a0a0a;border-top:1px solid #222">
+      <span style="color:var(--cyan);font-size:11px">λ&gt;&nbsp;</span>
+      <input type="text" id="term-input" autofocus
+        onkeydown="if(event.key==='Enter'){execTerm();event.preventDefault()}"
+        style="flex:1">
+    </div>
+  </div>
+</div>
+
+<!-- Window: Editor -->
+<div class="window" id="win-editor" style="width:550px;height:420px;top:60px;left:200px">
+  <div class="window-title" onmousedown="startDrag(event,'win-editor')">
+    <div class="btn btn-close" onclick="closeApp('editor')"></div>
+    <div class="btn btn-min"></div>
+    <div class="btn btn-max"></div>
+    <div class="title">📝 LisPy Editor</div>
+  </div>
+  <div class="window-body" style="padding:0">
+    <div class="editor-bar">
+      <button onclick="runEditor()">▶ Run</button>
+      <button onclick="loadPrompt()">📚 Load Prompt</button>
+      <button onclick="clearEditor()">✕ Clear</button>
+      <select id="prompt-select" style="background:#0a0a0a;border:1px solid var(--border);color:var(--dim);font-family:var(--mono);font-size:9px;padding:2px">
+      </select>
+    </div>
+    <textarea class="editor-area" id="editor-code" spellcheck="false">;; Write your LisPy program here
+;; Press ▶ Run to execute
+
+(begin
+  (log "Hello from LisPy OS!")
+  (log (concat "2 + 2 = " (string (+ 2 2))))
+  (log (concat "Pi ≈ " (string (round (* (pi) 1000))))))
+</textarea>
+    <div style="max-height:100px;overflow-y:auto;background:#0a0a0a;border-top:1px solid #222;padding:6px 8px;font-size:10px" id="editor-output">
+      <span style="color:var(--dim)">Output will appear here</span>
+    </div>
+  </div>
+</div>
+
+<!-- Window: Files -->
+<div class="window" id="win-files" style="width:400px;height:350px;top:80px;left:340px">
+  <div class="window-title" onmousedown="startDrag(event,'win-files')">
+    <div class="btn btn-close" onclick="closeApp('files')"></div>
+    <div class="btn btn-min"></div>
+    <div class="btn btn-max"></div>
+    <div class="title">📁 File Manager — /mars-barn-opus</div>
+  </div>
+  <div class="window-body" id="file-body"></div>
+</div>
+
+<!-- Window: Colony Monitor -->
+<div class="window" id="win-monitor" style="width:420px;height:340px;top:50px;left:400px">
+  <div class="window-title" onmousedown="startDrag(event,'win-monitor')">
+    <div class="btn btn-close" onclick="closeApp('monitor')"></div>
+    <div class="btn btn-min"></div>
+    <div class="btn btn-max"></div>
+    <div class="title">📡 Colony Monitor (live from twin)</div>
+  </div>
+  <div class="window-body"><div class="monitor-grid" id="monitor-grid"><div style="color:var(--dim);grid-column:1/-1;text-align:center;padding:20px">Connecting to twin...</div></div></div>
+</div>
+
+<!-- Window: Frame Browser -->
+<div class="window" id="win-browser" style="width:500px;height:360px;top:70px;left:250px">
+  <div class="window-title" onmousedown="startDrag(event,'win-browser')">
+    <div class="btn btn-close" onclick="closeApp('browser')"></div>
+    <div class="btn btn-min"></div>
+    <div class="btn btn-max"></div>
+    <div class="title">🌐 Frame Browser</div>
+  </div>
+  <div class="window-body">
+    <div style="display:flex;gap:4px;margin-bottom:8px">
+      <input type="text" id="frame-url" value="https://raw.githubusercontent.com/kody-w/mars-barn-opus/main/data/frames/latest.json" style="flex:1;background:#0a0a0a;border:1px solid var(--border);color:var(--cyan);padding:4px 8px;font-family:var(--mono);font-size:10px;border-radius:4px">
+      <button onclick="fetchFrame()" style="padding:4px 12px;background:none;border:1px solid var(--cyan);color:var(--cyan);font-family:var(--mono);font-size:10px;cursor:pointer;border-radius:4px">GO</button>
+    </div>
+    <pre id="frame-output" style="background:#0a0a0a;padding:8px;border-radius:4px;font-size:10px;max-height:280px;overflow-y:auto;color:var(--text)">Click GO to fetch</pre>
+  </div>
+</div>
+
+<!-- Window: Wallet -->
+<div class="window" id="win-wallet" style="width:380px;height:300px;top:90px;left:320px">
+  <div class="window-title" onmousedown="startDrag(event,'win-wallet')">
+    <div class="btn btn-close" onclick="closeApp('wallet')"></div>
+    <div class="btn btn-min"></div>
+    <div class="btn btn-max"></div>
+    <div class="title">💰 MARS Wallet</div>
+  </div>
+  <div class="window-body" id="wallet-body">
+    <div style="text-align:center;padding:16px">
+      <div style="font-size:10px;color:var(--dim);letter-spacing:1px">MARS TOKEN BALANCE</div>
+      <div style="font-size:32px;font-weight:700;color:var(--cyan);margin:8px 0">21,000,000</div>
+      <div style="font-size:10px;color:var(--dim)">Total Supply · Genesis Wallet</div>
+      <div style="margin-top:16px;font-size:9px;color:var(--dim)">Connect to sim twin for live balances</div>
+    </div>
+  </div>
+</div>
+
+<!-- Window: Help (LISPY.md) -->
+<div class="window" id="win-help" style="width:520px;height:440px;top:30px;left:180px">
+  <div class="window-title" onmousedown="startDrag(event,'win-help')">
+    <div class="btn btn-close" onclick="closeApp('help')"></div>
+    <div class="btn btn-min"></div>
+    <div class="btn btn-max"></div>
+    <div class="title">📖 LISPY.md — Rosetta Stone</div>
+  </div>
+  <div class="window-body" id="help-body" style="font-size:10px;line-height:1.7">
+    <div style="color:var(--dim);text-align:center;padding:20px">Loading LISPY.md...</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// LISPY OS — Virtual Operating System
+// Same VM. Runs in the browser. Cached on GitHub.
+// ═══════════════════════════════════════
+
+// ── LisPy VM (identical to viewer.html) ──
+class LispyVM{constructor(){this.env={};this.output=[];this.steps=0;this.maxSteps=500000}
+setEnv(k,v){this.env[k]=v}
+tokenize(s){const t=[];let i=0;while(i<s.length){const c=s[i];if(' \t\n\r'.includes(c)){i++;continue}if(c===';'){while(i<s.length&&s[i]!=='\n')i++;continue}if('()'.includes(c)){t.push(c);i++;continue}if(c==='"'){let x='"';i++;while(i<s.length&&s[i]!=='"'){if(s[i]==='\\')x+=s[i++];x+=s[i++]}if(i<s.length)i++;t.push(x+'"');continue}let x='';while(i<s.length&&!' \t\n\r()'.includes(s[i])){x+=s[i++]}t.push(x)}return t}
+parse(t,p={i:0}){if(p.i>=t.length)throw new Error('EOF');const x=t[p.i++];if(x==='('){const l=[];while(p.i<t.length&&t[p.i]!==')')l.push(this.parse(t,p));if(p.i<t.length)p.i++;return l}if(x[0]==='"')return{__str:true,v:x.slice(1,-1)};const n=Number(x);return isNaN(n)?x:n}
+eval(e){if(++this.steps>this.maxSteps)throw new Error('Step limit');if(typeof e==='number')return e;if(e&&e.__str)return e.v;if(typeof e==='string'){if(e==='true')return true;if(e==='false')return false;if(e in this.env)return this.env[e];throw new Error('Undefined: '+e)}if(!Array.isArray(e)||!e.length)return e;const[o,...a]=e;if(o==='begin'){let r;for(const x of a)r=this.eval(x);return r}if(o==='define'){this.env[a[0]]=this.eval(a[1]);return this.env[a[0]]}if(o==='set!'){this.env[a[0]]=this.eval(a[1]);return this.env[a[0]]}if(o==='if')return this.eval(a[0])?this.eval(a[1]):(a.length>2?this.eval(a[2]):false);if(o==='cond'){for(const c of a){if(this.eval(c[0])){let r;for(const b of c.slice(1))r=this.eval(b);return r}}return false}if(o==='log'||o==='print'){const v=a.map(x=>this.eval(x)).join(' ');this.output.push(v);return v}if(o==='concat')return a.map(x=>String(this.eval(x))).join('');if(o==='string')return String(this.eval(a[0]));if(o==='number')return Number(this.eval(a[0]));if(o==='length'){const v=this.eval(a[0]);return typeof v==='string'?v.length:Array.isArray(v)?v.length:0}if(o==='list')return a.map(x=>this.eval(x));if(o==='nth'){const l=this.eval(a[0]);return Array.isArray(l)?l[this.eval(a[1])]||null:null}if(o==='range'){const x=this.eval(a[0]),y=a.length>1?this.eval(a[1]):null;const s=y!==null?x:0,end=y!==null?y:x;const r=[];for(let i=s;i<end;i++)r.push(i);return r}if(o==='repeat'){const n=this.eval(a[0]);let r;for(let i=0;i<n;i++){this.env['_i']=i;r=this.eval(a[1])}return r}if(o==='map'){const f=a[0],l=this.eval(a[1]);return Array.isArray(l)?l.map(x=>{this.env['_']=x;return this.eval(f)}):[]}if(o==='filter'){const f=a[0],l=this.eval(a[1]);return Array.isArray(l)?l.filter(x=>{this.env['_']=x;return this.eval(f)}):[]}if(o==='prompt-list')return Object.keys(PROMPTS);if(o==='help'){this.output.push('Commands: (help) (prompt-list) (prompt "name") (fetch "url")');this.output.push('Math: + - * / % abs round floor ceil min max pow sqrt sin cos pi random');this.output.push('Logic: < > <= >= = != and or not');this.output.push('Data: list nth length range map filter repeat concat string number');this.output.push('I/O: log print');return'help displayed'}
+const v=a.map(x=>this.eval(x));const ops={'+':()=>v.reduce((a,b)=>a+b,0),'-':()=>v.length===1?-v[0]:v[0]-v[1],'*':()=>v.reduce((a,b)=>a*b,1),'/':()=>v[0]/v[1],'%':()=>v[0]%v[1],'<':()=>v[0]<v[1],'>':()=>v[0]>v[1],'<=':()=>v[0]<=v[1],'>=':()=>v[0]>=v[1],'=':()=>v[0]===v[1],'!=':()=>v[0]!==v[1],'min':()=>Math.min(...v),'max':()=>Math.max(...v),'abs':()=>Math.abs(v[0]),'round':()=>Math.round(v[0]),'floor':()=>Math.floor(v[0]),'ceil':()=>Math.ceil(v[0]),'pow':()=>Math.pow(v[0],v[1]),'sqrt':()=>Math.sqrt(v[0]),'sin':()=>Math.sin(v[0]),'cos':()=>Math.cos(v[0]),'pi':()=>Math.PI,'random':()=>Math.random(),'mod':()=>v[0]%v[1],'and':()=>v.every(Boolean),'or':()=>v.some(Boolean),'not':()=>!v[0]};if(o in ops)return ops[o]();throw new Error('Unknown: '+o)}
+run(s){this.steps=0;this.output=[];try{const t=this.tokenize(s);const a=this.parse(t);return{ok:true,result:this.eval(a),output:this.output,steps:this.steps}}catch(e){return{ok:false,error:e.message,output:this.output,steps:this.steps}}}}
+
+const PROMPTS = {'governor-adaptive':'Governor','assess-o2':'O₂ Check','doom-clock':'Doom Clock','sentiment':'Sentiment','monte-carlo-pi':'π Estimator'};
+const vm = new LispyVM();
+vm.setEnv('sol',147);vm.setEnv('o2_days',18.5);vm.setEnv('h2o_days',22);vm.setEnv('food_days',31);
+vm.setEnv('power_kwh',342);vm.setEnv('crew_alive',4);vm.setEnv('colony_risk_index',28);
+vm.setEnv('morale',72);vm.setEnv('solar_eff',0.82);vm.setEnv('dust_tau',0.21);vm.setEnv('modules_built',3);
+
+// ── App State ──
+const openApps = new Set();
+let focusedApp = null;
+let termHistory = [];
+let termHistIdx = -1;
+
+// ── App Management ──
+function openApp(name){
+  const win = document.getElementById('win-'+name);
+  if(!win) return;
+  win.classList.add('open');
+  openApps.add(name);
+  focusApp(name);
+  updateTaskbar();
+  if(name==='files') renderFiles();
+  if(name==='monitor') connectMonitor();
+  if(name==='help') loadHelp();
+  if(name==='editor') populatePrompts();
+  toggleStart(true);
+}
+
+function closeApp(name){
+  const win = document.getElementById('win-'+name);
+  if(win) win.classList.remove('open');
+  openApps.delete(name);
+  if(focusedApp===name) focusedApp=null;
+  updateTaskbar();
+}
+
+function focusApp(name){
+  document.querySelectorAll('.window').forEach(w=>w.classList.remove('focused'));
+  const win = document.getElementById('win-'+name);
+  if(win){win.classList.add('focused');win.style.zIndex=++zCounter}
+  focusedApp = name;
+  updateTaskbar();
+}
+let zCounter = 10;
+
+function updateTaskbar(){
+  const el = document.getElementById('taskbar-apps');
+  el.innerHTML = [...openApps].map(name=>{
+    const titles = {terminal:'🖥️ Terminal',editor:'📝 Editor',files:'📁 Files',monitor:'📡 Monitor',browser:'🌐 Browser',wallet:'💰 Wallet',help:'📖 Help'};
+    return `<div class="taskbar-app ${focusedApp===name?'active':''}" onclick="focusApp('${name}')">${titles[name]||name}</div>`;
+  }).join('');
+}
+
+function toggleStart(forceClose){
+  const m=document.getElementById('start-menu');
+  if(forceClose===true){m.classList.remove('open');return}
+  m.classList.toggle('open');
+}
+
+// ── Dragging ──
+let dragState = null;
+function startDrag(e, winId){
+  const win = document.getElementById(winId);
+  focusApp(winId.replace('win-',''));
+  dragState = {win, startX:e.clientX-win.offsetLeft, startY:e.clientY-win.offsetTop};
+  e.preventDefault();
+}
+document.addEventListener('mousemove', e=>{
+  if(!dragState) return;
+  dragState.win.style.left = (e.clientX-dragState.startX)+'px';
+  dragState.win.style.top = (e.clientY-dragState.startY)+'px';
+});
+document.addEventListener('mouseup', ()=>{dragState=null});
+
+// ── Terminal ──
+function execTerm(){
+  const input = document.getElementById('term-input');
+  const output = document.getElementById('term-output');
+  const code = input.value.trim();
+  if(!code) return;
+  termHistory.unshift(code);
+  termHistIdx = -1;
+
+  output.innerHTML += `\n<span class="prompt">λ&gt;</span> ${escHtml(code)}\n`;
+
+  const result = vm.run(code);
+  if(result.ok){
+    if(result.output.length) output.innerHTML += `<span class="output">${result.output.map(escHtml).join('\n')}\n</span>`;
+    if(result.result !== undefined && result.result !== null && !result.output.length)
+      output.innerHTML += `<span class="output">${escHtml(String(result.result))}\n</span>`;
+    output.innerHTML += `<span style="color:var(--dim)">${result.steps} steps</span>\n`;
+  } else {
+    output.innerHTML += `<span class="error">ERROR: ${escHtml(result.error)}</span>\n`;
+  }
+
+  input.value = '';
+  output.scrollTop = output.scrollHeight;
+}
+
+document.addEventListener('keydown', e=>{
+  if(focusedApp==='terminal'){
+    const input = document.getElementById('term-input');
+    if(e.key==='ArrowUp'&&termHistory.length){termHistIdx=Math.min(termHistIdx+1,termHistory.length-1);input.value=termHistory[termHistIdx]}
+    if(e.key==='ArrowDown'){termHistIdx=Math.max(termHistIdx-1,-1);input.value=termHistIdx>=0?termHistory[termHistIdx]:''}
+  }
+});
+
+// ── Editor ──
+function runEditor(){
+  const code = document.getElementById('editor-code').value;
+  const out = document.getElementById('editor-output');
+  const result = vm.run(code);
+  if(result.ok){
+    out.innerHTML = result.output.map(l=>`<span style="color:var(--green)">${escHtml(l)}</span>`).join('<br>');
+    if(result.result!==undefined&&!result.output.length) out.innerHTML=`<span style="color:var(--cyan)">${escHtml(String(result.result))}</span>`;
+    out.innerHTML += `<br><span style="color:var(--dim)">${result.steps} steps</span>`;
+  } else {
+    out.innerHTML = `<span style="color:var(--red)">ERROR: ${escHtml(result.error)}</span>`;
+  }
+}
+function clearEditor(){document.getElementById('editor-code').value='';document.getElementById('editor-output').innerHTML=''}
+function populatePrompts(){
+  const sel=document.getElementById('prompt-select');
+  sel.innerHTML='<option value="">Load prompt...</option>'+Object.entries(PROMPTS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+}
+function loadPrompt(){
+  const sel=document.getElementById('prompt-select');
+  if(sel.value){document.getElementById('editor-code').value=`(prompt "${sel.value}")`; runEditor()}
+}
+
+// ── Files ──
+function renderFiles(){
+  const el = document.getElementById('file-body');
+  const files = [
+    {icon:'📄',name:'CONSTITUTION.md',size:'12 KB'},
+    {icon:'📄',name:'LISPY.md',size:'7 KB'},
+    {icon:'📄',name:'README.md',size:'2 KB'},
+    {icon:'📁',name:'data/',size:'—'},
+    {icon:'📁',name:'data/frames/',size:'502 frames'},
+    {icon:'📁',name:'data/federation/',size:'2 files'},
+    {icon:'📁',name:'data/chain/',size:'1 file'},
+    {icon:'📁',name:'docs/',size:'21 HTML pages'},
+    {icon:'📁',name:'src/',size:'29 modules'},
+    {icon:'📁',name:'tests/',size:'299 tests'},
+    {icon:'📁',name:'tools/',size:'5 scripts'},
+    {icon:'📄',name:'data/frames/latest.json',size:'fetch'},
+    {icon:'📄',name:'data/prompt-library.json',size:'17 prompts'},
+    {icon:'📄',name:'data/engine-manifest.json',size:'protocol'},
+  ];
+  el.innerHTML = '<ul class="file-list">' + files.map(f=>
+    `<li class="file-item" onclick="${f.name.endsWith('.json')?`fetchFile('${f.name}')`:''}" title="${f.name}">
+      <span>${f.icon}</span><span class="name">${f.name}</span><span class="size">${f.size}</span>
+    </li>`).join('') + '</ul>';
+}
+function fetchFile(name){
+  openApp('browser');
+  document.getElementById('frame-url').value = `https://raw.githubusercontent.com/kody-w/mars-barn-opus/main/${name}`;
+  fetchFrame();
+}
+
+// ── Frame Browser ──
+async function fetchFrame(){
+  const url = document.getElementById('frame-url').value;
+  const out = document.getElementById('frame-output');
+  out.textContent = 'Fetching...';
+  try{
+    const res = await fetch(url);
+    const text = await res.text();
+    try{out.textContent=JSON.stringify(JSON.parse(text),null,2)}catch(e){out.textContent=text}
+  }catch(e){out.textContent='Error: '+e.message}
+}
+
+// ── Colony Monitor (twin connection) ──
+function connectMonitor(){
+  if(typeof BroadcastChannel==='undefined'){
+    document.getElementById('monitor-grid').innerHTML='<div style="color:var(--dim);grid-column:1/-1;text-align:center;padding:20px">BroadcastChannel not supported.<br>Open viewer.html to connect.</div>';
+    return;
+  }
+  const ch = new BroadcastChannel('mars-barn-twin');
+  ch.postMessage({type:'request',cmd:'get_state',from:'os',id:'os-'+Date.now()});
+  ch.onmessage = (e)=>{
+    if(e.data.cmd==='state_update'||e.data.cmd==='state'){
+      const s=e.data.payload;
+      const g=document.getElementById('monitor-grid');
+      g.innerHTML=`
+        <div class="monitor-card"><div class="label">Sol</div><div class="value">${s.sol}</div></div>
+        <div class="monitor-card"><div class="label">Status</div><div class="value" style="color:${s.alive?'var(--green)':'var(--red)'}">${s.alive?'ALIVE':'DEAD'}</div></div>
+        <div class="monitor-card"><div class="label">CRI</div><div class="value" style="color:${(s.cri||0)>50?'var(--red)':'var(--green)'}">${s.cri||0}</div></div>
+        <div class="monitor-card"><div class="label">Power</div><div class="value">${Math.round(s.power||0)}</div></div>
+        <div class="monitor-card"><div class="label">Crew</div><div class="value">${s.crew?.filter(c=>c.alive).length||0}/${s.crew?.length||0}</div></div>
+        <div class="monitor-card"><div class="label">Modules</div><div class="value">${s.modules?.length||0}</div></div>
+      `;
+    }
+  };
+  setInterval(()=>ch.postMessage({type:'request',cmd:'get_state',from:'os',id:'os-'+Date.now()}),3000);
+}
+
+// ── Help (LISPY.md) ──
+async function loadHelp(){
+  const el=document.getElementById('help-body');
+  try{
+    const res=await fetch('https://raw.githubusercontent.com/kody-w/mars-barn-opus/main/LISPY.md');
+    const text=await res.text();
+    el.innerHTML='<pre style="white-space:pre-wrap;font-size:10px;color:var(--cyan);line-height:1.6">'+escHtml(text)+'</pre>';
+  }catch(e){el.innerHTML='<pre style="color:var(--red)">Failed to load: '+e.message+'</pre>'}
+}
+
+// ── Clock ──
+function updateClock(){
+  const d=new Date();
+  document.getElementById('clock').textContent=
+    `Sol ${Math.floor(d.getTime()/86400000)%999} · ${d.toLocaleTimeString()} · LisPy OS`;
+}
+setInterval(updateClock,1000);
+updateClock();
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// Click desktop to close start menu
+document.getElementById('desktop').addEventListener('click',()=>toggleStart(true));
+</script>
+</body>
+</html>
