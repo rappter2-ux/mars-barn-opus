@@ -883,7 +883,7 @@ const LISPY_PROGRAMS = {
 };
 
 class LispyVM {
-  constructor(){this.env={};this.output=[];this.steps=0;this.maxSteps=5000}
+  constructor(){this.env={};this.output=[];this.steps=0;this.maxSteps=5000;this.asyncResults={};this.promptLib=null}
   setEnv(k,v){this.env[k]=v}
   tokenize(src){
     const tokens=[];let i=0;
@@ -929,6 +929,57 @@ class LispyVM {
     if(op==='if')return this.eval(args[0])?this.eval(args[1]):(args.length>2?this.eval(args[2]):false);
     if(op==='cond'){for(const clause of args){const[test,...body]=clause;if(this.eval(test)){let r;for(const b of body)r=this.eval(b);return r}}return false}
     if(op==='print'){const v=this.eval(args[0]);this.output.push(String(v));return v}
+    if(op==='log'){const v=args.map(a=>this.eval(a)).join(' ');this.output.push(v);return v}
+    // ── PROMPT LIBRARY ──
+    // (prompt "name") → returns the prompt text from the library
+    // (prompt "name" "var1" val1 "var2" val2) → with template vars
+    if(op==='prompt'){
+      const name=this.eval(args[0]);
+      const prompt=getPrompt(name);
+      if(!prompt) return `[prompt not found: ${name}]`;
+      let text=prompt.template||prompt.text||'';
+      // Template variable substitution
+      for(let i=1;i<args.length;i+=2){
+        const k=this.eval(args[i]);
+        const v=this.eval(args[i+1]);
+        text=text.replace(new RegExp('\\{\\{'+k+'\\}\\}','g'),String(v));
+      }
+      return text;
+    }
+    // (prompt-list) → returns array of prompt names
+    if(op==='prompt-list'){return Object.keys(PROMPT_LIBRARY)}
+    // (prompt-tags "tag") → returns prompts matching a tag
+    if(op==='prompt-tags'){
+      const tag=this.eval(args[0]);
+      return Object.entries(PROMPT_LIBRARY).filter(([k,v])=>(v.tags||[]).includes(tag)).map(([k])=>k);
+    }
+    // ── HTTP/FETCH (async results read from pre-fetched cache) ──
+    // (http-get "key") → reads a pre-fetched result from asyncResults
+    if(op==='http-get'){
+      const key=this.eval(args[0]);
+      return this.asyncResults[key]||null;
+    }
+    // (json-get obj "key") → extract a key from a parsed JSON object
+    if(op==='json-get'){
+      const obj=this.eval(args[0]);
+      const key=this.eval(args[1]);
+      if(obj && typeof obj === 'object') return obj[key]!==undefined?obj[key]:null;
+      return null;
+    }
+    // (json-keys obj) → list keys of an object
+    if(op==='json-keys'){
+      const obj=this.eval(args[0]);
+      if(obj && typeof obj === 'object') return Object.keys(obj);
+      return [];
+    }
+    // (list ...) → create a list
+    if(op==='list'){return args.map(a=>this.eval(a))}
+    // (length x) → length of string or list
+    if(op==='length'){const v=this.eval(args[0]);return typeof v==='string'?v.length:Array.isArray(v)?v.length:0}
+    // (concat ...) → concatenate strings
+    if(op==='concat'){return args.map(a=>String(this.eval(a))).join('')}
+    // (nth list index) → get item from list
+    if(op==='nth'){const l=this.eval(args[0]);const i=this.eval(args[1]);return Array.isArray(l)?l[i]||null:null}
     // Math/comparison
     const vals=args.map(a=>this.eval(a));
     const ops={'+':()=>vals.reduce((a,b)=>a+b,0),'-':()=>vals.length===1?-vals[0]:vals[0]-vals[1],
@@ -937,8 +988,12 @@ class LispyVM {
       '=':()=>vals[0]===vals[1],'!=':()=>vals[0]!==vals[1],
       'min':()=>Math.min(...vals),'max':()=>Math.max(...vals),
       'abs':()=>Math.abs(vals[0]),'round':()=>Math.round(vals[0]),
-      'and':()=>vals.every(Boolean),'or':()=>vals.some(Boolean),'not':()=>!vals[0]};
+      'and':()=>vals.every(Boolean),'or':()=>vals.some(Boolean),'not':()=>!vals[0],
+      'mod':()=>vals[0]%vals[1],'floor':()=>Math.floor(vals[0]),'ceil':()=>Math.ceil(vals[0]),
+      'string':()=>String(vals[0]),'number':()=>Number(vals[0])};
     if(op in ops)return ops[op]();
+    // User-defined functions
+    if(op in this.env && typeof this.env[op]==='function') return this.env[op](...vals);
     throw new Error(`Unknown op: ${op}`);
   }
   run(src){
@@ -949,6 +1004,261 @@ class LispyVM {
       return{ok:true,result:this.eval(ast),env:this.env,output:this.output};
     }catch(e){return{ok:false,error:e.message,env:this.env,output:this.output}}
   }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PROMPT LIBRARY — Reusable prompts for agents, users, and the engine.
+// Agents in the sim use (prompt "name") in LisPy to look up prompts.
+// Same library, same format, usable by AI or human or VM.
+// ══════════════════════════════════════════════════════════════════
+
+const PROMPT_LIBRARY = {
+  // ── COLONY GOVERNANCE ──
+  'governor-adaptive': {
+    tags: ['governance', 'allocation', 'core'],
+    desc: 'Adaptive resource allocation governor. Reads colony state, outputs alloc percentages.',
+    template: `(begin
+  (define o2_urgent (< o2_days 5))
+  (define h2o_urgent (< h2o_days 5))
+  (define power_critical (< power_kwh 100))
+  (cond
+    (o2_urgent (begin (set! isru_alloc 0.80) (set! greenhouse_alloc 0.10) (set! heating_alloc 0.10)))
+    (h2o_urgent (begin (set! isru_alloc 0.60) (set! greenhouse_alloc 0.30) (set! heating_alloc 0.10)))
+    (power_critical (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.20) (set! heating_alloc 0.50)))
+    (true (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.35) (set! heating_alloc 0.25)))))`
+  },
+  'governor-survival': {
+    tags: ['governance', 'allocation', 'emergency'],
+    desc: 'Emergency survival mode. Minimum viable everything.',
+    template: `(begin
+  (set! isru_alloc 0.85)
+  (set! greenhouse_alloc 0.05)
+  (set! heating_alloc 0.10)
+  (set! food_ration 0.5)
+  (log "SURVIVAL MODE: all power to O₂, half rations"))`
+  },
+  'governor-growth': {
+    tags: ['governance', 'allocation', 'expansion'],
+    desc: 'Growth mode. Balanced for building and research.',
+    template: `(begin
+  (set! isru_alloc 0.35)
+  (set! greenhouse_alloc 0.40)
+  (set! heating_alloc 0.25)
+  (set! food_ration 1.0)
+  (log "GROWTH MODE: balanced for expansion"))`
+  },
+
+  // ── RISK ASSESSMENT ──
+  'assess-o2': {
+    tags: ['assessment', 'o2', 'resource'],
+    desc: 'Assess O₂ situation and recommend action.',
+    template: `(begin
+  (define days_left o2_days)
+  (define velocity (http-get "o2_velocity"))
+  (cond
+    ((< days_left 3) (log (concat "CRITICAL: " (string days_left) " days O₂. Velocity: " (string velocity))))
+    ((< days_left 7) (log (concat "WARNING: " (string days_left) " days O₂")))
+    (true (log (concat "O₂ nominal: " (string days_left) " days"))))
+  (cond
+    ((and (< days_left 5) (< velocity 0)) "emergency_isru")
+    ((< days_left 10) "boost_isru")
+    (true "nominal")))`
+  },
+  'assess-power': {
+    tags: ['assessment', 'power', 'resource'],
+    desc: 'Assess power grid and recommend load shedding.',
+    template: `(begin
+  (define pwr power_kwh)
+  (define dust dust_tau)
+  (define solar_pct (* solar_eff 100))
+  (cond
+    ((< pwr 50) (begin (log "POWER CRITICAL") "shed_all"))
+    ((and (< pwr 150) (> dust 0.4)) (begin (log "DUST STORM + LOW POWER") "shed_nonessential"))
+    ((< solar_pct 60) (begin (log (concat "Solar degraded: " (string solar_pct) "%")) "monitor"))
+    (true "nominal")))`
+  },
+  'assess-crew': {
+    tags: ['assessment', 'crew', 'medical'],
+    desc: 'Assess crew health and morale.',
+    template: `(begin
+  (define alive crew_alive)
+  (define mor morale)
+  (define risk colony_risk_index)
+  (cond
+    ((< alive 2) (log "CRITICAL: skeleton crew"))
+    ((< mor 30) (log "MORALE CRISIS"))
+    ((> risk 60) (log (concat "HIGH RISK ENVIRONMENT: CRI=" (string risk)))))
+  (cond
+    ((< mor 30) "boost_morale")
+    ((> risk 70) "shelter")
+    (true "nominal")))`
+  },
+
+  // ── TASK DECISION ──
+  'task-evaluate': {
+    tags: ['task', 'decision', 'autopilot'],
+    desc: 'Generic task evaluator. Pass task_type and urgency via env vars.',
+    template: `(begin
+  (define critical (> colony_risk_index 50))
+  (define resources_ok (and (> o2_days 10) (> h2o_days 10)))
+  (cond
+    ((and critical (= task_urgency "urgent")) "approve")
+    ((and (not resources_ok) (= task_urgency "urgent")) "approve")
+    ((= task_urgency "info") "deny")
+    (true "alt")))`
+  },
+  'task-override-bolt': {
+    tags: ['task', 'override', 'mechanical'],
+    desc: 'Correct sequence for stuck bolt override.',
+    template: '"diagnostic inspect torque_release wiggle extract"'
+  },
+  'task-override-panel': {
+    tags: ['task', 'override', 'cleaning'],
+    desc: 'Correct sequence for solar panel cleaning.',
+    template: '"diagnostic brush_dust inspect verify"'
+  },
+  'task-override-antenna': {
+    tags: ['task', 'override', 'comms'],
+    desc: 'Correct sequence for antenna realignment.',
+    template: '"diagnostic scan_signal adjust_az adjust_el lock verify"'
+  },
+
+  // ── ECONOMIC ──
+  'treasury-distribute': {
+    tags: ['economy', 'treasury', 'distribution'],
+    desc: 'Treasury distribution logic. Controls how genesis wallet releases MARS.',
+    template: `(begin
+  (define budget (cond ((< circulating_pct 1) 500) ((< circulating_pct 5) 200)
+    ((< circulating_pct 10) 100) ((< circulating_pct 25) 50) (true 10)))
+  (define halving (+ 1 (round (/ sol 500))))
+  (define final (max 1 (round (/ budget halving))))
+  (set! dist_agents (round (* final 0.6)))
+  (set! dist_treasury (round (* final 0.2)))
+  (set! dist_user (round (* final 0.2)))
+  (set! dist_total (+ dist_agents dist_treasury dist_user)))`
+  },
+  'tip-evaluator': {
+    tags: ['economy', 'reward', 'agents'],
+    desc: 'Decide which agent to tip based on contribution.',
+    template: `(begin
+  (define best_agent "")
+  (define best_score 0)
+  ;; Score each agent by role contribution
+  ;; CMDR: leadership under stress. ENGR: builds. SCI: research. MED: crew health.
+  (cond
+    ((> colony_risk_index 50) (set! best_agent "CMDR"))
+    ((> modules_built 3) (set! best_agent "ENGR"))
+    ((> research_count 2) (set! best_agent "SCI"))
+    (true (set! best_agent "CMDR")))
+  (log (concat "Recommend tip: " best_agent))
+  best_agent)`
+  },
+
+  // ── FRAME ANALYSIS ──
+  'frame-summarize': {
+    tags: ['frame', 'analysis', 'echo'],
+    desc: 'Summarize the current frame state for reporting.',
+    template: `(begin
+  (log (concat "Sol " (string sol) " | " (string crew_alive) " crew"))
+  (log (concat "O₂: " (string (round o2_days)) "d | H₂O: " (string (round h2o_days)) "d | Food: " (string (round food_days)) "d"))
+  (log (concat "Power: " (string (round power_kwh)) " kWh | CRI: " (string colony_risk_index)))
+  (log (concat "Dust τ: " (string dust_tau) " | Solar η: " (string (round (* solar_eff 100))) "%"))
+  (cond
+    ((> colony_risk_index 70) "CRITICAL")
+    ((> colony_risk_index 50) "HIGH")
+    ((> colony_risk_index 30) "ELEVATED")
+    ((> colony_risk_index 15) "MODERATE")
+    (true "LOW")))`
+  },
+
+  // ── API INTEGRATION ──
+  'fetch-mars-weather': {
+    tags: ['api', 'mars', 'weather'],
+    desc: 'Template for fetching real Mars weather from NASA API.',
+    template: `(begin
+  ;; Pre-fetch: the runtime fetches and caches before LisPy runs
+  ;; (http-get "mars_weather") reads the cached result
+  (define wx (http-get "mars_weather"))
+  (if wx
+    (begin
+      (define temp (json-get wx "temp_c"))
+      (define dust (json-get wx "dust_tau"))
+      (log (concat "Real Mars: " (string temp) "°C τ=" (string dust)))
+      wx)
+    (log "Mars weather unavailable — using sim data")))`
+  },
+  'fetch-frame-from-ledger': {
+    tags: ['api', 'frame', 'ledger'],
+    desc: 'Read a specific frame from the public ledger.',
+    template: `(begin
+  (define frame (http-get (concat "frame_" (string {{SOL}}))))
+  (if frame
+    (begin
+      (define mars (json-get frame "mars"))
+      (log (concat "Frame {{SOL}}: " (string (json-get mars "temp_c")) "°C"))
+      frame)
+    (log "Frame not found in cache")))`
+  },
+
+  // ── AGENT TOOLING ──
+  'agent-write-tool': {
+    tags: ['agent', 'tooling', 'emergent'],
+    desc: 'Meta-prompt: an agent uses this to write a new LisPy tool for a specific crisis.',
+    template: `(begin
+  ;; Agent: {{AGENT_NAME}} | Crisis: {{CRISIS_TYPE}}
+  ;; Write a LisPy function to handle this crisis.
+  ;; The function will be added to the colony tool library.
+  (define tool_name "{{CRISIS_TYPE}}_handler")
+  (log (concat "Authoring tool: " tool_name " for " "{{CRISIS_TYPE}}"))
+  ;; The tool itself — customize per crisis:
+  (define tool_program "(begin (log \\"tool executed\\"))")
+  (list tool_name tool_program "{{AGENT_NAME}}" sol))`
+  },
+  'agent-evaluate-tool': {
+    tags: ['agent', 'tooling', 'evaluation'],
+    desc: 'Evaluate whether a tool from the library helped.',
+    template: `(begin
+  (define cri_before {{CRI_BEFORE}})
+  (define cri_after colony_risk_index)
+  (define improved (< cri_after cri_before))
+  (log (concat "Tool evaluation: CRI " (string cri_before) " → " (string cri_after)))
+  (if improved
+    (begin (log "✓ Tool helped — keep in library") true)
+    (begin (log "✗ Tool did not help — consider removing") false)))`
+  },
+};
+
+function getPrompt(name){
+  return PROMPT_LIBRARY[name] || null;
+}
+
+function getPromptsByTag(tag){
+  return Object.entries(PROMPT_LIBRARY)
+    .filter(([k,v]) => (v.tags||[]).includes(tag))
+    .map(([k,v]) => ({name:k, desc:v.desc, tags:v.tags}));
+}
+
+// ── Async fetch cache for LisPy (http-get reads from here) ──
+// Before running a LisPy program that needs external data,
+// pre-fetch and cache the results. The VM reads synchronously.
+let lispyFetchCache = {};
+
+async function lispyPreFetch(keys){
+  // keys = [{key:'mars_weather', url:'https://...'}, ...]
+  for(const {key, url} of keys){
+    try{
+      const res = await fetch(url);
+      if(res.ok) lispyFetchCache[key] = await res.json();
+    }catch(e){
+      lispyFetchCache[key] = null;
+    }
+  }
+}
+
+function runLispyWithFetchCache(vm, src){
+  // Inject cached fetch results into the VM
+  vm.asyncResults = {...lispyFetchCache};
+  return vm.run(src);
 }
 
 // Active LisPy program for colony automation

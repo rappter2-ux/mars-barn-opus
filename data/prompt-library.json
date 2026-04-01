@@ -1,0 +1,180 @@
+{
+  "_format": "rappter-prompt-library",
+  "version": 1,
+  "description": "Reusable LisPy prompts for agents, users, and the engine. Use (prompt \"name\") in LisPy.",
+  "total": 17,
+  "tags": [
+    "agent",
+    "agents",
+    "allocation",
+    "analysis",
+    "api",
+    "assessment",
+    "autopilot",
+    "cleaning",
+    "comms",
+    "core",
+    "crew",
+    "decision",
+    "distribution",
+    "echo",
+    "economy",
+    "emergency",
+    "emergent",
+    "evaluation",
+    "expansion",
+    "frame",
+    "governance",
+    "ledger",
+    "mars",
+    "mechanical",
+    "medical",
+    "o2",
+    "override",
+    "power",
+    "resource",
+    "reward",
+    "task",
+    "tooling",
+    "treasury",
+    "weather"
+  ],
+  "prompts": {
+    "governor-adaptive": {
+      "tags": [
+        "governance",
+        "allocation",
+        "core"
+      ],
+      "desc": "Adaptive resource allocation governor"
+    },
+    "governor-survival": {
+      "tags": [
+        "governance",
+        "allocation",
+        "emergency"
+      ],
+      "desc": "Emergency survival mode"
+    },
+    "governor-growth": {
+      "tags": [
+        "governance",
+        "allocation",
+        "expansion"
+      ],
+      "desc": "Growth mode. Balanced for building."
+    },
+    "assess-o2": {
+      "tags": [
+        "assessment",
+        "o2",
+        "resource"
+      ],
+      "desc": "Assess O₂ and recommend action"
+    },
+    "assess-power": {
+      "tags": [
+        "assessment",
+        "power",
+        "resource"
+      ],
+      "desc": "Assess power grid"
+    },
+    "assess-crew": {
+      "tags": [
+        "assessment",
+        "crew",
+        "medical"
+      ],
+      "desc": "Assess crew health and morale"
+    },
+    "task-evaluate": {
+      "tags": [
+        "task",
+        "decision",
+        "autopilot"
+      ],
+      "desc": "Generic task evaluator"
+    },
+    "task-override-bolt": {
+      "tags": [
+        "task",
+        "override",
+        "mechanical"
+      ],
+      "desc": "Stuck bolt sequence"
+    },
+    "task-override-panel": {
+      "tags": [
+        "task",
+        "override",
+        "cleaning"
+      ],
+      "desc": "Panel cleaning sequence"
+    },
+    "task-override-antenna": {
+      "tags": [
+        "task",
+        "override",
+        "comms"
+      ],
+      "desc": "Antenna realignment sequence"
+    },
+    "treasury-distribute": {
+      "tags": [
+        "economy",
+        "treasury",
+        "distribution"
+      ],
+      "desc": "Treasury distribution logic"
+    },
+    "tip-evaluator": {
+      "tags": [
+        "economy",
+        "reward",
+        "agents"
+      ],
+      "desc": "Decide which agent to tip"
+    },
+    "frame-summarize": {
+      "tags": [
+        "frame",
+        "analysis",
+        "echo"
+      ],
+      "desc": "Summarize current frame state"
+    },
+    "fetch-mars-weather": {
+      "tags": [
+        "api",
+        "mars",
+        "weather"
+      ],
+      "desc": "Fetch real Mars weather"
+    },
+    "fetch-frame-from-ledger": {
+      "tags": [
+        "api",
+        "frame",
+        "ledger"
+      ],
+      "desc": "Read frame from public ledger"
+    },
+    "agent-write-tool": {
+      "tags": [
+        "agent",
+        "tooling",
+        "emergent"
+      ],
+      "desc": "Agent writes a new tool"
+    },
+    "agent-evaluate-tool": {
+      "tags": [
+        "agent",
+        "tooling",
+        "evaluation"
+      ],
+      "desc": "Evaluate if a tool helped"
+    }
+  }
+}
