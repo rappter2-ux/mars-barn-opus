@@ -1,0 +1,71 @@
+{
+  "_protocol": "rappter-engine-manifest",
+  "version": 1,
+  "description": "Manifest for a public repo that receives output from a private Rappter engine. The engine pulls this manifest, reads the chain state, computes the next frame, and pushes it back. The engine IP stays private. The output is static and public.",
+  
+  "repo": {
+    "owner": "kody-w",
+    "name": "mars-barn-opus",
+    "url": "https://github.com/kody-w/mars-barn-opus",
+    "pages": "https://kody-w.github.io/mars-barn-opus/"
+  },
+
+  "frames": {
+    "path": "data/frames/",
+    "manifest": "data/frames/manifest.json",
+    "latest": "data/frames/latest.json",
+    "format": "sol-NNNN.json",
+    "description": "Environmental frames. One per sol. Static JSON. The engine writes these."
+  },
+
+  "chain": {
+    "nodes_registry": "data/chain/nodes.json",
+    "genesis": "https://raw.githubusercontent.com/kody-w/mars-chain-node/main/chain/genesis.json",
+    "description": "Hash-linked verification chain. The engine's frame becomes a vote in the chain."
+  },
+
+  "engine_protocol": {
+    "pull": {
+      "1_read_manifest": "GET data/frames/manifest.json → know what frames exist",
+      "2_read_latest": "GET data/frames/latest.json → know the chain head",
+      "3_read_chain_state": "GET data/chain/nodes.json → know peer nodes",
+      "4_read_last_frame": "GET data/frames/sol-NNNN.json → read prev frame for echo continuity"
+    },
+    "compute": {
+      "5_generate_frame": "Engine runs its private algorithms to produce the next frame",
+      "6_hash_frame": "SHA-256 of frame content (before hash insertion) for anti-tamper",
+      "7_link_chain": "prevHash = hash of previous frame → extends the chain",
+      "8_sign_vote": "Engine signs the frame with its node ID → attribution"
+    },
+    "push": {
+      "9_write_frame": "PUT data/frames/sol-NNNN.json → the new frame",
+      "10_update_manifest": "PUT data/frames/manifest.json → add frame to index",
+      "11_update_latest": "PUT data/frames/latest.json → update chain head pointer",
+      "12_commit": "git commit + push → the frame is now public and immutable"
+    },
+    "description": "Pull → Compute → Push. The compute step is private. The pull and push are public. This is how the engine keeps its IP while driving the public chain."
+  },
+
+  "multi_engine_voting": {
+    "description": "Multiple engines can target the same repo. Each engine reads the latest frame, computes its proposed next frame, and submits via PR or direct push. If engines disagree, the repo owner (or a GitHub Action) picks the winning frame. This is consensus without a blockchain protocol — git branch resolution IS the consensus mechanism.",
+    "conflict_resolution": "First valid push wins (fast-forward). Conflicting pushes require PR review. Chain nodes verify the winning frame."
+  },
+
+  "what_stays_private": [
+    "Frame generation algorithms (the HOW)",
+    "Canonical LisPy VM implementation",
+    "Governor evolution strategies",
+    "Treasury governor economic models",
+    "ML models, training data, weights",
+    "Proprietary nervous system internals"
+  ],
+
+  "what_becomes_public": [
+    "Frame JSON files (static output)",
+    "Manifest and latest pointers",
+    "Chain state and node registry",
+    "Consumer applications (viewer, control, simhub)",
+    "Pattern documentation and blog posts",
+    "LisPy program TEXT (data, not engine)"
+  ]
+}

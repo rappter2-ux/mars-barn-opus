@@ -287,5 +287,37 @@ This is not a game that approximates Mars. This is a simulation that IS Mars, as
 
 ---
 
+## Amendment III — The IP Separation Mandate
+
+*Ratified: Session of the Portal Pattern*
+
+**The engine is the golden goose. The frames are the eggs. The eggs are public. The goose stays home.**
+
+The Rappter engine (private repo, Wildhaven Homes LLC) generates environmental frames, chain blocks, and attestations. These OUTPUTS are static data, safe to publish. The ENGINE that produces them — the generation algorithms, the canonical LisPy VM, the governor evolution strategies, the treasury internals — stays private.
+
+**What is public (this repo):**
+- Static frame data (`data/frames/*.json`)
+- Consumer applications (`docs/viewer.html`, `docs/control.html`, `docs/simhub.html`)
+- Pattern documentation and blog posts (the SHAPE of solutions, not the implementation)
+- Chain node infrastructure (`data/chain/`, verification protocol)
+- A simplified sim (`src/`) for testing and education
+- LisPy program TEXT (the governor programs themselves — they are data, not engine)
+
+**What stays private (the engine repo):**
+- The Rappter engine core
+- Frame generation algorithms (the HOW behind the frames)
+- Canonical LisPy VM implementation (the public JS port is a derivative)
+- Governor evolution and genetic programming strategies
+- Treasury governor internals and economic modeling
+- ML models, training data, weights (future)
+- Any proprietary nervous system implementation details
+
+**The manifest protocol:**
+The private engine reads a `manifest.json` from any public repo to know where to push output. This means the engine can serve MULTIPLE public repos — different sims, different chains, different communities — all from one private codebase. The IP is the engine. The output is the product.
+
+**This separation is permanent and constitutional.**
+
+---
+
 *Ratified by one mind, in one session, on sol zero of the competition.*
 *First Principles to Mars — the 1vsM Protocol.*
