@@ -563,6 +563,12 @@ function submitToLeaderboard(){
     governor: c.config?.arch || 'unknown',
     date: new Date().toISOString(),
     frameHash: c.state?.startWeather ? 'verified' : 'local',
+    // MARS Token chain verification
+    marsBalance: c.marsCirculating || 0,
+    marsSupplyPct: c.marsSupplyPct || '0',
+    chainHead: c.chainHead || null,
+    chainLength: c.chainBlocks?.length || 0,
+    chainVerified: verifyChain(c),
     // Store full cartridge for detail view
     _cartridge: c
   };
@@ -669,6 +675,7 @@ function showRunDetail(idx){
   document.getElementById('detail-modal').classList.add('show');
 
   const body = document.getElementById('modal-body');
+  const chainColor = entry.chainVerified==='verified'?'var(--green)':entry.chainVerified==='broken'?'var(--red)':'var(--yellow)';
   body.innerHTML = `
     <div class="detail-grid">
       <div class="detail-item"><div class="lbl">Cartridge ID</div><div class="val" style="font-size:11px">${entry.id||'?'}</div></div>
@@ -684,6 +691,16 @@ function showRunDetail(idx){
       <div class="detail-item"><div class="lbl">Frame Verification</div><div class="val">${entry.frameHash||'unverified'}</div></div>
       <div class="detail-item"><div class="lbl">Submitted</div><div class="val" style="font-size:10px">${entry.date?new Date(entry.date).toLocaleString():'?'}</div></div>
     </div>
+    <div style="margin-top:16px;padding:12px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px">
+      <div style="font-size:10px;color:var(--cyan);letter-spacing:1px;margin-bottom:8px">🪙 MARS TOKEN CHAIN</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="lbl">MARS Balance</div><div class="val" style="color:var(--cyan)">${(entry.marsBalance||0).toLocaleString()}</div></div>
+        <div class="detail-item"><div class="lbl">Supply Minted</div><div class="val">${entry.marsSupplyPct||'0'}%</div></div>
+        <div class="detail-item"><div class="lbl">Chain Length</div><div class="val">${entry.chainLength||0} blocks</div></div>
+        <div class="detail-item"><div class="lbl">Chain Status</div><div class="val" style="color:${chainColor}">${entry.chainVerified==='verified'?'✓ VERIFIED':entry.chainVerified==='broken'?'✗ BROKEN':'⚠ '+entry.chainVerified}</div></div>
+        <div class="detail-item" style="grid-column:1/-1"><div class="lbl">Chain Head</div><div class="val" style="font-size:10px;font-family:monospace">${entry.chainHead||'none'}</div></div>
+      </div>
+    </div>
   `;
 }
 
@@ -696,6 +713,21 @@ function esc(s){
   const d = document.createElement('div');
   d.textContent = s || '';
   return d.innerHTML;
+}
+
+// ── Chain Verification ──
+// Verify hash chain integrity of a cartridge's block history
+function verifyChain(cartridge){
+  if(!cartridge.chainBlocks || !cartridge.chainBlocks.length) return 'no-chain';
+  let prevHash = null;
+  for(let i=0; i<cartridge.chainBlocks.length; i++){
+    const block = cartridge.chainBlocks[i];
+    if(block.prevHash !== prevHash) return 'broken';
+    prevHash = block.hash;
+  }
+  // Check final hash matches cartridge head
+  if(cartridge.chainHead && prevHash !== cartridge.chainHead) return 'head-mismatch';
+  return 'verified';
 }
 
 // ── Also import high scores from the game ──
