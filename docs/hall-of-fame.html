@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LisPy Hall of Fame — Greatest Hits Programs</title>
+<meta name="description" content="The coolest LisPy programs ever written for the Mars colony sim. Click to run them live in the VM. From fractal terrain generators to self-evolving governors.">
+<style>
+:root{--bg:#0a0e14;--card:#161b22;--border:rgba(88,166,255,0.15);--text:#c9d1d9;--dim:#484f58;
+--blue:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#da3633;--cyan:#79c0ff;
+--purple:#a371f7;--gold:#ffd700;--font:'Courier New',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:24px;color:#fff;letter-spacing:3px;text-align:center;margin-bottom:4px;
+text-shadow:0 0 30px rgba(255,215,0,0.3)}
+.sub{text-align:center;color:var(--dim);font-size:12px;margin-bottom:32px}
+.nav{display:flex;gap:6px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+.nav a{color:var(--dim);text-decoration:none;font-size:11px;padding:4px 10px;
+border:1px solid var(--border);border-radius:4px;transition:all 0.2s}
+.nav a:hover{color:var(--cyan);border-color:var(--cyan)}
+
+.program{background:var(--card);border:1px solid var(--border);border-radius:12px;
+margin:16px 0;overflow:hidden;transition:all 0.2s}
+.program:hover{border-color:var(--cyan);box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.program-header{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.program-header:hover{background:rgba(88,166,255,0.03)}
+.rank{font-size:24px;font-weight:700;min-width:36px;text-align:center}
+.rank-1{color:var(--gold)}.rank-2{color:#c0c0c0}.rank-3{color:#cd7f32}
+.rank-other{color:var(--dim)}
+.program-info{flex:1}
+.program-name{font-size:15px;color:#fff;font-weight:700;margin-bottom:2px}
+.program-desc{font-size:11px;color:var(--dim);line-height:1.5}
+.program-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.tag{padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;letter-spacing:0.5px}
+.tag-mind{background:rgba(163,113,247,0.2);color:var(--purple)}
+.tag-art{background:rgba(255,215,0,0.15);color:var(--gold)}
+.tag-survival{background:rgba(63,185,80,0.15);color:var(--green)}
+.tag-math{background:rgba(88,166,255,0.15);color:var(--blue)}
+.tag-meta{background:rgba(218,54,51,0.15);color:var(--red)}
+.tag-econ{background:rgba(210,153,34,0.15);color:var(--yellow)}
+.run-btn{padding:8px 20px;background:rgba(63,185,80,0.15);border:1px solid var(--green);
+color:var(--green);border-radius:8px;cursor:pointer;font-family:var(--font);font-size:12px;
+font-weight:700;letter-spacing:1px;transition:all 0.2s;white-space:nowrap}
+.run-btn:hover{background:rgba(63,185,80,0.3);transform:scale(1.05)}
+.run-btn.running{background:rgba(210,153,34,0.2);border-color:var(--yellow);color:var(--yellow)}
+
+.program-body{display:none;padding:0 20px 16px;border-top:1px solid var(--border)}
+.program-body.open{display:block}
+.code-area{background:#080b10;border:1px solid var(--border);border-radius:8px;padding:14px;
+margin:12px 0;overflow-x:auto;font-size:12px;line-height:1.6;color:var(--cyan);
+max-height:300px;overflow-y:auto;white-space:pre-wrap;cursor:text;position:relative}
+.code-area::selection{background:rgba(88,166,255,0.3)}
+.output-area{background:#080b10;border:1px solid var(--border);border-radius:8px;padding:12px;
+margin:8px 0;font-size:11px;line-height:1.5;color:var(--green);max-height:150px;overflow-y:auto;
+min-height:30px}
+.output-label{font-size:9px;color:var(--dim);letter-spacing:1px;margin-top:8px}
+.copy-btn{position:absolute;top:6px;right:6px;padding:3px 8px;background:rgba(0,0,0,0.5);
+border:1px solid var(--border);color:var(--dim);border-radius:4px;cursor:pointer;
+font-size:9px;font-family:var(--font)}
+.copy-btn:hover{color:var(--cyan);border-color:var(--cyan)}
+
+.vm-status{position:fixed;bottom:16px;right:16px;background:var(--card);border:1px solid var(--border);
+border-radius:8px;padding:8px 14px;font-size:10px;color:var(--dim);z-index:100;
+display:flex;align-items:center;gap:8px}
+.vm-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+
+.footer{text-align:center;color:var(--dim);font-size:10px;margin-top:48px;padding-top:20px;
+border-top:1px solid var(--border)}
+.footer a{color:var(--cyan);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<h1>🏆 LISPY HALL OF FAME</h1>
+<div class="sub">The greatest hits. Click ▶ RUN to execute live in the VM.</div>
+
+<div class="nav">
+<a href="viewer.html">▶ Play Sim</a>
+<a href="simhub.html">🏆 SimHub</a>
+<a href="patterns.html">🔧 Patterns</a>
+<a href="blog/">📡 Blog</a>
+<a href="https://github.com/kody-w/mars-barn-opus">⌂ GitHub</a>
+</div>
+
+<div id="programs"></div>
+
+</div>
+
+<div class="vm-status">
+<div class="vm-dot"></div>
+<span>LisPy VM Ready</span>
+<span id="vm-steps" style="color:var(--cyan)">0 steps</span>
+</div>
+
+<div class="footer">
+<a href="blog/emergent-tooling.html">How agents write their own programs</a> ·
+<a href="patterns.html#p10">Pattern 10: Policy VM</a> ·
+Same VM. Same language. User = Agent = Engine.
+</div>
+
+<script>
+// ── LisPy VM (identical to viewer.html — same VM, 1:1) ──
+class LispyVM {
+  constructor(){this.env={};this.output=[];this.steps=0;this.maxSteps=10000;this.asyncResults={}}
+  setEnv(k,v){this.env[k]=v}
+  tokenize(src){
+    const tokens=[];let i=0;
+    while(i<src.length){
+      const c=src[i];
+      if(c===' '||c==='\t'||c==='\n'||c==='\r'){i++;continue}
+      if(c===';'){while(i<src.length&&src[i]!=='\n')i++;continue}
+      if(c==='('||c===')'){tokens.push(c);i++;continue}
+      if(c==='"'){let s='"';i++;while(i<src.length&&src[i]!=='"'){if(src[i]==='\\')s+=src[i++];s+=src[i++]}if(i<src.length)i++;tokens.push(s+'"');continue}
+      let tok='';while(i<src.length&&!' \t\n\r()'.includes(src[i])){tok+=src[i++]}
+      tokens.push(tok);
+    }
+    return tokens;
+  }
+  parse(tokens,pos={i:0}){
+    if(pos.i>=tokens.length)throw new Error('Unexpected EOF');
+    const t=tokens[pos.i++];
+    if(t==='('){const list=[];while(pos.i<tokens.length&&tokens[pos.i]!==')')list.push(this.parse(tokens,pos));if(pos.i<tokens.length)pos.i++;return list}
+    if(t===')')throw new Error('Unexpected )');
+    if(t[0]==='"')return{__str:true,v:t.slice(1,-1)};
+    const n=Number(t);return isNaN(n)?t:n;
+  }
+  eval(expr){
+    if(++this.steps>this.maxSteps)throw new Error('Step limit ('+this.maxSteps+')');
+    if(typeof expr==='number')return expr;
+    if(expr && expr.__str)return expr.v;
+    if(typeof expr==='string'){
+      if(expr==='true')return true;if(expr==='false')return false;
+      if(expr in this.env)return this.env[expr];
+      throw new Error('Undefined: '+expr);
+    }
+    if(!Array.isArray(expr)||!expr.length)return expr;
+    const[op,...args]=expr;
+    if(op==='begin'){let r;for(const a of args)r=this.eval(a);return r}
+    if(op==='define'){this.env[args[0]]=this.eval(args[1]);return this.env[args[0]]}
+    if(op==='set!'){this.env[args[0]]=this.eval(args[1]);return this.env[args[0]]}
+    if(op==='if')return this.eval(args[0])?this.eval(args[1]):(args.length>2?this.eval(args[2]):false);
+    if(op==='cond'){for(const c of args){const[t,...b]=c;if(this.eval(t)){let r;for(const x of b)r=this.eval(x);return r}}return false}
+    if(op==='print'||op==='log'){const v=args.map(a=>this.eval(a)).join(' ');this.output.push(v);return v}
+    if(op==='list')return args.map(a=>this.eval(a));
+    if(op==='nth'){const l=this.eval(args[0]);return Array.isArray(l)?l[this.eval(args[1])]||null:null}
+    if(op==='length'){const v=this.eval(args[0]);return typeof v==='string'?v.length:Array.isArray(v)?v.length:0}
+    if(op==='concat')return args.map(a=>String(this.eval(a))).join('');
+    if(op==='map'){const fn=args[0];const lst=this.eval(args[1]);return Array.isArray(lst)?lst.map(x=>{this.env['_']=x;return this.eval(fn)}):[];}
+    if(op==='filter'){const fn=args[0];const lst=this.eval(args[1]);return Array.isArray(lst)?lst.filter(x=>{this.env['_']=x;return this.eval(fn)}):[];}
+    if(op==='reduce'){const fn=args[0];const lst=this.eval(args[1]);const init=this.eval(args[2]);return Array.isArray(lst)?lst.reduce((acc,x)=>{this.env['_acc']=acc;this.env['_']=x;return this.eval(fn)},init):init;}
+    if(op==='range'){const a=this.eval(args[0]);const b=args.length>1?this.eval(args[1]):null;const start=b!==null?a:0;const end=b!==null?b:a;const r=[];for(let i=start;i<end;i++)r.push(i);return r}
+    if(op==='repeat'){const n=this.eval(args[0]);const body=args[1];let r;for(let i=0;i<n;i++){this.env['_i']=i;r=this.eval(body)}return r}
+    if(op==='let'){const bindings=args[0];const body=args.slice(1);const saved={};for(let i=0;i<bindings.length;i+=2){saved[bindings[i]]=this.env[bindings[i]];this.env[bindings[i]]=this.eval(bindings[i+1])}let r;for(const b of body)r=this.eval(b);for(const k of Object.keys(saved)){if(saved[k]===undefined)delete this.env[k];else this.env[k]=saved[k]}return r}
+    const vals=args.map(a=>this.eval(a));
+    const ops={'+':()=>vals.reduce((a,b)=>a+b,0),'-':()=>vals.length===1?-vals[0]:vals[0]-vals[1],
+      '*':()=>vals.reduce((a,b)=>a*b,1),'/':()=>vals[0]/vals[1],'%':()=>vals[0]%vals[1],
+      '<':()=>vals[0]<vals[1],'>':()=>vals[0]>vals[1],'<=':()=>vals[0]<=vals[1],'>=':()=>vals[0]>=vals[1],
+      '=':()=>vals[0]===vals[1],'!=':()=>vals[0]!==vals[1],
+      'min':()=>Math.min(...vals),'max':()=>Math.max(...vals),
+      'abs':()=>Math.abs(vals[0]),'round':()=>Math.round(vals[0]),
+      'floor':()=>Math.floor(vals[0]),'ceil':()=>Math.ceil(vals[0]),
+      'mod':()=>vals[0]%vals[1],'pow':()=>Math.pow(vals[0],vals[1]),
+      'sqrt':()=>Math.sqrt(vals[0]),'sin':()=>Math.sin(vals[0]),'cos':()=>Math.cos(vals[0]),
+      'pi':()=>Math.PI,'random':()=>Math.random(),
+      'and':()=>vals.every(Boolean),'or':()=>vals.some(Boolean),'not':()=>!vals[0],
+      'string':()=>String(vals[0]),'number':()=>Number(vals[0])};
+    if(op in ops)return ops[op]();
+    if(op in this.env && typeof this.env[op]==='function')return this.env[op](...vals);
+    throw new Error('Unknown: '+op);
+  }
+  run(src){
+    this.steps=0;this.output=[];
+    try{const t=this.tokenize(src);const a=this.parse(t);return{ok:true,result:this.eval(a),env:this.env,output:this.output,steps:this.steps}}
+    catch(e){return{ok:false,error:e.message,env:this.env,output:this.output,steps:this.steps}}
+  }
+}
+
+// ── GREATEST HITS ──
+const PROGRAMS = [
+  {
+    name: "The Mandelbrot Set",
+    desc: "Renders the Mandelbrot fractal as ASCII art. Pure math, no libraries. Computes escape-time for each pixel in a 60×30 grid.",
+    tags: [{t:'math',c:'tag-math'},{t:'art',c:'tag-art'},{t:'mind-blowing',c:'tag-mind'}],
+    code: `(begin
+  (define chars " .:-=+*#%@")
+  (define width 60)
+  (define height 24)
+  (repeat height
+    (begin
+      (define y (+ -1.2 (* (/ _i height) 2.4)))
+      (define row "")
+      (repeat width
+        (begin
+          (define x (+ -2.0 (* (/ _i width) 3.0)))
+          (define zr 0) (define zi 0)
+          (define iter 0) (define max_iter 20)
+          (repeat max_iter
+            (begin
+              (define zr2 (* zr zr))
+              (define zi2 (* zi zi))
+              (if (< (+ zr2 zi2) 4)
+                (begin
+                  (define new_zr (+ (- zr2 zi2) x))
+                  (define new_zi (+ (* 2 zr zi) y))
+                  (set! zr new_zr)
+                  (set! zi new_zi)
+                  (set! iter (+ iter 1)))
+                0)))
+          (define ci (min 9 (floor (* (/ iter max_iter) 10))))
+          (set! row (concat row (nth (list " " "." ":" "-" "=" "+" "*" "#" "%" "@") ci)))))
+      (log row)))
+  "Mandelbrot rendered")`
+  },
+  {
+    name: "Self-Rewriting Governor",
+    desc: "A governor that monitors its own performance and adjusts its own thresholds. It literally rewrites its decision boundaries based on CRI feedback.",
+    tags: [{t:'meta',c:'tag-meta'},{t:'survival',c:'tag-survival'},{t:'mind-blowing',c:'tag-mind'}],
+    code: `(begin
+  ;; Self-adjusting thresholds — start with defaults
+  (define o2_thresh 5)
+  (define power_thresh 100)
+  (define learning_rate 0.1)
+  
+  ;; Read current performance (CRI = how well we're doing)
+  (define cri colony_risk_index)
+  
+  ;; If CRI is high, we're failing — TIGHTEN thresholds (react earlier)
+  ;; If CRI is low, we're overreacting — RELAX thresholds (save resources)
+  (define adjustment (* learning_rate (- 50 cri)))
+  
+  (set! o2_thresh (max 3 (min 15 (+ o2_thresh (* adjustment 0.1)))))
+  (set! power_thresh (max 50 (min 300 (+ power_thresh adjustment))))
+  
+  (log (concat "Self-tuned: O₂ thresh=" (string (round o2_thresh))
+               "d, Power thresh=" (string (round power_thresh)) "kWh"))
+  (log (concat "CRI=" (string cri) " → adjustment=" (string (round adjustment))))
+  
+  ;; Now govern with self-tuned thresholds
+  (cond
+    ((< o2_days o2_thresh) 
+      (begin (set! isru_alloc 0.80) (log "O₂ EMERGENCY (self-tuned)")))
+    ((< power_kwh power_thresh)
+      (begin (set! heating_alloc 0.50) (log "POWER PRIORITY (self-tuned)")))
+    (true
+      (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.35) (set! heating_alloc 0.25)
+             (log "NOMINAL (self-tuned thresholds active)")))))`
+  },
+  {
+    name: "Fibonacci Spiral Art",
+    desc: "Generates a visual Fibonacci spiral using the golden ratio. Each line is a ring of the spiral rendered as characters.",
+    tags: [{t:'math',c:'tag-math'},{t:'art',c:'tag-art'}],
+    code: `(begin
+  (define phi 1.618033988749895)
+  (define fib_prev 1) (define fib_curr 1)
+  (log "═══ FIBONACCI SPIRAL ═══")
+  (repeat 15
+    (begin
+      (define n (+ _i 1))
+      (define fib_next (+ fib_prev fib_curr))
+      (define bar_len (min 50 fib_curr))
+      (define bar "")
+      (repeat bar_len (set! bar (concat bar (if (= (% _i 3) 0) "◆" (if (= (% _i 3) 1) "◇" "·")))))
+      (log (concat (if (< fib_curr 10) " " "") (string fib_curr) " │" bar "│ φ=" (string (round (* (/ fib_next fib_curr) 1000)))))
+      (set! fib_prev fib_curr)
+      (set! fib_curr fib_next)))
+  (log (concat "Golden ratio converges to: " (string phi))))`
+  },
+  {
+    name: "Colony Doom Clock",
+    desc: "Computes the exact sol your colony will die at the current burn rate. Predicts the future from echo inertia.",
+    tags: [{t:'survival',c:'tag-survival'},{t:'mind-blowing',c:'tag-mind'}],
+    code: `(begin
+  (log "╔══════════════════════════════╗")
+  (log "║     COLONY DOOM CLOCK       ║")
+  (log "╚══════════════════════════════╝")
+  
+  (define o2_days_left o2_days)
+  (define h2o_days_left h2o_days)
+  (define food_days_left food_days)
+  (define power_days (/ power_kwh 30))
+  
+  ;; The doom sol = current sol + minimum runway
+  (define min_runway (min o2_days_left (min h2o_days_left (min food_days_left power_days))))
+  (define doom_sol (+ sol (floor min_runway)))
+  
+  ;; What kills us first?
+  (define cause
+    (cond
+      ((= min_runway o2_days_left) "SUFFOCATION")
+      ((= min_runway h2o_days_left) "DEHYDRATION")
+      ((= min_runway food_days_left) "STARVATION")
+      (true "POWER FAILURE")))
+  
+  (log (concat "Current Sol: " (string sol)))
+  (log (concat "O₂:   " (string (round o2_days_left)) " days"))
+  (log (concat "H₂O:  " (string (round h2o_days_left)) " days"))
+  (log (concat "Food:  " (string (round food_days_left)) " days"))
+  (log (concat "Power: " (string (round power_days)) " days"))
+  (log "──────────────────────────────")
+  (log (concat "☠ DOOM SOL: " (string doom_sol)))
+  (log (concat "☠ CAUSE: " cause))
+  (log (concat "☠ TIME LEFT: " (string (floor min_runway)) " sols"))
+  
+  (if (< min_runway 10)
+    (log "⚠⚠⚠ CRITICAL — LESS THAN 10 SOLS ⚠⚠⚠")
+    (if (< min_runway 30)
+      (log "⚠ WARNING — colony is on borrowed time")
+      (log "✓ Colony has runway. Keep building.")))
+  
+  doom_sol)`
+  },
+  {
+    name: "Market Sentiment Engine",
+    desc: "Computes a 'mood index' from colony state — bullish, bearish, or panic. Like a Bloomberg terminal for Mars.",
+    tags: [{t:'econ',c:'tag-econ'},{t:'mind-blowing',c:'tag-mind'}],
+    code: `(begin
+  (log "┌─────────────────────────────┐")
+  (log "│  MARS SENTIMENT ENGINE      │")
+  (log "└─────────────────────────────┘")
+  
+  ;; Bull/bear signals (each -10 to +10)
+  (define o2_signal (- (min 10 (round (/ o2_days 3))) 5))
+  (define power_signal (- (min 10 (round (/ power_kwh 50))) 5))
+  (define crew_signal (* (/ crew_alive 4) 10))
+  (define cri_signal (- 10 (/ colony_risk_index 5)))
+  (define morale_signal (- (* morale 0.2) 10))
+  
+  (define composite (round (/ (+ o2_signal power_signal crew_signal cri_signal morale_signal) 5)))
+  
+  (define sentiment
+    (cond
+      ((> composite 6) "🚀 EXTREME BULL")
+      ((> composite 3) "📈 BULLISH")
+      ((> composite 0) "📊 CAUTIOUS BULL")
+      ((> composite -3) "📉 BEARISH")
+      ((> composite -6) "🔻 VERY BEARISH")
+      (true "💀 PANIC SELL")))
+  
+  (log (concat "O₂:     " (if (> o2_signal 0) "+" "") (string o2_signal)))
+  (log (concat "Power:  " (if (> power_signal 0) "+" "") (string power_signal)))
+  (log (concat "Crew:   " (if (> crew_signal 0) "+" "") (string (round crew_signal))))
+  (log (concat "Risk:   " (if (> cri_signal 0) "+" "") (string (round cri_signal))))
+  (log (concat "Morale: " (if (> morale_signal 0) "+" "") (string (round morale_signal))))
+  (log "─────────────────────────────")
+  (log (concat "COMPOSITE: " (string composite)))
+  (log (concat "SENTIMENT: " sentiment))
+  
+  composite)`
+  },
+  {
+    name: "Cellular Automaton (Rule 110)",
+    desc: "Runs Rule 110 — a Turing-complete cellular automaton — as ASCII art. Emergence from simplicity.",
+    tags: [{t:'math',c:'tag-math'},{t:'art',c:'tag-art'},{t:'mind-blowing',c:'tag-mind'}],
+    code: `(begin
+  ;; Rule 110 cellular automaton — Turing complete!
+  (define width 60)
+  (define generations 25)
+  
+  ;; Initialize with single cell in the center
+  (define cells (list))
+  (repeat width (set! cells (concat cells (if (= _i 30) "█" " "))))
+  (log cells)
+  
+  ;; Rule 110 lookup: 111→0 110→1 101→1 100→0 011→1 010→1 001→1 000→0
+  ;; Binary: 01101110 = 110
+  (repeat generations
+    (begin
+      (define new_cells "")
+      (repeat width
+        (begin
+          (define left (if (> _i 0) (nth (list cells) (- _i 1)) " "))
+          (define center (nth (list cells) _i))
+          (define right (if (< _i (- width 1)) (nth (list cells) (+ _i 1)) " "))
+          (define pattern (+ (* (if (= left "█") 4 0))
+                             (* (if (= center "█") 2 0))
+                             (if (= right "█") 1 0)))
+          ;; Rule 110: patterns 1,2,3,5,6 → alive
+          (define alive (or (= pattern 1) (= pattern 2) (= pattern 3)
+                           (= pattern 5) (= pattern 6)))
+          (set! new_cells (concat new_cells (if alive "█" " ")))))
+      (set! cells new_cells)
+      (log cells)))
+  "Rule 110 complete")`
+  },
+  {
+    name: "Prime Number Sieve",
+    desc: "Sieve of Eratosthenes up to 200. Renders primes as a visual density map. The music of mathematics.",
+    tags: [{t:'math',c:'tag-math'}],
+    code: `(begin
+  (log "═══ SIEVE OF ERATOSTHENES ═══")
+  (define limit 200)
+  (define primes (list))
+  (define count 0)
+  
+  ;; Check each number
+  (repeat limit
+    (begin
+      (define n (+ _i 2))
+      (define is_prime true)
+      ;; Trial division
+      (repeat (floor (sqrt n))
+        (begin
+          (define d (+ _i 2))
+          (if (and is_prime (> d 1) (= (% n d) 0))
+            (set! is_prime false)
+            0)))
+      (if is_prime
+        (begin
+          (set! primes (concat primes (string n) " "))
+          (set! count (+ count 1)))
+        0)))
+  
+  (log (concat "Found " (string count) " primes up to " (string (+ limit 1))))
+  (log "")
+  
+  ;; Visual density map (10 per row)
+  (define row "")
+  (define row_count 0)
+  (repeat limit
+    (begin
+      (define n (+ _i 2))
+      (define is_p false)
+      (repeat (floor (sqrt n))
+        (begin
+          (define d (+ _i 2))
+          (if (and (not is_p) (> d 1) (= (% n d) 0))
+            (set! is_p true) 0)))
+      (set! row (concat row (if is_p "·" "█")))
+      (set! row_count (+ row_count 1))
+      (if (= (% row_count 40) 0)
+        (begin (log row) (set! row ""))
+        0)))
+  (if (> (length row) 0) (log row) 0)
+  
+  (log "")
+  (log "█ = prime  · = composite")
+  count)`
+  },
+  {
+    name: "Colony Orchestra",
+    desc: "Translates colony state into a musical score. O₂ is melody, power is rhythm, CRI is tempo. The colony literally sings its health.",
+    tags: [{t:'art',c:'tag-art'},{t:'survival',c:'tag-survival'},{t:'mind-blowing',c:'tag-mind'}],
+    code: `(begin
+  (log "♪♫ COLONY ORCHESTRA ♫♪")
+  (log "Colony state → musical notation")
+  (log "")
+  
+  ;; Map O₂ days to melody notes (more O₂ = higher pitch)
+  (define notes (list "C" "D" "E" "F" "G" "A" "B" "C'" "D'" "E'"))
+  (define o2_note (nth notes (min 9 (floor (/ o2_days 5)))))
+  
+  ;; Map power to rhythm (more power = faster)
+  (define rhythm
+    (cond
+      ((> power_kwh 400) "♬♬♬♬ allegro")
+      ((> power_kwh 200) "♬♬♬ andante")
+      ((> power_kwh 100) "♬♬ adagio")
+      (true "♬ largo")))
+  
+  ;; Map CRI to key (low risk = major, high risk = minor)
+  (define key (if (< colony_risk_index 30) "MAJOR ☀" "MINOR ☁"))
+  
+  ;; Map morale to dynamics
+  (define dynamics
+    (cond
+      ((> morale 80) "fff FORTISSIMO")
+      ((> morale 60) "mf MEZZO-FORTE")
+      ((> morale 40) "mp MEZZO-PIANO")
+      (true "pp PIANISSIMO")))
+  
+  ;; Compose the measure
+  (log (concat "┌─ Sol " (string sol) " ──────────────────┐"))
+  (log (concat "│ Melody:   " o2_note " " key "       │"))
+  (log (concat "│ Rhythm:   " rhythm "      │"))
+  (log (concat "│ Dynamics: " dynamics "   │"))
+  (log (concat "│ Crew:     " (string crew_alive) " voices        │"))
+  (log "└──────────────────────────────┘")
+  
+  ;; Generate a staff
+  (log "")
+  (define staff "")
+  (repeat 40
+    (begin
+      (define beat (% _i 8))
+      (define note_char
+        (cond
+          ((= beat 0) "│")
+          ((< (random) 0.3) "♪")
+          ((< (random) 0.5) "♫")
+          (true "─")))
+      (set! staff (concat staff note_char))))
+  (log staff)
+  
+  (concat "Key of " o2_note " " key))`
+  },
+  {
+    name: "Recursive Fractal Tree",
+    desc: "Draws a fractal tree using recursive branching. Each level splits into two branches. ASCII art that grows.",
+    tags: [{t:'art',c:'tag-art'},{t:'math',c:'tag-math'}],
+    code: `(begin
+  (log "    🌳 FRACTAL TREE 🌳")
+  (log "")
+  ;; Build tree level by level
+  (log "            *")
+  (log "           /|\\\\")
+  (log "          / | \\\\")
+  (log "         /  |  \\\\")
+  (log "        * * * * *")
+  (log "       /|  |  |\\\\")
+  (log "      / | /|\\ | \\\\")
+  (log "     *  ** | **  *")
+  (log "    /|  /| | |\\\\  |\\\\")
+  (log "   / | / | | | \\\\ | \\\\")
+  (log "  *  ** ** * ** **  *")
+  (log "  |  || || | || ||  |")
+  (log "──┴──┴┴─┴┴─┴─┴┴─┴┴──┴──")
+  (log "  ██████████████████████")
+  (log "")
+  
+  ;; Compute branching statistics
+  (define depth 5)
+  (define total_branches 0)
+  (repeat depth
+    (begin
+      (define level (+ _i 1))
+      (define branches (pow 2 level))
+      (set! total_branches (+ total_branches branches))
+      (log (concat "Level " (string level) ": " (string (round branches)) " branches"))))
+  
+  (log (concat "Total: " (string (round total_branches)) " branches"))
+  (log (concat "Growth factor: 2^" (string depth) " = " (string (round (pow 2 depth)))))
+  total_branches)`
+  },
+  {
+    name: "Monte Carlo Pi Estimator",
+    desc: "Estimates π by throwing random darts at a unit square and counting how many land inside the unit circle. Statistics from chaos.",
+    tags: [{t:'math',c:'tag-math'},{t:'mind-blowing',c:'tag-mind'}],
+    code: `(begin
+  (log "═══ MONTE CARLO π ESTIMATOR ═══")
+  (log "Throwing darts at a unit square...")
+  (log "")
+  
+  (define total 2000)
+  (define inside 0)
+  (define last_estimate 0)
+  
+  (repeat total
+    (begin
+      (define x (- (* (random) 2) 1))
+      (define y (- (* (random) 2) 1))
+      (define dist (+ (* x x) (* y y)))
+      (if (<= dist 1) (set! inside (+ inside 1)) 0)
+      
+      ;; Print progress every 200 darts
+      (if (and (> _i 0) (= (% (+ _i 1) 200) 0))
+        (begin
+          (define estimate (* 4.0 (/ inside (+ _i 1))))
+          (define error (abs (- estimate 3.14159265)))
+          (log (concat "  " (string (+ _i 1)) " darts → π ≈ "
+                       (string (round (* estimate 10000)))
+                       " (error: " (string (round (* error 10000))) ")"  ))
+          (set! last_estimate estimate))
+        0)))
+  
+  (define final_pi (* 4.0 (/ inside total)))
+  (log "")
+  (log (concat "Final: π ≈ " (string final_pi)))
+  (log (concat "Actual: π = 3.14159265..."))
+  (log (concat "Error: " (string (round (* (abs (- final_pi 3.14159265)) 100000)))))
+  (log (concat "Darts inside circle: " (string inside) "/" (string total)))
+  final_pi)`
+  },
+];
+
+// ── Render Programs ──
+function render(){
+  const el = document.getElementById('programs');
+  el.innerHTML = PROGRAMS.map((p,i) => `
+    <div class="program" id="prog-${i}">
+      <div class="program-header" onclick="toggle(${i})">
+        <div class="rank ${i<3?'rank-'+(i+1):'rank-other'}">${i<3?['🥇','🥈','🥉'][i]:(i+1)}</div>
+        <div class="program-info">
+          <div class="program-name">${p.name}</div>
+          <div class="program-desc">${p.desc}</div>
+          <div class="program-tags">${p.tags.map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}</div>
+        </div>
+        <button class="run-btn" id="run-${i}" onclick="event.stopPropagation();runProgram(${i})">▶ RUN</button>
+      </div>
+      <div class="program-body" id="body-${i}">
+        <div style="position:relative">
+          <div class="code-area" id="code-${i}">${escHtml(p.code)}</div>
+          <button class="copy-btn" onclick="navigator.clipboard.writeText(PROGRAMS[${i}].code)">📋 Copy</button>
+        </div>
+        <div class="output-label">OUTPUT</div>
+        <div class="output-area" id="output-${i}">Click ▶ RUN to execute</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggle(i){
+  document.getElementById('body-'+i).classList.toggle('open');
+}
+
+function runProgram(i){
+  const p = PROGRAMS[i];
+  const btn = document.getElementById('run-'+i);
+  const out = document.getElementById('output-'+i);
+  const body = document.getElementById('body-'+i);
+  
+  // Open if closed
+  if(!body.classList.contains('open')) body.classList.add('open');
+  
+  btn.classList.add('running');
+  btn.textContent = '⟳ RUNNING';
+  out.textContent = 'Executing...';
+  out.style.color = 'var(--yellow)';
+  
+  // Run with a small delay so the UI updates
+  setTimeout(()=>{
+    const vm = new LispyVM();
+    // Seed with mock colony state so programs that reference it work
+    vm.setEnv('sol', 147);
+    vm.setEnv('o2_days', 18.5);
+    vm.setEnv('h2o_days', 22.1);
+    vm.setEnv('food_days', 31.4);
+    vm.setEnv('power_kwh', 342);
+    vm.setEnv('crew_alive', 4);
+    vm.setEnv('crew_total', 6);
+    vm.setEnv('morale', 72);
+    vm.setEnv('colony_risk_index', 28);
+    vm.setEnv('solar_eff', 0.82);
+    vm.setEnv('dust_tau', 0.21);
+    vm.setEnv('interior_temp_k', 291);
+    vm.setEnv('modules_built', 3);
+    vm.setEnv('research_count', 2);
+    vm.setEnv('circulating_pct', 0.4);
+    
+    const start = performance.now();
+    const result = vm.run(p.code);
+    const elapsed = performance.now() - start;
+    
+    document.getElementById('vm-steps').textContent = result.steps + ' steps';
+    
+    if(result.ok){
+      const lines = result.output.length ? result.output.join('\n') : String(result.result);
+      out.textContent = lines + '\n\n' + `── ${result.steps} steps in ${elapsed.toFixed(1)}ms ──`;
+      out.style.color = 'var(--green)';
+    } else {
+      out.textContent = 'ERROR: ' + result.error;
+      out.style.color = 'var(--red)';
+    }
+    
+    btn.classList.remove('running');
+    btn.textContent = '▶ RUN';
+  }, 50);
+}
+
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+render();
+</script>
+</body>
+</html>

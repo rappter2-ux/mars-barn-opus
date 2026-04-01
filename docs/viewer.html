@@ -492,6 +492,7 @@ body.cinematic-active .cartridge-bar,body.cinematic-active #task-panel{
 <div id="top-nav" class="game-hidden" style="position:fixed;top:0;left:0;right:0;z-index:200;background:#080b10;border-bottom:1px solid var(--border);padding:4px 16px;display:flex;align-items:center;gap:12px;font-size:11px;font-family:var(--font)">
   <span style="color:var(--cyan);font-weight:700;font-size:12px;letter-spacing:1px;margin-right:6px">FIRST PRINCIPLES TO MARS</span>
   <a href="simhub.html" style="color:var(--cyan);text-decoration:none;padding:3px 8px;border-radius:3px;border:1px solid var(--border)">🏆 SimHub</a>
+  <a href="hall-of-fame.html" style="color:var(--dim);text-decoration:none;padding:3px 8px;border-radius:3px">🏅 LisPy</a>
   <a href="patterns.html" style="color:var(--dim);text-decoration:none;padding:3px 8px;border-radius:3px">🔧 Patterns</a>
   <a href="control.html" target="_blank" style="color:var(--dim);text-decoration:none;padding:3px 8px;border-radius:3px">◉ Control</a>
   <a href="splitscreen.html" style="color:var(--dim);text-decoration:none;padding:3px 8px;border-radius:3px">Earth↔Mars</a>
@@ -908,13 +909,14 @@ class LispyVM {
       return list;
     }
     if(t===')')throw new Error('Unexpected )');
-    if(t[0]==='"')return t.slice(1,-1);
+    if(t[0]==='"')return{__str:true,v:t.slice(1,-1)};
     const n=Number(t);
     return isNaN(n)?t:n;
   }
   eval(expr){
     if(++this.steps>this.maxSteps)throw new Error('LisPy: step limit exceeded');
     if(typeof expr==='number')return expr;
+    if(expr && expr.__str)return expr.v;
     if(typeof expr==='string'){
       if(expr==='true')return true;
       if(expr==='false')return false;
@@ -1225,6 +1227,59 @@ const PROMPT_LIBRARY = {
   (if improved
     (begin (log "✓ Tool helped — keep in library") true)
     (begin (log "✗ Tool did not help — consider removing") false)))`
+  },
+
+  // ── GREATEST HITS (Hall of Fame) ──
+  'hof-doom-clock': {
+    tags: ['greatest-hit', 'survival', 'prediction'],
+    desc: 'Computes the exact sol your colony dies at current burn rate.',
+    template: `(begin
+  (define min_runway (min o2_days (min h2o_days (min food_days (/ power_kwh 30)))))
+  (define doom_sol (+ sol (floor min_runway)))
+  (define cause (cond ((= min_runway o2_days) "SUFFOCATION") ((= min_runway h2o_days) "DEHYDRATION") ((= min_runway food_days) "STARVATION") (true "POWER FAILURE")))
+  (log (concat "☠ DOOM SOL: " (string doom_sol) " (" cause ")"))
+  (log (concat "Time left: " (string (floor min_runway)) " sols"))
+  doom_sol)`
+  },
+  'hof-sentiment': {
+    tags: ['greatest-hit', 'economy', 'analysis'],
+    desc: 'Market sentiment engine — bull/bear signal from colony state.',
+    template: `(begin
+  (define composite (round (/ (+ (- (min 10 (round (/ o2_days 3))) 5) (- (min 10 (round (/ power_kwh 50))) 5) (* (/ crew_alive 4) 10) (- 10 (/ colony_risk_index 5)) (- (* morale 0.2) 10)) 5)))
+  (define sentiment (cond ((> composite 6) "🚀 EXTREME BULL") ((> composite 3) "📈 BULLISH") ((> composite 0) "📊 CAUTIOUS") ((> composite -3) "📉 BEARISH") (true "💀 PANIC")))
+  (log (concat "SENTIMENT: " sentiment " (score: " (string composite) ")"))
+  composite)`
+  },
+  'hof-self-tuning': {
+    tags: ['greatest-hit', 'meta', 'governance'],
+    desc: 'Self-rewriting governor that adjusts its own thresholds from CRI feedback.',
+    template: `(begin
+  (define adj (* 0.1 (- 50 colony_risk_index)))
+  (define o2_thresh (max 3 (min 15 (+ 5 (* adj 0.1)))))
+  (define pwr_thresh (max 50 (min 300 (+ 100 adj))))
+  (log (concat "Self-tuned: O₂=" (string (round o2_thresh)) "d Pwr=" (string (round pwr_thresh)) "kWh"))
+  (cond ((< o2_days o2_thresh) (begin (set! isru_alloc 0.80) (log "O₂ EMERGENCY"))) ((< power_kwh pwr_thresh) (begin (set! heating_alloc 0.50) (log "POWER PRIORITY"))) (true (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.35) (set! heating_alloc 0.25)))))`
+  },
+  'hof-orchestra': {
+    tags: ['greatest-hit', 'art', 'creative'],
+    desc: 'Translates colony state into musical notation. The colony sings.',
+    template: `(begin
+  (define notes (list "C" "D" "E" "F" "G" "A" "B"))
+  (define note (nth notes (min 6 (floor (/ o2_days 5)))))
+  (define key (if (< colony_risk_index 30) "MAJOR ☀" "MINOR ☁"))
+  (define tempo (cond ((> power_kwh 400) "allegro") ((> power_kwh 200) "andante") (true "largo")))
+  (log (concat "♪ Sol " (string sol) " in " note " " key " — " tempo))
+  (concat note " " key))`
+  },
+  'hof-monte-carlo-pi': {
+    tags: ['greatest-hit', 'math', 'simulation'],
+    desc: 'Estimates π by throwing random darts. Statistics from chaos.',
+    template: `(begin
+  (define n 1000) (define inside 0)
+  (repeat n (begin (define x (- (* (random) 2) 1)) (define y (- (* (random) 2) 1)) (if (<= (+ (* x x) (* y y)) 1) (set! inside (+ inside 1)) 0)))
+  (define pi_est (* 4.0 (/ inside n)))
+  (log (concat "π ≈ " (string pi_est) " (" (string n) " darts, " (string inside) " inside)"))
+  pi_est)`
   },
 };
 
