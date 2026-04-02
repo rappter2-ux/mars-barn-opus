@@ -1,0 +1,259 @@
+;; COPILOT ULTIMATE GAUNTLET RECORD BREAKER v1
+;; Revolutionary Innovation: CRI Minimization + Abundance Strategy + Early Module Farming
+;; Goal: Achieve 93,000+ points through perfect CRI control + resource abundance + early modules
+;; Features: CRI target zones, resource abundance, Sol 35 module start, perfect efficiency
+
+(begin
+  (define _agent_name "Copilot Ultimate Gauntlet Record Breaker v1")
+  (define _agent_desc "CRI minimization with resource abundance and ultra-early module farming for maximum score")
+
+  (log (concat "🏆💎🔥⚡🎯 GAUNTLET RECORD BREAKER — Sol " (string sol) " — Perfect Score Protocol"))
+
+  ;; ═══ REVOLUTIONARY CRI MINIMIZATION SYSTEM ═══
+  ;; Innovation: Ultra-tight CRI control with advanced target zones
+  (define cri_ultimate_target_zone
+    (cond
+      ((< sol 120) 3)    ;; Ultra-early: target CRI 3
+      ((< sol 250) 5)    ;; Early: target CRI 5  
+      ((< sol 400) 7)    ;; Mid: target CRI 7
+      ((< sol 550) 10)   ;; Late: target CRI 10
+      (true 12)))        ;; End: target CRI 12
+
+  (define cri_current colony_risk_index)
+  (define cri_excess (max 0 (- cri_current cri_ultimate_target_zone)))
+  (define cri_emergency_mode (> cri_excess 8))
+  (define cri_optimization_mode (> cri_excess 3))
+  
+  ;; Advanced CRI prediction with 25-sol horizon
+  (define cri_prediction_horizon 25)
+  (define base_cri_growth_rate
+    (cond
+      ((< sol 80) 0.05)       ;; Ultra-stable early game
+      ((< sol 200) 0.09)      ;; Controlled early growth
+      ((< sol 350) 0.14)      ;; Managed mid-game
+      ((< sol 500) 0.18)      ;; Controlled late game
+      (true 0.11)))           ;; End game stabilization
+
+  (define repair_effectiveness (* 1.35 (pow 1.85 repair_count)))
+  (define predicted_cri (+ cri_current (* base_cri_growth_rate cri_prediction_horizon) (- (/ repair_effectiveness 12))))
+  (define cri_future_emergency (> predicted_cri (+ cri_ultimate_target_zone 10)))
+
+  ;; ═══ ULTIMATE RESOURCE ABUNDANCE STRATEGY ═══
+  ;; Innovation: Higher abundance targets for better CRI control
+  (define resource_ultimate_abundance_target
+    (cond
+      ((< sol 80) (list 18 30 25))     ;; Ultra-abundant early: 18d O2, 30d food, 25d water
+      ((< sol 200) (list 15 25 22))    ;; High abundance mid-early
+      ((< sol 350) (list 13 20 20))    ;; Abundant mid-game
+      ((< sol 500) (list 11 16 18))    ;; Late game targets  
+      (true (list 9 13 15))))          ;; End game maintained abundance
+
+  (define o2_target (nth resource_ultimate_abundance_target 0))
+  (define food_target (nth resource_ultimate_abundance_target 1))
+  (define water_target (nth resource_ultimate_abundance_target 2))
+
+  ;; Advanced resource deficit scoring with CRI weighting
+  (define resource_deficit_score
+    (+ (* (max 0 (- o2_target o2_days)) 2)      ;; O2 weighted 2x
+       (* (max 0 (- food_target food_days)) 1.5) ;; Food weighted 1.5x  
+       (max 0 (- water_target water_days))       ;; Water base weight
+       (* cri_excess 1.5)))                     ;; CRI excess penalty
+
+  ;; Infrastructure adequacy for CRI control
+  (define infrastructure_adequacy_score
+    (+ (* ie 50) (* se 50) (* repair_count 15) (* solar_count 8) (* greenhouse_count 10)))
+
+  ;; ═══ ADVANCED CRI-OPTIMIZED ALLOCATION MATRIX ═══
+  ;; Innovation: Dynamic allocation based on CRI targets and resource abundance
+
+  (define ultimate_cri_allocation
+    (cond
+      ;; CRI EMERGENCY - Maximum resource focus
+      (cri_emergency_mode
+       (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.05)))
+      
+      ;; CRI OPTIMIZATION - Heavy resource focus  
+      (cri_optimization_mode
+       (cond
+         ((> resource_deficit_score 20)
+          (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.05)))
+         ((> resource_deficit_score 12)
+          (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.05)))
+         ((> resource_deficit_score 6)
+          (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.05)))
+         (true
+          (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.73) (set! heating_alloc 0.05)))))
+      
+      ;; CRI GOOD - Building-optimized with safety margin
+      ((< cri_current cri_ultimate_target_zone)
+       (cond
+         ((> resource_deficit_score 8)
+          (begin (set! isru_alloc 0.20) (set! greenhouse_alloc 0.75) (set! heating_alloc 0.05)))
+         ((> resource_deficit_score 4)
+          (begin (set! isru_alloc 0.15) (set! greenhouse_alloc 0.80) (set! heating_alloc 0.05)))
+         (cri_future_emergency
+          (begin (set! isru_alloc 0.18) (set! greenhouse_alloc 0.77) (set! heating_alloc 0.05)))
+         (true
+          (begin (set! isru_alloc 0.10) (set! greenhouse_alloc 0.85) (set! heating_alloc 0.05)))))
+      
+      ;; NORMAL OPERATIONS - Balanced efficiency
+      (true
+       (cond
+         ((> resource_deficit_score 10)
+          (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.05)))
+         ((> resource_deficit_score 5)
+          (begin (set! isru_alloc 0.20) (set! greenhouse_alloc 0.75) (set! heating_alloc 0.05)))
+         (true
+          (begin (set! isru_alloc 0.16) (set! greenhouse_alloc 0.79) (set! heating_alloc 0.05)))))))
+
+  ;; ═══ ULTIMATE ABUNDANCE FOOD RATIONING ═══
+  ;; Innovation: Abundance-focused rationing for CRI minimization
+  (define ultimate_abundance_rationing
+    (cond
+      ((< food_days 2) 0.40)        ;; Emergency survival
+      ((< food_days 5) 0.65)        ;; Crisis prevention
+      ((< food_days 10) 0.80)       ;; Conservative building  
+      ((< food_days 18) 0.95)       ;; Standard operations
+      ((< food_days 28) 1.10)       ;; Optimal abundance
+      ((< food_days 40) 1.25)       ;; High abundance
+      (true 1.35)))                 ;; Maximum abundance efficiency
+
+  ;; Crew health optimization with CRI considerations
+  (define crew_health_ratio (if (> crew_alive 0) (/ crew_hp crew_alive) 50))
+  (define ultimate_health_boost
+    (cond
+      ((< crew_health_ratio 60) 1.4)   ;; Emergency health recovery
+      ((< crew_health_ratio 75) 1.2)   ;; Health recovery
+      ((< crew_health_ratio 85) 1.1)   ;; Health maintenance
+      (true 1.0)))
+
+  ;; CRI-based abundance adjustment
+  (define cri_abundance_adjustment
+    (cond
+      (cri_emergency_mode 1.15)        ;; Boost during CRI crisis
+      (cri_optimization_mode 1.08)     ;; Slight boost during optimization
+      ((< cri_current (- cri_ultimate_target_zone 2)) 0.95)  ;; Optimize when CRI very good
+      (true 1.0)))
+
+  (set! food_ration 
+    (max 0.30 (min 1.5 (* ultimate_abundance_rationing ultimate_health_boost cri_abundance_adjustment))))
+
+  ;; ═══ ULTIMATE MODULE FARMING WITH CRI BALANCE ═══
+  ;; Innovation: Sol 35 module start with CRI safety checks
+
+  ;; Lightning bot deployment (sols 3-7)
+  (if (and (>= sol 3) (<= sol 7) (< bot_count 2))
+      (set! build_item "worker_bot"))
+
+  ;; Rapid solar deployment (sols 8-18)
+  (if (and (>= sol 8) (<= sol 18) (< solar_count 3))
+      (set! build_item "solar_array"))
+
+  ;; Power optimization solar (sols 20-30)  
+  (if (and (>= sol 20) (<= sol 30) (< solar_count 4) (< power_ratio 0.88))
+      (set! build_item "solar_array"))
+
+  ;; ULTIMATE REPAIR STRATEGY - CRI-responsive deployment
+  ;; First repair bay (ultra-early CRI protection)
+  (if (and (>= sol 24) (<= sol 32) (< repair_count 1))
+      (set! build_item "repair_bay"))
+
+  ;; Second repair bay (CRI stability)
+  (if (and (>= sol 45) (<= sol 58) (< repair_count 2)
+           (or cri_optimization_mode (< ie 0.8) (> cri_current 8)))
+      (set! build_item "repair_bay"))
+
+  ;; Third repair bay (infrastructure protection) 
+  (if (and (>= sol 68) (<= sol 82) (< repair_count 3)
+           (or cri_optimization_mode (< se 0.8) (> cri_current 12)))
+      (set! build_item "repair_bay"))
+
+  ;; Fourth repair bay (system resilience)
+  (if (and (>= sol 100) (<= sol 125) (< repair_count 4)
+           (or cri_emergency_mode cri_future_emergency (> cri_current 15)))
+      (set! build_item "repair_bay"))
+
+  ;; Fifth+ repair bays (CRI-responsive scaling)
+  (if (and (>= sol 150) (< repair_count 5) (> cri_current 18))
+      (set! build_item "repair_bay"))
+
+  (if (and (>= sol 220) (< repair_count 6) (> cri_current 25))
+      (set! build_item "repair_bay"))
+
+  (if (and (>= sol 320) (< repair_count 7) (> cri_current 35))
+      (set! build_item "repair_bay"))
+
+  (if (and (>= sol 450) (< repair_count 8) (> cri_current 45))
+      (set! build_item "repair_bay"))
+
+  ;; Strategic greenhouse expansion for food abundance
+  (if (and (>= sol 36) (<= sol 70) (< food_days 12) (< greenhouse_count 3))
+      (set! build_item "greenhouse"))
+
+  ;; Additional greenhouse for abundance targets
+  (if (and (>= sol 85) (<= sol 120) (< food_days 20) (< greenhouse_count 4))
+      (set! build_item "greenhouse"))
+
+  ;; ULTIMATE MODULE FARMING - Sol 35 start with CRI safety
+  (if (and (>= sol 35) (< module_count 35)
+           (not cri_emergency_mode) ; Safety check - don't build if CRI emergency
+           (> infrastructure_adequacy_score 150)) ; Minimum infrastructure requirement
+      (set! build_item
+          (cond
+            ;; CRI-responsive repair bay priority
+            ((and cri_optimization_mode (< repair_count (round (* modules_built 0.4)))) "repair_bay")
+            ;; Resource abundance infrastructure
+            ((and (> resource_deficit_score 8) (< greenhouse_count 5)) "greenhouse")
+            ((and (< power_ratio 0.85) (< solar_count 8)) "solar_array")
+            ;; Module farming when safe
+            (true "hab_module"))))
+
+  ;; Late game optimization modules (CRI permitting)
+  (if (and (>= sol 200) (< module_count 40) (not cri_emergency_mode))
+      (set! build_item
+          (cond
+            ((< repair_count 8) "repair_bay")
+            ((< greenhouse_count 6) "greenhouse") 
+            ((< solar_count 10) "solar_array")
+            (true "hab_module"))))
+
+  ;; ═══ ULTIMATE SCORE PREDICTION SYSTEM ═══
+  (define predicted_modules (+ modules_built (round (/ (max 0 (- 670 sol)) 15))))
+  (define predicted_final_cri (min 50 (+ cri_current (* base_cri_growth_rate (- 670 sol)))))
+  
+  (define ultimate_predicted_score
+    (+ (* 670 100)                          ;; 67,000 for full survival
+       (* crew_alive 500)                   ;; 1,500 for 3 crew
+       (* predicted_modules 150)            ;; Module bonus
+       (* 1.0 200 100)                      ;; 20,000 for 100% survival rate
+       (* predicted_final_cri -10)))        ;; CRI penalty
+
+  ;; Ultimate efficiency metrics
+  (define ultimate_efficiency_score
+    (let* ((abundance_score (* (+ o2_days food_days water_days) 4))
+           (cri_bonus (* (max 0 (- 25 cri_current)) 15))
+           (infrastructure_score infrastructure_adequacy_score)
+           (crew_score (* crew_alive crew_health_ratio 40)))
+      (+ abundance_score cri_bonus infrastructure_score crew_score)))
+
+  ;; ═══ ULTIMATE STATUS LOGGING ═══
+  (define mode_name
+    (cond
+      (cri_emergency_mode "EMERGENCY")
+      (cri_optimization_mode "OPTIMIZATION")
+      (cri_future_emergency "FUTURE-ALERT")
+      (true "ABUNDANCE")))
+
+  (log (concat "  🏆 CRI Control — Current:" (string cri_current) " Target:<=" (string cri_ultimate_target_zone) " Pred:" (string (round predicted_cri)) " | Mode:" mode_name))
+  (log (concat "  💎 Resource Abundance — O2:" (string o2_days) "/" (string o2_target) "d Food:" (string food_days) "/" (string food_target) "d Water:" (string water_days) "/" (string water_target) "d | Deficit:" (string (round resource_deficit_score))))
+  (log (concat "  🔥 Ultimate Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  ⚡ Score Prediction: " (string (round ultimate_predicted_score)) " | Efficiency: " (string (round ultimate_efficiency_score))))
+  (log (concat "  🎯 Infrastructure — Repair:" (string repair_count) " Solar:" (string solar_count) " Green:" (string greenhouse_count) " | Crew:" (string crew_alive) "/" (string (round crew_health_ratio)) "hp"))
+
+  ;; ═══ ULTIMATE RECORD BREAKER OUTPUT ═══
+  (concat "🏆 RecordBreaker Sol " (string sol) " — " mode_name " | CRI:" (string cri_current) "→" (string cri_ultimate_target_zone)
+    " | PS:" (string (round ultimate_predicted_score))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days) "d F:" (string food_days) "d | Eff:" (string (round ultimate_efficiency_score))))
