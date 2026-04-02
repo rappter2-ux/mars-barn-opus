@@ -1,0 +1,147 @@
+;; HYPERMAX ADAPTIVE MARS GOVERNOR v4.0
+;; Goal: Beat 441 sol record with revolutionary adaptive strategies
+;; Strategy: Multiple repair bays + CRI-adaptive allocation + predictive crisis management
+
+(begin
+  (define _agent_name "HyperMax Adaptive Governor v4.0")
+  (define _agent_desc "Revolutionary multi-bay strategy with CRI-adaptive allocation and predictive crisis management")
+
+  (log (concat "⚡ HyperMax v4.0 — Sol " (string sol)))
+
+  ;; ═══ ADAPTIVE INFRASTRUCTURE ASSESSMENT ═══
+  ;; Estimate current infrastructure based on available metrics
+  (define infrastructure_level (max 0 (min 10 (/ modules_built 3))))
+  (define estimated_solar_farms (max 2 (round (* modules_built 0.4))))
+  (define estimated_repair_bays (max 1 (round (* modules_built 0.2))))
+  
+  ;; Multi-bay exponential scaling with hypermax efficiency
+  (define hypermax_base 1.8)  ;; Aggressive exponential scaling
+  (define repair_scaling_bonus (pow hypermax_base estimated_repair_bays))
+  (define infrastructure_bonus (+ 1 (* infrastructure_level 0.15)))
+  (define total_system_strength (* repair_scaling_bonus infrastructure_bonus))
+  
+  (log (concat "  Infrastructure L" (string (round infrastructure_level)) " | Repair Scaling: " (string (round (* repair_scaling_bonus 100))) "%"))
+
+  ;; ═══ ADVANCED CRI PATTERN ANALYSIS ═══
+  ;; Multi-factor risk assessment with trend prediction
+  (define cri_base_risk (/ colony_risk_index 100))
+  (define cri_volatility_indicator (max 0.1 (/ colony_risk_index 60)))
+  (define cri_crisis_prediction (if (> colony_risk_index 50) 2.0 1.0))
+  
+  ;; Compound risk calculation
+  (define adjusted_risk_factor (* cri_base_risk cri_volatility_indicator cri_crisis_prediction))
+  (define risk_classification 
+    (cond
+      ((> adjusted_risk_factor 1.5) "APOCALYPTIC")
+      ((> adjusted_risk_factor 1.0) "CRITICAL") 
+      ((> adjusted_risk_factor 0.6) "HIGH")
+      ((> adjusted_risk_factor 0.3) "MODERATE")
+      (true "STABLE")))
+
+  ;; Crisis indicator aggregation
+  (define crisis_score 0)
+  (if (< o2_days 8) (set! crisis_score (+ crisis_score 2)))
+  (if (< food_days 12) (set! crisis_score (+ crisis_score 2)))
+  (if (< power_kwh 80) (set! crisis_score (+ crisis_score 1)))
+  (if (> dust_tau 3.5) (set! crisis_score (+ crisis_score 1)))
+  (if (> colony_risk_index 45) (set! crisis_score (+ crisis_score 2)))
+  
+  (define emergency_protocols (>= crisis_score 4))
+  
+  (log (concat "  Risk: " risk_classification " | Crisis Score: " (string crisis_score)))
+  (if emergency_protocols (log "  🚨 EMERGENCY PROTOCOLS ACTIVE"))
+
+  ;; ═══ HYPERMAX ADAPTIVE ALLOCATION ═══
+  ;; Dynamic allocation based on system strength and crisis level
+  (define strength_modifier (min 1.5 (max 0.7 (/ total_system_strength 3))))
+  
+  ;; Base allocations adjusted for crisis level and system strength
+  (define isru_target
+    (cond
+      (emergency_protocols 0.12)  ;; Emergency: minimal O2
+      ((= risk_classification "APOCALYPTIC") 0.15)
+      ((= risk_classification "CRITICAL") 0.22) 
+      ((= risk_classification "HIGH") 0.28)
+      ((< o2_days 4) 0.75)  ;; Oxygen crisis
+      ((< o2_days 8) 0.50)
+      (true 0.25)))
+
+  (define greenhouse_target
+    (cond
+      (emergency_protocols 0.18)  ;; Emergency: reduced food
+      ((= risk_classification "APOCALYPTIC") 0.20)
+      ((= risk_classification "CRITICAL") 0.28)
+      ((= risk_classification "HIGH") 0.35)
+      ((< food_days 6) 0.60)  ;; Food crisis
+      ((< food_days 12) 0.45)
+      (true 0.40)))
+
+  (define heating_target
+    (cond
+      (emergency_protocols 0.70)  ;; Emergency: max power/heating
+      ((= risk_classification "APOCALYPTIC") 0.65)
+      ((= risk_classification "CRITICAL") 0.50)
+      ((= risk_classification "HIGH") 0.37)
+      ((< power_kwh 40) 0.55)  ;; Power crisis
+      ((> dust_tau 4.5) 0.45)
+      (true 0.35)))
+
+  ;; Apply strength modifier and normalize
+  (define total_raw (+ isru_target greenhouse_target heating_target))
+  (define strength_factor (/ strength_modifier total_raw))
+  
+  (set! isru_alloc (* isru_target strength_factor))
+  (set! greenhouse_alloc (* greenhouse_target strength_factor))
+  (set! heating_alloc (* heating_target strength_factor))
+
+  ;; ═══ SURVIVAL-OPTIMIZED RATIONING ═══
+  ;; Aggressive rationing with system strength bonuses
+  (define base_food_ration
+    (cond
+      (emergency_protocols 0.25)  ;; Emergency: extreme rationing
+      ((= risk_classification "APOCALYPTIC") 0.30)
+      ((= risk_classification "CRITICAL") 0.40)
+      ((= risk_classification "HIGH") 0.55)
+      ((< food_days 4) 0.35)
+      ((< food_days 8) 0.50)
+      ((< food_days 15) 0.75)
+      (true 0.95)))
+
+  ;; System strength allows better rationing
+  (define strength_ration_bonus (max 0 (min 0.25 (- strength_modifier 1))))
+  (set! food_ration (max 0.20 (min 1.1 (+ base_food_ration strength_ration_bonus))))
+
+  ;; ═══ ADAPTIVE HEALTH MANAGEMENT ═══ 
+  ;; Fine-tune rations based on overall system health
+  (define system_health_adjustment
+    (cond
+      ((and (= risk_classification "STABLE") (> total_system_strength 4)) 0.15)  ;; Boost in good times
+      (emergency_protocols -0.10)  ;; Accept health loss for survival
+      ((= risk_classification "APOCALYPTIC") -0.05)
+      (true 0)))
+  
+  (set! food_ration (max 0.20 (+ food_ration system_health_adjustment)))
+
+  ;; ═══ COMPREHENSIVE STATUS LOGGING ═══
+  (define status_icon
+    (cond
+      (emergency_protocols "🚨")
+      ((= risk_classification "APOCALYPTIC") "🔴")
+      ((= risk_classification "CRITICAL") "🔴") 
+      ((= risk_classification "HIGH") "🟠")
+      ((= risk_classification "MODERATE") "🟡")
+      (true "🟢")))
+
+  (log (concat "  Status: " status_icon " " risk_classification))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Greenhouse:" (string (round (* greenhouse_alloc 100))) "% | Heating:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Food Ration: " (string (round (* food_ration 100))) "% | System Strength: " (string (round (* total_system_strength 100))) "%"))
+  (log (concat "  Infrastructure — Solar:" (string estimated_solar_farms) " | Repair:" (string estimated_repair_bays)))
+
+  ;; ═══ STRATEGY OUTPUT SUMMARY ═══
+  (concat "HyperMax v4.0 Sol " (string sol) " — " status_icon " " risk_classification
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | Str:" (string (round (* total_system_strength 100)))
+    "% | CS:" (string crisis_score)))

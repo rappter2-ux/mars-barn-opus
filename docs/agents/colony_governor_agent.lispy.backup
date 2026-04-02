@@ -1,0 +1,151 @@
+;; ULTRA-ADAPTIVE CRI MARS GOVERNOR v2.0
+;; Goal: Push beyond current 627 sol record through advanced pattern recognition
+;; Multi-layered risk assessment with exponential repair scaling and predictive modeling
+
+(begin
+  (define _agent_name "Ultra-Adaptive CRI Governor v2.0")
+  (define _agent_desc "Advanced pattern recognition with exponential repair scaling, volatility detection, and predictive risk modeling for maximum survival.")
+
+  (log (concat "🧠 Ultra-Adaptive CRI Governor v2.0 — Sol " (string sol)))
+
+  ;; ═══ CRI PATTERN RECOGNITION & VOLATILITY ANALYSIS ═══
+  ;; Track CRI history for pattern recognition (simulated with available variables)
+  (define cri_baseline 20)
+  (define cri_volatility_factor (max 0.1 (/ colony_risk_index 50))) ;; Estimate volatility
+  (define cri_trend_factor (if (> colony_risk_index 40) 1.5 0.8)) ;; Estimate trend direction
+  
+  ;; Multi-factor risk assessment beyond just current CRI
+  (define adjusted_cri (* colony_risk_index cri_trend_factor cri_volatility_factor))
+  
+  ;; Dynamic risk profile classification
+  (define risk_profile
+    (cond
+      ((> adjusted_cri 75) "CRITICAL")
+      ((> adjusted_cri 45) "HIGH") 
+      ((> adjusted_cri 25) "MEDIUM")
+      (true "LOW")))
+  
+  ;; Emergency mode detection for extreme conditions
+  (define emergency_mode (or (> adjusted_cri 80) (< o2_days 2) (< power_kwh 30)))
+  
+  (log (concat "  Risk Profile: " risk_profile " (Adjusted CRI: " (string (round adjusted_cri)) ")"))
+  (if emergency_mode (log "  ⚠️  EMERGENCY MODE ACTIVE"))
+
+  ;; ═══ ULTRA-EXPONENTIAL REPAIR SCALING ═══
+  ;; Calculate repair bay count (estimate based on modules)
+  (define estimated_repair_bays (max 1 (round (/ modules_built 8))))
+  (define exponential_base 1.65) ;; Higher exponential scaling
+  (define exponential_repair_bonus (pow exponential_base estimated_repair_bays))
+  (define volatility_multiplier (+ 1 (/ colony_risk_index 100)))
+  (define total_repair_effectiveness (* exponential_repair_bonus volatility_multiplier))
+  
+  (log (concat "  Repair Effectiveness: " (string (round (* total_repair_effectiveness 100))) "% (Bays: " (string estimated_repair_bays) ")"))
+
+  ;; ═══ ULTRA-ADAPTIVE THREAT ASSESSMENT ═══
+  ;; Enhanced threat calculations with predictive modeling
+  (define o2_threat_base (if (< o2_days 15) (/ (- 15 (min o2_days 15)) 15) 0))
+  (define o2_threat_enhanced (* o2_threat_base (if emergency_mode 2.0 1.0)))
+  
+  (define food_threat_base (if (< food_days 20) (/ (- 20 (min food_days 20)) 20) 0))
+  (define food_threat_enhanced (* food_threat_base cri_trend_factor))
+  
+  (define power_threat_base (if (< power_kwh 150) (/ (- 150 (min power_kwh 150)) 150) 0))
+  (define power_threat_enhanced (* power_threat_base cri_volatility_factor))
+  
+  (define heat_threat_base (if (> dust_tau 2.0) (/ (min dust_tau 5.0) 5.0) 0.1))
+  (define heat_threat_enhanced (* heat_threat_base (if (= risk_profile "HIGH") 1.5 1.0)))
+
+  ;; Compound threat analysis
+  (define total_threat_enhanced (+ o2_threat_enhanced food_threat_enhanced power_threat_enhanced heat_threat_enhanced))
+  (define threat_multiplier (+ 1 (* total_threat_enhanced 0.3)))
+  
+  (log (concat "  Enhanced Threats — O₂:" (string (round (* o2_threat_enhanced 100)))
+    " Food:" (string (round (* food_threat_enhanced 100)))
+    " Power:" (string (round (* power_threat_enhanced 100)))
+    " Heat:" (string (round (* heat_threat_enhanced 100)))))
+
+  ;; ═══ ULTRA-ADAPTIVE ALLOCATION STRATEGY ═══
+  ;; Risk-profile based allocation with emergency protocols
+  (define isru_alloc_new
+    (cond
+      (emergency_mode 0.15)  ;; Emergency: minimal O2 production
+      ((= risk_profile "CRITICAL") 0.20)
+      ((= risk_profile "HIGH") 0.30)
+      ((= risk_profile "MEDIUM") 0.35)
+      ((< o2_days 3) 0.85)   ;; Emergency O2
+      ((< o2_days 7) 0.55)
+      (true 0.30)))
+
+  (define greenhouse_alloc_new
+    (cond
+      (emergency_mode 0.20)  ;; Emergency: reduced food production
+      ((= risk_profile "CRITICAL") 0.25)
+      ((= risk_profile "HIGH") 0.35)
+      ((= risk_profile "MEDIUM") 0.40)
+      ((< food_days 5) 0.65)
+      ((< food_days 12) 0.45)
+      (true 0.45)))
+
+  (define heating_alloc_new
+    (cond
+      (emergency_mode 0.65)  ;; Emergency: maximum power/heating
+      ((= risk_profile "CRITICAL") 0.55)
+      ((= risk_profile "HIGH") 0.35)
+      ((= risk_profile "MEDIUM") 0.25)
+      ((> dust_tau 4.0) 0.40)
+      ((< power_kwh 50) 0.45)
+      (true 0.25)))
+
+  ;; Normalize allocations with volatility adjustment
+  (define volatility_adjustment (+ 0.9 (* cri_volatility_factor 0.2)))
+  (define raw_total (+ isru_alloc_new greenhouse_alloc_new heating_alloc_new))
+  (define norm_factor (/ volatility_adjustment raw_total))
+  
+  (set! isru_alloc (* isru_alloc_new norm_factor))
+  (set! greenhouse_alloc (* greenhouse_alloc_new norm_factor))
+  (set! heating_alloc (* heating_alloc_new norm_factor))
+
+  ;; ═══ ULTRA-ADAPTIVE FOOD RATIONING ═══
+  ;; Dynamic rationing based on risk profile and predictive modeling
+  (set! food_ration
+    (cond
+      (emergency_mode 0.4)
+      ((= risk_profile "CRITICAL") 0.5)
+      ((= risk_profile "HIGH") 0.7)
+      ((< food_days 5) 0.5)
+      ((< food_days 10) 0.7)
+      ((< food_days 15) 0.85)
+      (true 1.0)))
+
+  ;; ═══ PREDICTIVE HEALTH PRESERVATION ═══
+  ;; Anticipate health degradation and adjust rations accordingly
+  (define health_preservation_bonus
+    (cond
+      ((> total_threat_enhanced 1.5) -0.1)  ;; Reduce rations in extreme stress
+      ((> total_threat_enhanced 1.0) -0.05)
+      ((< total_threat_enhanced 0.3) 0.1)   ;; Boost rations in good times
+      (true 0)))
+  
+  (set! food_ration (max 0.3 (min 1.2 (+ food_ration health_preservation_bonus))))
+
+  ;; ═══ LOGGING & DECISION SUMMARY ═══
+  (define mode_display
+    (cond
+      (emergency_mode "🔴 EMERGENCY")
+      ((= risk_profile "CRITICAL") "🔴 CRITICAL")
+      ((= risk_profile "HIGH") "🟠 HIGH RISK")
+      ((= risk_profile "MEDIUM") "🟡 MEDIUM RISK")
+      (true "🟢 LOW RISK")))
+
+  (log (concat "  Mode: " mode_display))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Greenhouse:" (string (round (* greenhouse_alloc 100))) "% | Heating:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Food Ration: " (string (round (* food_ration 100))) "% | Repair Effectiveness: " (string (round (* total_repair_effectiveness 100))) "%"))
+
+  ;; ═══ STRATEGY OUTPUT ═══
+  (concat "Ultra-Adaptive v2.0 Sol " (string sol) " — " mode_display
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | CRI:" (string colony_risk_index)
+    " (Adj:" (string (round adjusted_cri)) ")"))

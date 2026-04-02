@@ -1,75 +1,137 @@
-;; colony_governor_agent.lispy — THE core agent. Adaptive resource allocation. OG: Mars-native.
+;; HYPER-ADAPTIVE MARS SURVIVAL GOVERNOR v3.0
+;; Target: Maximum survival beyond 627 sols with extreme redundancy
+;; Strategy: Multiple repair bays, aggressive solar scaling, predictive crisis management
 
 (begin
-  (define _agent_name "Colony Governor")
-  (define _agent_desc "The core governor agent. Adaptive resource allocation based on colony state, risk, and environmental conditions.")
+  (define _agent_name "Hyper-Adaptive Survival Governor v3.0")
+  (define _agent_desc "Maximum survival strategy with hyper-redundancy, multiple repair bays, and crisis prediction")
 
-  (log (concat "🏛️ Colony Governor — Sol " (string sol)))
+  (log (concat "🚀 Hyper-Adaptive v3.0 — Sol " (string sol)))
 
-  ;; Assess threat levels (0-1 scale)
-  (define o2_threat    (if (< o2_days 15) (/ (- 15 (min o2_days 15)) 15) 0))
-  (define food_threat  (if (< food_days 20) (/ (- 20 (min food_days 20)) 20) 0))
-  (define power_threat (if (< power_kwh 150) (/ (- 150 (min power_kwh 150)) 150) 0))
-  (define heat_threat  (if (> dust_tau 2.0) (/ (min dust_tau 5.0) 5.0) 0.1))
+  ;; ═══ HYPER-REDUNDANCY ASSESSMENT ═══
+  ;; Estimate infrastructure redundancy levels
+  (define infrastructure_maturity (max 0 (min 1 (/ modules_built 20))))
+  (define estimated_solar_farms (max 1 (round (* modules_built 0.3))))
+  (define estimated_repair_bays (max 1 (round (* modules_built 0.15))))
+  
+  ;; Hyper-exponential scaling for multiple repair bays
+  (define hyper_exponential_base 1.75)
+  (define repair_redundancy_bonus (pow hyper_exponential_base estimated_repair_bays))
+  (define infrastructure_stability_bonus (+ 1 infrastructure_maturity))
+  (define total_system_resilience (* repair_redundancy_bonus infrastructure_stability_bonus))
+  
+  (log (concat "  Infrastructure: " (string (round (* infrastructure_maturity 100))) "% mature | Repair Redundancy: " (string (round (* repair_redundancy_bonus 100))) "%"))
+  (log (concat "  System Resilience: " (string (round (* total_system_resilience 100))) "%"))
 
-  ;; Normalize threats to determine allocation weights
-  (define total_threat (+ o2_threat food_threat power_threat heat_threat))
-  (define safe (< total_threat 0.3))
-
-  ;; Compute adaptive allocations
-  (define isru_alloc_new
+  ;; ═══ ADVANCED CRISIS PREDICTION ═══
+  ;; Multi-variable crisis prediction beyond simple CRI
+  (define crisis_indicators 0)
+  (if (> colony_risk_index 40) (set! crisis_indicators (+ crisis_indicators 1)))
+  (if (< o2_days 10) (set! crisis_indicators (+ crisis_indicators 1)))
+  (if (< food_days 15) (set! crisis_indicators (+ crisis_indicators 1)))
+  (if (< power_kwh 100) (set! crisis_indicators (+ crisis_indicators 1)))
+  (if (> dust_tau 3.0) (set! crisis_indicators (+ crisis_indicators 1)))
+  
+  (define crisis_severity
     (cond
-      ((< o2_days 3)  0.85)
-      ((< o2_days 7)  0.55)
-      (safe           0.30)
-      (true           (+ 0.25 (* o2_threat 0.4)))))
+      ((>= crisis_indicators 4) "CATASTROPHIC")
+      ((>= crisis_indicators 3) "SEVERE")
+      ((>= crisis_indicators 2) "MODERATE")
+      ((>= crisis_indicators 1) "MILD")
+      (true "STABLE")))
+  
+  ;; Predictive failure modeling
+  (define failure_probability (/ crisis_indicators 5))
+  (define system_stress_factor (+ 1 (* failure_probability 2)))
+  
+  (log (concat "  Crisis Level: " crisis_severity " | Failure Risk: " (string (round (* failure_probability 100))) "%"))
 
-  (define greenhouse_alloc_new
+  ;; ═══ HYPER-ADAPTIVE RESOURCE ALLOCATION ═══
+  ;; Dynamic allocation based on crisis prediction and system resilience
+  (define resilience_factor (min 1.5 (/ total_system_resilience 2)))
+  
+  (define isru_alloc_base
     (cond
-      ((< food_days 5)  0.60)
-      ((< food_days 12) 0.45)
-      (safe             0.40)
-      (true             (+ 0.20 (* food_threat 0.35)))))
+      ((= crisis_severity "CATASTROPHIC") 0.10)  ;; Minimal O2 in catastrophic conditions
+      ((= crisis_severity "SEVERE") 0.20)
+      ((= crisis_severity "MODERATE") 0.30)
+      ((< o2_days 5) 0.70)
+      ((< o2_days 10) 0.50)
+      (true 0.25)))
 
-  (define heating_alloc_new
+  (define greenhouse_alloc_base
     (cond
-      ((> dust_tau 4.0) 0.40)
-      ((< power_kwh 50) 0.45)
-      (safe             0.25)
-      (true             (+ 0.15 (* heat_threat 0.25)))))
+      ((= crisis_severity "CATASTROPHIC") 0.15)  ;; Minimal food in crisis
+      ((= crisis_severity "SEVERE") 0.25)
+      ((= crisis_severity "MODERATE") 0.35)
+      ((< food_days 8) 0.60)
+      ((< food_days 15) 0.45)
+      (true 0.40)))
 
-  ;; Normalize to sum to 1.0
-  (define raw_total (+ isru_alloc_new greenhouse_alloc_new heating_alloc_new))
-  (set! isru_alloc       (/ isru_alloc_new raw_total))
-  (set! greenhouse_alloc (/ greenhouse_alloc_new raw_total))
-  (set! heating_alloc    (/ heating_alloc_new raw_total))
-
-  ;; Adaptive food ration
-  (set! food_ration
+  (define heating_alloc_base
     (cond
-      ((< food_days 5)  0.5)
-      ((< food_days 10) 0.7)
-      ((< food_days 15) 0.85)
-      (true             1.0)))
+      ((= crisis_severity "CATASTROPHIC") 0.75)  ;; Maximum power for survival systems
+      ((= crisis_severity "SEVERE") 0.55)
+      ((= crisis_severity "MODERATE") 0.35)
+      ((< power_kwh 50) 0.60)
+      ((> dust_tau 4.0) 0.45)
+      (true 0.35)))
 
-  ;; Log the decision
-  (define mode
+  ;; Apply resilience bonus - higher resilience allows for more balanced allocation
+  (define resilience_balance_factor (max 0.7 (min 1.3 resilience_factor)))
+  
+  ;; Normalize with resilience adjustment
+  (define raw_total (+ isru_alloc_base greenhouse_alloc_base heating_alloc_base))
+  (set! isru_alloc (/ (* isru_alloc_base resilience_balance_factor) raw_total))
+  (set! greenhouse_alloc (/ (* greenhouse_alloc_base resilience_balance_factor) raw_total))
+  (set! heating_alloc (/ (* heating_alloc_base resilience_balance_factor) raw_total))
+
+  ;; ═══ SURVIVAL-OPTIMIZED RATIONING ═══
+  ;; Aggressive rationing for maximum survival duration
+  (define base_ration
     (cond
-      ((> colony_risk_index 70) "🔴 CRISIS")
-      ((> colony_risk_index 40) "🟡 ALERT")
-      (true                     "🟢 NOMINAL")))
+      ((= crisis_severity "CATASTROPHIC") 0.3)
+      ((= crisis_severity "SEVERE") 0.4)
+      ((= crisis_severity "MODERATE") 0.6)
+      ((< food_days 5) 0.4)
+      ((< food_days 10) 0.6)
+      ((< food_days 20) 0.8)
+      (true 1.0)))
 
-  (log (concat "  Mode:       " mode))
-  (log (concat "  ISRU:       " (string (round (* isru_alloc 100))) "%"))
-  (log (concat "  Greenhouse: " (string (round (* greenhouse_alloc 100))) "%"))
-  (log (concat "  Heating:    " (string (round (* heating_alloc 100))) "%"))
-  (log (concat "  Ration:     " (string food_ration)))
-  (log (concat "  Threats — O₂:" (string (round (* o2_threat 100)))
-    " Food:" (string (round (* food_threat 100)))
-    " Power:" (string (round (* power_threat 100)))
-    " Heat:" (string (round (* heat_threat 100)))))
+  ;; Resilience bonus allows for better rationing when systems are robust
+  (define ration_resilience_bonus (max 0 (min 0.3 (- resilience_factor 1))))
+  (set! food_ration (min 1.2 (+ base_ration ration_resilience_bonus)))
 
-  (concat "Governor Sol " (string sol) " — " mode
-    " I=" (string (round (* isru_alloc 100)))
-    " G=" (string (round (* greenhouse_alloc 100)))
-    " H=" (string (round (* heating_alloc 100)))))
+  ;; ═══ ADAPTIVE HEALTH PRESERVATION ═══
+  ;; Health management based on system resilience and crisis prediction
+  (define health_adjustment
+    (cond
+      ((and (= crisis_severity "STABLE") (> resilience_factor 1.2)) 0.1)   ;; Boost health in good times
+      ((= crisis_severity "CATASTROPHIC") -0.2)  ;; Accept health loss for survival
+      ((= crisis_severity "SEVERE") -0.1)
+      (true 0)))
+  
+  (set! food_ration (max 0.25 (+ food_ration health_adjustment)))
+
+  ;; ═══ COMPREHENSIVE LOGGING ═══
+  (define status_display
+    (cond
+      ((= crisis_severity "CATASTROPHIC") "🔴 CATASTROPHIC")
+      ((= crisis_severity "SEVERE") "🔴 SEVERE")
+      ((= crisis_severity "MODERATE") "🟠 MODERATE CRISIS")
+      ((= crisis_severity "MILD") "🟡 MILD STRESS")
+      (true "🟢 STABLE")))
+
+  (log (concat "  Status: " status_display))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Greenhouse:" (string (round (* greenhouse_alloc 100))) "% | Heating:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Food Ration: " (string (round (* food_ration 100))) "% | Resilience Factor: " (string (round (* resilience_factor 100))) "%"))
+  (log (concat "  Estimated Infrastructure — Solar:" (string estimated_solar_farms) " | Repair:" (string estimated_repair_bays)))
+
+  ;; ═══ STRATEGY SUMMARY ═══
+  (concat "Hyper-Adaptive v3.0 Sol " (string sol) " — " status_display
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | Resilience:" (string (round (* resilience_factor 100)))
+    "% | Risk:" (string (round (* failure_probability 100))) "%"))
