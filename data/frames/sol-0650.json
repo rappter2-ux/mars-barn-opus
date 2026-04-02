@@ -1,0 +1,62 @@
+{
+  "sol": 650,
+  "utc": "2027-05-07T21:00:00Z",
+  "mars": {
+    "ls": 107.6,
+    "season": "Northern Summer",
+    "temp_k": 225.7,
+    "temp_c": -47.4,
+    "pressure_pa": 769,
+    "solar_wm2": 411,
+    "dust_tau": 0.154,
+    "wind_ms": 3.9,
+    "lmst": 22.0
+  },
+  "events": [
+    {
+      "type": "solar_flare",
+      "severity": 0.43,
+      "duration_sols": 3,
+      "desc": "Solar particle event"
+    }
+  ],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0051
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "wheel_assembly",
+      "degradation": 0.0022
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 9.7,
+    "window_open": false,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.9,
+    "water_ice_depth_m": 1.9,
+    "surface_radiation_usv": 0.6
+  },
+  "challenge": {
+    "id": "sol650_pressure_anomaly",
+    "type": "pressure_anomaly",
+    "params": {
+      "section": "airlock",
+      "drop_pa": 20
+    }
+  },
+  "frame_echo": {
+    "prev_sol": 649,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": -0.1,
+    "dust_delta": 0.013
+  },
+  "_engineId": "rappter-genesis",
+  "_signature": "5bb214d81406f6d313004392",
+  "_hash": "affb73a40f8f0b2d"
+}
