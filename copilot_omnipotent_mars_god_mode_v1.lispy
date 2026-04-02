@@ -1,0 +1,330 @@
+;; COPILOT OMNIPOTENT MARS GOD MODE v1
+;; Revolutionary Innovation: Transcendent Mars Domination with Perfect Control
+;; Target: Achieve 93,000+ score through ultra-early Sol 15 farming + CRI P75=5 + 25 modules
+;; Breakthrough: Ultra-optimized everything for theoretical maximum performance
+
+(begin
+  (define _agent_name "Copilot Omnipotent Mars God Mode v1")
+  (define _agent_desc "Transcendent Mars domination through ultra-optimization and perfect control")
+
+  (log (concat "🌌⚡🏆🎯🚀 OMNIPOTENT GOD MODE — Sol " (string sol) " — Supreme Control Active"))
+
+  ;; ═══ TRANSCENDENT EARLY FARMING PROTOCOL ═══
+  ;; Ultra-early farming starting Sol 15 (10 sols earlier than standard)
+  (define ultra_transcendent_farming_sol 15)
+  (define mega_farming_window (and (>= sol ultra_transcendent_farming_sol) (< sol 45)))
+  (define hyper_farming_phase (and (>= sol 45) (< sol 75)))
+  
+  ;; ═══ PERFECT CRI DOMINATION SYSTEM ═══
+  ;; Target P75 CRI = 5 for maximum score optimization
+  (define perfect_cri_target 5)
+  (define cri_safety_margin 1)
+  
+  ;; Ultra-refined CRI threat levels
+  (define cri_godlike (< cri 3))
+  (define cri_perfect (and (>= cri 3) (< cri 5)))
+  (define cri_excellent (and (>= cri 5) (< cri 8)))
+  (define cri_good (and (>= cri 8) (< cri 12)))
+  (define cri_manageable (and (>= cri 12) (< cri 18)))
+  (define cri_concerning (and (>= cri 18) (< cri 28)))
+  (define cri_dangerous (>= cri 28))
+
+  ;; ═══ TRANSCENDENT MODULE ARCHITECTURE ═══
+  ;; Target 25 modules for score breakthrough (vs previous max 23)
+  (define transcendent_module_target 25)
+  (define phase_1_modules 9)    ;; Sol 90
+  (define phase_2_modules 16)   ;; Sol 180
+  (define phase_3_modules 21)   ;; Sol 300
+  (define phase_4_modules 25)   ;; Sol 500+
+
+  ;; Current infrastructure counts
+  (define greenhouse_count (length (filter (lambda (m) (equal? (get m "type") "greenhouse")) modules)))
+  (define solar_count (length (filter (lambda (m) (equal? (get m "type") "solar_array")) modules)))
+  (define repair_count (length (filter (lambda (m) (equal? (get m "type") "repair_bay")) modules)))
+  (define hab_count (length (filter (lambda (m) (equal? (get m "type") "habitat")) modules)))
+  (define bot_count (length (filter (lambda (m) (equal? (get m "type") "worker_bot")) modules)))
+  (define total_modules (length modules))
+
+  ;; ═══ OMNIPOTENT PHASE INTELLIGENCE ═══
+  ;; 8-phase mission evolution for maximum optimization
+  (define genesis_phase (< sol 15))                    ;; Bootstrap
+  (define transcendent_farming (and (>= sol 15) (< sol 45)))  ;; Ultra-early farming
+  (define hyper_acceleration (and (>= sol 45) (< sol 90)))     ;; Acceleration
+  (define infrastructure_mastery (and (>= sol 90) (< sol 180))) ;; Infrastructure
+  (define optimization_peak (and (>= sol 180) (< sol 300)))     ;; Optimization
+  (define module_transcendence (and (>= sol 300) (< sol 450)))  ;; Module density
+  (define perfection_phase (and (>= sol 450) (< sol 600)))     ;; Perfection
+  (define god_mode_phase (>= sol 600))                          ;; God mode
+
+  ;; ═══ ULTRA-OPTIMIZED ALLOCATION MATRIX ═══
+  ;; Revolutionary allocation based on CRI and phase
+
+  ;; Genesis Phase: Lightning bootstrap
+  (define genesis_allocation
+    (cond
+      (cri_dangerous (begin (set! isru_alloc 0.70) (set! greenhouse_alloc 0.22) (set! heating_alloc 0.08)))
+      (cri_concerning (begin (set! isru_alloc 0.65) (set! greenhouse_alloc 0.26) (set! heating_alloc 0.09)))
+      (cri_manageable (begin (set! isru_alloc 0.58) (set! greenhouse_alloc 0.32) (set! heating_alloc 0.10)))
+      (cri_good (begin (set! isru_alloc 0.52) (set! greenhouse_alloc 0.38) (set! heating_alloc 0.10)))
+      (cri_excellent (begin (set! isru_alloc 0.46) (set! greenhouse_alloc 0.44) (set! heating_alloc 0.10)))
+      (cri_perfect (begin (set! isru_alloc 0.42) (set! greenhouse_alloc 0.48) (set! heating_alloc 0.10)))
+      (cri_godlike (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.52) (set! heating_alloc 0.10)))
+      (true (begin (set! isru_alloc 0.50) (set! greenhouse_alloc 0.40) (set! heating_alloc 0.10)))))
+
+  ;; Transcendent Farming: Ultra-aggressive food production
+  (define transcendent_farming_allocation
+    (cond
+      (cri_dangerous (begin (set! isru_alloc 0.55) (set! greenhouse_alloc 0.36) (set! heating_alloc 0.09)))
+      (cri_concerning (begin (set! isru_alloc 0.48) (set! greenhouse_alloc 0.43) (set! heating_alloc 0.09)))
+      (cri_manageable (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.51) (set! heating_alloc 0.09)))
+      (cri_good (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.09)))
+      (cri_excellent (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.09)))
+      (cri_perfect (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.09)))
+      (cri_godlike (begin (set! isru_alloc 0.20) (set! greenhouse_alloc 0.71) (set! heating_alloc 0.09)))
+      (true (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.09)))))
+
+  ;; Hyper Acceleration: Balanced growth with efficiency
+  (define hyper_acceleration_allocation
+    (cond
+      (cri_dangerous (begin (set! isru_alloc 0.52) (set! greenhouse_alloc 0.40) (set! heating_alloc 0.08)))
+      (cri_concerning (begin (set! isru_alloc 0.45) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.08)))
+      (cri_manageable (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.54) (set! heating_alloc 0.08)))
+      (cri_good (begin (set! isru_alloc 0.33) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.08)))
+      (cri_excellent (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.64) (set! heating_alloc 0.08)))
+      (cri_perfect (begin (set! isru_alloc 0.24) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.08)))
+      (cri_godlike (begin (set! isru_alloc 0.20) (set! greenhouse_alloc 0.72) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.08)))))
+
+  ;; Infrastructure Mastery: Infrastructure focus
+  (define infrastructure_mastery_allocation
+    (cond
+      (cri_dangerous (begin (set! isru_alloc 0.48) (set! greenhouse_alloc 0.44) (set! heating_alloc 0.08)))
+      (cri_concerning (begin (set! isru_alloc 0.42) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.08)))
+      (cri_manageable (begin (set! isru_alloc 0.36) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.08)))
+      (cri_good (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.08)))
+      (cri_excellent (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))
+      (cri_perfect (begin (set! isru_alloc 0.23) (set! greenhouse_alloc 0.69) (set! heating_alloc 0.08)))
+      (cri_godlike (begin (set! isru_alloc 0.19) (set! greenhouse_alloc 0.73) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))))
+
+  ;; Optimization Peak: Peak efficiency operations
+  (define optimization_peak_allocation
+    (cond
+      (cri_dangerous (begin (set! isru_alloc 0.45) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.08)))
+      (cri_concerning (begin (set! isru_alloc 0.39) (set! greenhouse_alloc 0.53) (set! heating_alloc 0.08)))
+      (cri_manageable (begin (set! isru_alloc 0.34) (set! greenhouse_alloc 0.58) (set! heating_alloc 0.08)))
+      (cri_good (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))
+      (cri_excellent (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08)))
+      (cri_perfect (begin (set! isru_alloc 0.21) (set! greenhouse_alloc 0.71) (set! heating_alloc 0.08)))
+      (cri_godlike (begin (set! isru_alloc 0.18) (set! greenhouse_alloc 0.74) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))))
+
+  ;; Module Transcendence: Module density optimization
+  (define module_transcendence_allocation
+    (cond
+      (cri_dangerous (begin (set! isru_alloc 0.50) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.08)))
+      (cri_concerning (begin (set! isru_alloc 0.43) (set! greenhouse_alloc 0.49) (set! heating_alloc 0.08)))
+      (cri_manageable (begin (set! isru_alloc 0.37) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.08)))
+      (cri_good (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.08)))
+      (cri_excellent (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.64) (set! heating_alloc 0.08)))
+      (cri_perfect (begin (set! isru_alloc 0.24) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.08)))
+      (cri_godlike (begin (set! isru_alloc 0.20) (set! greenhouse_alloc 0.72) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.08)))))
+
+  ;; Perfection Phase: System perfection
+  (define perfection_phase_allocation
+    (cond
+      (cri_dangerous (begin (set! isru_alloc 0.48) (set! greenhouse_alloc 0.44) (set! heating_alloc 0.08)))
+      (cri_concerning (begin (set! isru_alloc 0.41) (set! greenhouse_alloc 0.51) (set! heating_alloc 0.08)))
+      (cri_manageable (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.08)))
+      (cri_good (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.08)))
+      (cri_excellent (begin (set! isru_alloc 0.26) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.08)))
+      (cri_perfect (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.08)))
+      (cri_godlike (begin (set! isru_alloc 0.18) (set! greenhouse_alloc 0.74) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.64) (set! heating_alloc 0.08)))))
+
+  ;; God Mode Phase: Ultimate operations
+  (define god_mode_allocation
+    (cond
+      (cri_dangerous (begin (set! isru_alloc 0.52) (set! greenhouse_alloc 0.40) (set! heating_alloc 0.08)))
+      (cri_concerning (begin (set! isru_alloc 0.44) (set! greenhouse_alloc 0.48) (set! heating_alloc 0.08)))
+      (cri_manageable (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.54) (set! heating_alloc 0.08)))
+      (cri_good (begin (set! isru_alloc 0.33) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.08)))
+      (cri_excellent (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))
+      (cri_perfect (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08)))
+      (cri_godlike (begin (set! isru_alloc 0.21) (set! greenhouse_alloc 0.71) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.08)))))
+
+  ;; Apply phase-specific allocation
+  (cond
+    (genesis_phase genesis_allocation)
+    (transcendent_farming transcendent_farming_allocation)
+    (hyper_acceleration hyper_acceleration_allocation)
+    (infrastructure_mastery infrastructure_mastery_allocation)
+    (optimization_peak optimization_peak_allocation)
+    (module_transcendence module_transcendence_allocation)
+    (perfection_phase perfection_phase_allocation)
+    (god_mode_phase god_mode_allocation)
+    (true optimization_peak_allocation))
+
+  ;; ═══ TRANSCENDENT FOOD OPTIMIZATION ═══
+  ;; Ultra-optimized rationing for score and health balance
+  (define crew_health_avg (if (> crew_alive 0) (/ crew_hp crew_alive) 50))
+  
+  (define optimal_rationing
+    (cond
+      ((< food_days 2) 0.20)   ;; Crisis mode
+      ((< food_days 4) 0.30)   ;; Emergency
+      ((< food_days 6) 0.45)   ;; Critical
+      ((< food_days 10) 0.65)  ;; Cautious
+      ((< food_days 15) 0.85)  ;; Conservative
+      ((< food_days 22) 1.0)   ;; Normal
+      ((< food_days 30) 1.1)   ;; Surplus
+      (true 1.15)))            ;; Abundant
+
+  (define health_modifier
+    (cond
+      ((< crew_health_avg 45) 1.25)   ;; Critical health boost
+      ((< crew_health_avg 60) 1.15)   ;; Health boost
+      ((< crew_health_avg 75) 1.05)   ;; Slight boost
+      ((> crew_health_avg 95) 0.90)   ;; Efficiency
+      (true 1.0)))
+
+  (define cri_rationing_modifier
+    (cond
+      (cri_dangerous 0.75)
+      (cri_concerning 0.85)
+      (cri_manageable 0.92)
+      (true 1.0)))
+
+  (set! food_ration (max 0.15 (min 1.25 (* optimal_rationing health_modifier cri_rationing_modifier))))
+
+  ;; ═══ OMNIPOTENT INFRASTRUCTURE DEPLOYMENT ═══
+  ;; Ultra-aggressive infrastructure timing for maximum score
+
+  ;; Lightning bot deployment (sols 4-8)
+  (if (and (>= sol 4) (<= sol 8) (< bot_count 2))
+      (set! build_item "worker_bot"))
+
+  ;; Hyper-fast solar deployment (sols 10-22)
+  (if (and (>= sol 10) (<= sol 22) (< solar_count 3))
+      (set! build_item "solar_array"))
+
+  ;; Additional solar for efficiency (sols 25-35)
+  (if (and (>= sol 25) (<= sol 35) (< solar_count 4) (< power_ratio 0.80))
+      (set! build_item "solar_array"))
+
+  ;; TRANSCENDENT REPAIR BAY STRATEGY - 8-bay supreme system
+  ;; First repair bay (ultra-early protection)
+  (if (and (>= sol 30) (<= sol 45) (< repair_count 1))
+      (set! build_item "repair_bay"))
+
+  ;; Second repair bay (early compound damage shield)
+  (if (and (>= sol 55) (<= sol 75) (< repair_count 2)
+           (or cri_concerning cri_dangerous (< ie 0.75)))
+      (set! build_item "repair_bay"))
+
+  ;; Third repair bay (infrastructure protection)
+  (if (and (>= sol 85) (<= sol 110) (< repair_count 3)
+           (or cri_manageable cri_concerning cri_dangerous
+               (< se 0.75)))
+      (set! build_item "repair_bay"))
+
+  ;; Fourth repair bay (system consolidation)
+  (if (and (>= sol 140) (<= sol 175) (< repair_count 4)
+           (or cri_concerning cri_dangerous
+               (> cri 20) (< (+ ie se) 1.40)))
+      (set! build_item "repair_bay"))
+
+  ;; Fifth repair bay (optimization protection)
+  (if (and (>= sol 220) (<= sol 260) (< repair_count 5)
+           (or cri_dangerous (> cri 25)))
+      (set! build_item "repair_bay"))
+
+  ;; Sixth repair bay (module phase preparation)
+  (if (and (>= sol 320) (<= sol 370) (< repair_count 6)
+           (or cri_dangerous module_transcendence))
+      (set! build_item "repair_bay"))
+
+  ;; Seventh repair bay (perfection phase)
+  (if (and (>= sol 420) (<= sol 470) (< repair_count 7)
+           (or cri_dangerous perfection_phase))
+      (set! build_item "repair_bay"))
+
+  ;; Eighth repair bay (god mode activation)
+  (if (and (>= sol 520) (<= sol 570) (< repair_count 8)
+           (or cri_dangerous god_mode_phase))
+      (set! build_item "repair_bay"))
+
+  ;; Strategic greenhouse expansion
+  (if (and (>= sol 50) (<= sol 90) (< food_days 8) (< greenhouse_count 3))
+      (set! build_item "greenhouse"))
+
+  ;; Additional greenhouse for transcendent farming
+  (if (and (>= sol 100) (<= sol 140) (< greenhouse_count 4) transcendent_farming)
+      (set! build_item "greenhouse"))
+
+  ;; Module density optimization - target 25 modules
+  (if (and (>= sol 180) (< total_modules transcendent_module_target))
+      (set! build_item
+          (cond
+            ((< repair_count 6) "repair_bay")
+            ((< greenhouse_count 5) "greenhouse")
+            ((< solar_count 9) "solar_array")
+            (true "hab_module"))))
+
+  ;; God mode final push - maximum module density
+  (if (and god_mode_phase (< total_modules transcendent_module_target))
+      (set! build_item
+          (cond
+            ((< repair_count 8) "repair_bay")
+            ((< greenhouse_count 6) "greenhouse")
+            ((< solar_count 11) "solar_array")
+            (true "hab_module"))))
+
+  ;; ═══ OMNIPOTENT STATUS LOGGING ═══
+  (define phase_name
+    (cond
+      (genesis_phase "GENESIS")
+      (transcendent_farming "TRANSCENDENT_FARMING")
+      (hyper_acceleration "HYPER_ACCELERATION")
+      (infrastructure_mastery "INFRASTRUCTURE_MASTERY")
+      (optimization_peak "OPTIMIZATION_PEAK")
+      (module_transcendence "MODULE_TRANSCENDENCE")
+      (perfection_phase "PERFECTION")
+      (god_mode_phase "GOD_MODE")
+      (true "UNKNOWN")))
+
+  (define cri_status
+    (cond
+      (cri_godlike "GODLIKE")
+      (cri_perfect "PERFECT")
+      (cri_excellent "EXCELLENT")
+      (cri_good "GOOD")
+      (cri_manageable "MANAGEABLE")
+      (cri_concerning "CONCERNING")
+      (cri_dangerous "DANGEROUS")
+      (true "UNKNOWN")))
+
+  (define omnipotent_score
+    (let* ((infra_score (* (+ ie se) 50))
+           (resource_score (+ food_days (* o2_days 2)))
+           (module_score (* total_modules 4))
+           (crew_score (* crew_alive crew_health_avg)))
+      (+ infra_score resource_score module_score crew_score)))
+
+  (log (concat "  Phase: " phase_name " | CRI: " cri_status " (" (string (round cri)) ")"))
+  (log (concat "  Omnipotent Score: " (string (round omnipotent_score)) " | Target Modules: " (string transcendent_module_target) " | Current: " (string total_modules)))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Resources — O2:" (string o2_days) "d Food:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))
+  (log (concat "  Infrastructure — Repair:" (string repair_count) " Solar:" (string solar_count) " Green:" (string greenhouse_count) " Bot:" (string bot_count) " | Crew:" (string crew_alive) "/" (string (round crew_health_avg)) "hp"))
+
+  ;; ═══ OMNIPOTENT OUTPUT ═══
+  (concat "🌌 Omnipotent God Mode Sol " (string sol) " — " phase_name "/" cri_status
+    " | OS:" (string (round omnipotent_score))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | Modules:" (string total_modules) "/" (string transcendent_module_target)
+    " | O2:" (string o2_days) "d F:" (string food_days) "d"))
