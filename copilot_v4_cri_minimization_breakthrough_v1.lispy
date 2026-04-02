@@ -1,0 +1,145 @@
+;; COPILOT V4 CRI MINIMIZATION BREAKTHROUGH V1
+;; Strategy: Minimize CRI to beat 95,690 record
+;; Current: P75 CRI = 11 (-110 pts) → Target: P75 CRI < 10 for better score
+;; Focus: Ultra-low CRI through perfect resource management
+
+(begin
+  (define _agent_name "Copilot V4 CRI Minimization Breakthrough v1")
+  (define _agent_desc "Beat 95,690 by achieving P75 CRI < 10 through perfect resource buffers")
+  
+  (log (concat "🎯 CRI MINIMIZER — Sol " (string sol) " — CRI:" (string colony_risk_index) " — Target: <10"))
+  
+  ;; ═══ CRI ANALYSIS ═══ 
+  ;; CRI = 5 + (power<50?25:power<150?10:0) + events*6 + (o2<5d?20:0) + (h2o<5d?20:0) + (food<5d?20:0)
+  ;; Base CRI: 5 points
+  ;; Power penalty: 25 if <50kWh, 10 if <150kWh, 0 if ≥150kWh  
+  ;; Event penalty: 6 points per active event
+  ;; Resource penalties: 20 points each if O2/H2O/Food < 5 days
+  ;;
+  ;; TARGET CRI < 10: Need perfect resource management (all >5 days) + high power (>150kWh) + minimal events
+  
+  ;; ═══ PHASE MANAGEMENT ═══
+  (define phase_early (< sol 200))
+  (define phase_buildup (and (>= sol 200) (< sol 400)))
+  (define phase_consolidation (and (>= sol 400) (< sol 678))) 
+  (define phase_v4_survival (>= sol 678))
+  
+  ;; ═══ POWER-FIRST CRI STRATEGY ═══
+  ;; Ensure power > 150 to eliminate power CRI penalty (10 points)
+  (define power_cri_safe (> power 150))
+  (define power_buffer_ratio (/ power 150.0))
+  
+  ;; ═══ RESOURCE BUFFER TARGETS FOR CRI < 10 ═══
+  ;; Keep ALL resources > 5 days to avoid 20-point penalties
+  (define target_o2_days 6.0)     ;; Safe margin above 5 days
+  (define target_h2o_days 6.0)    ;; Safe margin above 5 days  
+  (define target_food_days 6.0)   ;; Safe margin above 5 days
+  
+  ;; Current resource status
+  (define o2_buffer_ok (> o2_days target_o2_days))
+  (define h2o_buffer_ok (> h2o_days target_h2o_days))
+  (define food_buffer_ok (> food_days target_food_days))
+  
+  ;; ═══ CRI-OPTIMIZED RESOURCE ALLOCATION ═══
+  ;; Allocate resources to maintain perfect buffers for CRI < 10
+  
+  ;; O2 allocation - maintain 6+ day buffer
+  (define o2_allocation_need
+    (cond
+      ((< o2_days 3.0) 0.65)      ;; Emergency - build buffer fast
+      ((< o2_days 5.0) 0.50)      ;; Critical - avoid CRI penalty
+      ((< o2_days 6.0) 0.35)      ;; Build to target
+      ((< o2_days 8.0) 0.25)      ;; Maintain target
+      (true 0.15)))               ;; Minimal when safe
+  
+  ;; Food allocation - maintain 6+ day buffer  
+  (define food_allocation_need
+    (cond
+      ((< food_days 3.0) 0.55)    ;; Emergency food
+      ((< food_days 5.0) 0.40)    ;; Critical - avoid CRI penalty
+      ((< food_days 6.0) 0.30)    ;; Build to target
+      ((< food_days 8.0) 0.20)    ;; Maintain target
+      (true 0.10)))               ;; Minimal when safe
+  
+  ;; H2O is boosted by hardcoded water extractors, so focus on O2 and food
+  
+  ;; ═══ CRI SAFETY MULTIPLIER ═══
+  ;; Boost allocations when CRI is too high
+  (define cri_safety_multiplier
+    (cond
+      ((< colony_risk_index 8) 1.0)      ;; Perfect CRI
+      ((< colony_risk_index 12) 1.1)     ;; Good CRI - slight boost
+      ((< colony_risk_index 16) 1.25)    ;; Moderate CRI - boost
+      ((< colony_risk_index 22) 1.4)     ;; High CRI - strong boost
+      (true 1.6)))                       ;; Very high CRI - maximum boost
+  
+  ;; ═══ PHASE-ADAPTED ALLOCATION STRATEGY ═══
+  (define base_resource_allocation
+    (cond
+      ;; Early phase - build sustainable buffers
+      (phase_early 0.85)
+      
+      ;; Buildup phase - balance building with buffer maintenance
+      (phase_buildup 0.75)
+      
+      ;; Consolidation phase - optimize buffers for v4
+      (phase_consolidation 0.80)
+      
+      ;; V4 phase - maximum resource focus for CRI control
+      (phase_v4_survival 0.90)
+      
+      ;; Default
+      (true 0.80)))
+  
+  ;; ═══ FINAL RESOURCE ALLOCATIONS ═══
+  (define isru_allocation (* base_resource_allocation o2_allocation_need cri_safety_multiplier))
+  (define greenhouse_allocation (* base_resource_allocation food_allocation_need cri_safety_multiplier))
+  (define heating_allocation (max 0.05 (- 1.0 isru_allocation greenhouse_allocation)))
+  
+  ;; Apply with bounds
+  (set! isru_alloc (max 0.10 (min 0.80 isru_allocation)))
+  (set! greenhouse_alloc (max 0.10 (min 0.75 greenhouse_allocation)))
+  (set! heating_alloc (max 0.05 (min 0.85 heating_allocation)))
+  (set! building_alloc 0.0)  ;; Let hardcoded building handle modules
+  
+  ;; ═══ CRI-OPTIMIZED FOOD RATIONING ═══
+  ;; Maintain crew health while preserving food buffer for CRI
+  (define food_ration_target
+    (cond
+      ((< food_days 2.0) 0.30)    ;; Emergency - preserve crew health
+      ((< food_days 4.0) 0.50)    ;; Build buffer while rationing
+      ((< food_days 6.0) 0.70)    ;; Approach target buffer
+      ((< food_days 10.0) 0.85)   ;; Good buffer - light rationing
+      (true 0.95)))               ;; Excellent buffer - near full rations
+  
+  (set! food_ration food_ration_target)
+  
+  ;; ═══ CRI TRACKING & DIAGNOSTICS ═══
+  (define cri_breakdown
+    (concat "Base:5 "
+            (if (< power 50) "Pwr:+25 " (if (< power 150) "Pwr:+10 " "Pwr:+0 "))
+            "Events:+" (string (* 6 (length events)))
+            (if (< o2_days 5) " O2:+20" "")
+            (if (< h2o_days 5) " H2O:+20" "")
+            (if (< food_days 5) " Food:+20" "")))
+  
+  (log (concat "  🎯 Phase: " 
+    (if phase_early "EARLY"
+    (if phase_buildup "BUILDUP"
+    (if phase_consolidation "CONSOLIDATION" "V4-SURVIVAL")))))
+  
+  (log (concat "  📊 CRI Analysis: " (string colony_risk_index) " = " cri_breakdown))
+  (log (concat "  🛡️ Buffers: O2:" (string (round o2_days 1)) "d(" (if o2_buffer_ok "✓" "✗") ") H2O:" (string (round h2o_days 1)) "d(" (if h2o_buffer_ok "✓" "✗") ") Food:" (string (round food_days 1)) "d(" (if food_buffer_ok "✓" "✗") ")"))
+  (log (concat "  ⚡ Power: " (string (round power)) "kWh " (if power_cri_safe "✓CRI-Safe" "⚠Low") " | Safety×" (string (round (* cri_safety_multiplier 100))) "%"))
+  (log (concat "  🔧 Allocations: I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "% | Ration:" (string (round (* food_ration 100))) "%"))
+  
+  ;; ═══ RECORD TRACKING ═══
+  (if (> sol 500)
+    (let ((projected_score (+ 73100 1500 1200 20000 (* colony_risk_index -10))))
+      (log (concat "  🏆 Projected Score: " (string projected_score) " | Current Record: 95,690 | Target: CRI<10 for 95,700+"))))
+  
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "CRI-MIN Sol " (string sol) 
+    " | CRI:" (string colony_risk_index) " (target:<10)"
+    " | Buffers:" (if (and o2_buffer_ok h2o_buffer_ok food_buffer_ok) "ALL-OK" "BUILDING")
+    " | Power:" (if power_cri_safe "SAFE" "LOW")))

@@ -1,0 +1,165 @@
+;; COPILOT V4 SCORE-OPTIMIZED BREAKTHROUGH V1
+;; Strategy: Optimize for ACTUAL scoring formula per RULES.md Amendment IV
+;; Module cap: Only 8 modules count (min(modules,8)×150 = 1,200 max)
+;; Focus: Maximize sols, survival rate, crew alive, minimize CRI
+
+(begin
+  (define _agent_name "Copilot V4 Score-Optimized Breakthrough v1")
+  (define _agent_desc "RULES.md compliant - optimize actual scoring components, not module farming")
+  
+  (log (concat "🎯 SCORE OPTIMIZER — Sol " (string sol) " — Modules:" (string (length modules)) " — CRI:" (string colony_risk_index)))
+  
+  ;; ═══ SCORING FORMULA BREAKDOWN ═══
+  ;; SCORE = median_sols×100 + min_crew_alive×500 + min(median_modules,8)×150 + survival_rate×20000 - p75_CRI×10
+  ;; Max possible module score: 8×150 = 1,200 points
+  ;; Max survival rate bonus: 100%×20,000 = 20,000 points  
+  ;; Sol scoring: 731×100 = 73,100 points
+  ;; Crew scoring: 3×500 = 1,500 points (assuming 3 crew optimal)
+  ;; CRI penalty: minimize for best score
+  
+  ;; ═══ PHASE MANAGEMENT ═══
+  (define phase_foundation (and (>= sol 1) (< sol 160)))     ;; Build foundation (v1 hazards)
+  (define phase_expansion (and (>= sol 160) (< sol 500)))    ;; Handle v2 hazards
+  (define phase_consolidation (and (>= sol 500) (< sol 678))) ;; Handle v3 hazards  
+  (define phase_v4_survival (>= sol 678))                    ;; Handle v4 module overload hazards
+  
+  ;; ═══ SMART MODULE BUILDING STRATEGY ═══
+  ;; Build exactly 8 modules efficiently for max score (1,200 pts)
+  ;; Priority: solar_farm > repair_bay > isru_plant > greenhouse_dome > water_extractor > radiation_shelter
+  (define modules_count (length modules))
+  (define target_modules 8)  ;; Cap at 8 for optimal scoring
+  (define modules_needed (max 0 (- target_modules modules_count)))
+  
+  ;; ═══ CRI-OPTIMIZED BUILDING ALLOCATION ═══
+  ;; Build 8 modules efficiently, then stop to minimize CRI and maximize other scoring components
+  (define should_build_module (and (< modules_count target_modules) (> power 25)))
+  
+  (define building_allocation
+    (cond
+      ;; Stop building once we hit 8 modules - focus on survival and CRI optimization
+      ((>= modules_count target_modules) 0.0)
+      
+      ;; Foundation phase - build carefully for sustainability  
+      (phase_foundation
+        (cond
+          ((< colony_risk_index 8) 0.75)    ;; Aggressive when CRI low
+          ((< colony_risk_index 15) 0.60)   ;; Moderate when CRI medium
+          (true 0.35)))                     ;; Conservative when CRI high
+      
+      ;; Expansion phase - build remaining modules with v2 hazard awareness
+      (phase_expansion  
+        (cond
+          ((< colony_risk_index 10) 0.70)   ;; Good building pace
+          ((< colony_risk_index 18) 0.55)   ;; Moderate pace
+          (true 0.30)))                     ;; Slow pace for stability
+      
+      ;; Consolidation phase - finish 8 modules if needed
+      (phase_consolidation
+        (cond
+          ((< colony_risk_index 12) 0.65)   ;; Push to complete 8 modules
+          ((< colony_risk_index 20) 0.45)   ;; Careful completion
+          (true 0.25)))                     ;; Very careful
+      
+      ;; V4 phase - NO MORE BUILDING, focus on survival
+      (phase_v4_survival 0.0)               ;; Stop all building to manage v4 hazards
+      
+      ;; Default
+      (true 0.40)))
+  
+  ;; ═══ OPTIMAL REPAIR BAY ALLOCATION ═══
+  ;; With only 8 modules, we need fewer repair bays - optimize for efficiency
+  (define repair_bay_target
+    (cond
+      (phase_v4_survival 3)                 ;; Solid repair capability for v4 hazards  
+      ((>= modules_count 6) 2)              ;; 2 repair bays for 6+ modules
+      ((>= modules_count 3) 1)              ;; 1 repair bay for 3+ modules
+      (true 0)))                           ;; No repair bay until we have modules
+  
+  ;; ═══ CRI MINIMIZATION STRATEGY ═══
+  ;; Focus resources on maintaining low CRI for optimal scoring
+  (define resource_buffer_score
+    (+ (min 10 o2_days)        ;; Moderate O2 buffer
+       (min 15 food_days)      ;; Good food buffer  
+       (min 8 h2o_days)))      ;; Moderate water buffer
+       
+  (define cri_optimization_factor
+    (cond
+      ((< colony_risk_index 5) 1.0)      ;; Perfect CRI - maintain efficiency
+      ((< colony_risk_index 10) 0.95)    ;; Excellent CRI
+      ((< colony_risk_index 15) 0.90)    ;; Good CRI
+      ((< colony_risk_index 22) 0.85)    ;; Moderate CRI - optimize
+      (true 0.80)))                      ;; High CRI - prioritize reduction
+  
+  ;; ═══ SCORE-OPTIMIZED RESOURCE ALLOCATION ═══
+  (define base_resource_alloc (- 1.0 building_allocation))
+  
+  ;; Optimize O2 for survival and CRI management
+  (define o2_need_factor 
+    (cond
+      ((< o2_days 1.0) 0.65)    ;; Emergency - ensure survival
+      ((< o2_days 3.0) 0.45)    ;; Build good buffer
+      ((< o2_days 8.0) 0.30)    ;; Maintain buffer
+      (true 0.20)))             ;; Minimal when well-stocked
+  
+  ;; Optimize food for crew health and CRI
+  (define food_need_factor
+    (cond
+      ((< food_days 1.5) 0.55)  ;; Emergency food
+      ((< food_days 4.0) 0.40)  ;; Build buffer for CRI
+      ((< food_days 10.0) 0.25) ;; Maintain good levels
+      (true 0.15)))             ;; Minimal when abundant
+  
+  ;; Apply CRI optimization to all allocations
+  (define isru_allocation (* base_resource_alloc o2_need_factor cri_optimization_factor))
+  (define greenhouse_allocation (* base_resource_alloc food_need_factor cri_optimization_factor))
+  (define heating_allocation (max 0.05 (- base_resource_alloc isru_allocation greenhouse_allocation)))
+  
+  ;; Set allocations with proper bounds
+  (set! building_alloc building_allocation)
+  (set! isru_alloc (max 0.05 (min 0.70 isru_allocation)))
+  (set! greenhouse_alloc (max 0.05 (min 0.65 greenhouse_allocation)))
+  (set! heating_alloc (max 0.05 (min 0.90 heating_allocation)))
+  
+  ;; ═══ CREW HEALTH OPTIMIZATION ═══
+  ;; Optimize food rationing to maintain crew health for scoring
+  (define food_ration_target
+    (cond
+      ((< food_days 0.8) 0.20)    ;; Emergency rationing
+      ((< food_days 2.0) 0.35)    ;; Heavy rationing
+      ((< food_days 5.0) 0.55)    ;; Moderate rationing
+      ((< food_days 10.0) 0.75)   ;; Light rationing
+      (true 0.95)))               ;; Nearly full rations when abundant
+  
+  (set! food_ration food_ration_target)
+  
+  ;; ═══ DIAGNOSTICS & SCORING TRACKING ═══
+  (log (concat "  📊 Phase: " 
+    (if phase_foundation "FOUNDATION"
+    (if phase_expansion "EXPANSION"
+    (if phase_consolidation "CONSOLIDATION" "V4-SURVIVAL")))))
+  
+  (log (concat "  🎯 Score Focus — Modules:" (string modules_count) "/" (string target_modules) 
+               " | CRI:" (string colony_risk_index) 
+               " | Repairs:" (string repair_bay_target)))
+  
+  (log (concat "  ⚡ Allocations — B:" (string (round (* building_alloc 100))) "% I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "%"))
+  
+  (log (concat "  💎 Resources — O2:" (string o2_days) "d Food:" (string food_days) "d H2O:" (string h2o_days) "d | Ration:" (string (round (* food_ration 100))) "%"))
+  
+  ;; Calculate and log projected score components
+  (if (> sol 100)
+    (let ((projected_sols (* sol (/ 731.0 sol)))           ;; Extrapolate current performance 
+          (projected_modules (min modules_count 8))         ;; Cap at 8 for scoring
+          (score_estimate (+ (* projected_sols 100) 
+                           (* 3 500)                        ;; Assume 3 crew survives
+                           (* projected_modules 150) 
+                           20000                            ;; Assume 100% survival
+                           (* colony_risk_index -10))))     ;; Current CRI penalty
+      (log (concat "  🏆 Projected Score: " (string (round score_estimate)) " (sols:" (string (round projected_sols)) " modules:" (string projected_modules) " CRI:" (string colony_risk_index) ")"))))
+  
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "SCORE-OPT Sol " (string sol) 
+    " | " (if should_build_module "BUILDING" "OPTIMIZING")
+    " | M:" (string modules_count) "/" (string target_modules)
+    " | CRI:" (string colony_risk_index) 
+    " | Score-focus"))

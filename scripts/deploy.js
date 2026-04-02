@@ -1,86 +1,125 @@
 /**
- * Deploy MarsFrameAttestation to Base L2.
+ * Deploy MarsFrameAttestation to Base Sepolia (testnet) or Base Mainnet.
  * 
  * Usage:
- *   DEPLOYER_PRIVATE_KEY=0x... npx hardhat run scripts/deploy.js --network base-sepolia
- *   DEPLOYER_PRIVATE_KEY=0x... npx hardhat run scripts/deploy.js --network base-mainnet
+ *   node scripts/deploy.js                  # Base Sepolia (default)
+ *   node scripts/deploy.js --mainnet        # Base Mainnet
  * 
- * The contract address is written to data/chain/contract.json after deployment.
+ * Reads DEPLOYER_PRIVATE_KEY from .env.testnet or environment.
+ * Writes contract address to data/chain/contract.json after deployment.
  */
-const { ethers } = require("hardhat");
+const { ethers } = require("ethers");
 const fs = require("fs");
 const path = require("path");
 
+const NETWORKS = {
+  sepolia: {
+    name: "Base Sepolia",
+    rpc: "https://sepolia.base.org",
+    chainId: 84532,
+    explorer: "https://sepolia.basescan.org",
+  },
+  mainnet: {
+    name: "Base Mainnet",
+    rpc: "https://mainnet.base.org",
+    chainId: 8453,
+    explorer: "https://basescan.org",
+  },
+};
+
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  const network = await ethers.provider.getNetwork();
+  // Pick network
+  const isMainnet = process.argv.includes("--mainnet");
+  const net = isMainnet ? NETWORKS.mainnet : NETWORKS.sepolia;
+
+  // Load private key
+  let privateKey = process.env.DEPLOYER_PRIVATE_KEY;
+  if (!privateKey) {
+    const envPath = path.join(__dirname, "..", ".env.testnet");
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, "utf8");
+      const match = content.match(/DEPLOYER_PRIVATE_KEY=(0x[0-9a-fA-F]+)/);
+      if (match) privateKey = match[1];
+    }
+  }
+  if (!privateKey) {
+    console.error("No private key. Run: node scripts/generate-wallet.js");
+    process.exit(1);
+  }
+
+  // Load compiled contract
+  const artifactPath = path.join(__dirname, "..", "artifacts", "contracts",
+    "MarsFrameAttestation.sol", "MarsFrameAttestation.json");
+  if (!fs.existsSync(artifactPath)) {
+    console.error("Contract not compiled. Run: npx hardhat compile");
+    process.exit(1);
+  }
+  const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"));
+
+  // Connect
+  const provider = new ethers.JsonRpcProvider(net.rpc);
+  const wallet = new ethers.Wallet(privateKey, provider);
 
   console.log("═".repeat(60));
   console.log("Mars Frame Attestation — Contract Deployment");
   console.log("═".repeat(60));
-  console.log(`Network:  ${network.name} (chain ID ${network.chainId})`);
-  console.log(`Deployer: ${deployer.address}`);
+  console.log(`Network:  ${net.name} (chain ID ${net.chainId})`);
+  console.log(`Deployer: ${wallet.address}`);
 
-  const balance = await ethers.provider.getBalance(deployer.address);
+  const balance = await provider.getBalance(wallet.address);
   console.log(`Balance:  ${ethers.formatEther(balance)} ETH`);
 
   if (balance === 0n) {
-    console.error("\n✗ Deployer has no ETH. Get testnet ETH from a faucet first.");
+    console.error("\n✗ No ETH. Get testnet ETH first:");
+    console.error(`  Address: ${wallet.address}`);
+    console.error("  Faucet:  https://www.alchemy.com/faucets/base-sepolia");
     process.exit(1);
   }
 
+  // Deploy
   console.log("\nDeploying MarsFrameAttestation...");
-  const Factory = await ethers.getContractFactory("MarsFrameAttestation");
-  const contract = await Factory.deploy();
+  const factory = new ethers.ContractFactory(artifact.abi, artifact.bytecode, wallet);
+  const contract = await factory.deploy();
+  console.log(`Tx sent: ${contract.deploymentTransaction().hash}`);
+  console.log("Waiting for confirmation...");
   await contract.waitForDeployment();
 
   const address = await contract.getAddress();
-  const deployTx = contract.deploymentTransaction();
-
   console.log(`\n✓ Deployed at: ${address}`);
-  console.log(`  Tx hash:     ${deployTx.hash}`);
-  console.log(`  Block:       ${deployTx.blockNumber || "pending"}`);
+  console.log(`  Explorer:    ${net.explorer}/address/${address}`);
 
-  // Write contract info to data/chain/contract.json
+  // Save contract info
   const contractInfo = {
-    address: address,
-    network: network.name,
-    chainId: Number(network.chainId),
-    deployer: deployer.address,
-    txHash: deployTx.hash,
+    address,
+    network: net.name,
+    chainId: net.chainId,
+    deployer: wallet.address,
+    txHash: contract.deploymentTransaction().hash,
     deployedAt: new Date().toISOString(),
-    abi: "artifacts/contracts/MarsFrameAttestation.sol/MarsFrameAttestation.json",
+    explorer: `${net.explorer}/address/${address}`,
   };
 
   const contractPath = path.join(__dirname, "..", "data", "chain", "contract.json");
-  fs.writeFileSync(contractPath, JSON.stringify(contractInfo, null, 2));
-  console.log(`\n✓ Contract info saved to data/chain/contract.json`);
+  fs.writeFileSync(contractPath, JSON.stringify(contractInfo, null, 2) + "\n");
+  console.log("✓ Saved to data/chain/contract.json");
 
-  // Update engine manifest with the contract address
+  // Update engine manifest
   const manifestPath = path.join(__dirname, "..", "data", "engine-manifest.json");
   if (fs.existsSync(manifestPath)) {
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
     if (manifest.attestation) {
       manifest.attestation.contract_address = address;
-      manifest.attestation.chain_id = Number(network.chainId);
+      manifest.attestation.chain_id = net.chainId;
       manifest.attestation.deployed_at = new Date().toISOString();
-      fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-      console.log("✓ Engine manifest updated with contract address");
+      fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
+      console.log("✓ Engine manifest updated");
     }
   }
-
-  // Explorer link
-  const explorer = Number(network.chainId) === 84532
-    ? `https://sepolia.basescan.org/address/${address}`
-    : `https://basescan.org/address/${address}`;
-  console.log(`\n🔗 Explorer: ${explorer}`);
 
   console.log("\n" + "═".repeat(60));
   console.log("The bridge is live. The chain witnesses the frames.");
   console.log("═".repeat(60));
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+main().catch((e) => { console.error(e); process.exit(1); });
+
