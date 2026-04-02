@@ -1,0 +1,144 @@
+;; POWER REDUNDANCY MASTER STRATEGY V1
+;; Innovation: Massive early power infrastructure + Multi-layer backup systems
+;; Goal: Beat 441 sols through overwhelming energy abundance and redundancy
+
+(begin
+  (define _agent_name "Power Redundancy Master v1")
+  (define _agent_desc "Ultra-aggressive power infrastructure with redundant backup systems")
+
+  (log (concat "⚡ Power Master — Sol " (string sol)))
+
+  ;; ═══ POWER ABUNDANCE PHILOSOPHY ═══
+  ;; Build massive early power infrastructure to overwhelm all challenges
+  (define estimated_solar_farms (max 3 (round (* modules_built 0.6))))  ;; 60% solar focus
+  (define estimated_batteries (max 2 (round (* modules_built 0.25))))   ;; 25% battery backup
+  (define estimated_backup_power (max 1 (round (* modules_built 0.15)))) ;; 15% backup systems
+  
+  ;; Total power infrastructure assessment
+  (define total_power_modules (+ estimated_solar_farms estimated_batteries estimated_backup_power))
+  (define power_redundancy_factor (min 4.0 (max 1.0 (+ 1.0 (* total_power_modules 0.2)))))
+  (define power_abundance_multiplier (pow 1.5 (min 8 estimated_solar_farms)))
+  
+  ;; Overall power mastery level
+  (define power_mastery_level (* power_redundancy_factor power_abundance_multiplier))
+
+  (log (concat "  Power Grid: " (string estimated_solar_farms) " solar + " (string estimated_batteries) " battery + " (string estimated_backup_power) " backup"))
+  (log (concat "  Power Mastery: " (string (round (* power_mastery_level 100))) "% | Abundance: " (string (round (* power_abundance_multiplier 100))) "%"))
+
+  ;; ═══ POWER-CENTRIC RESOURCE STRATEGY ═══
+  ;; With massive power, we can afford higher energy allocations to life support
+  
+  ;; Power confidence factor (more power = more aggressive resource usage)
+  (define power_confidence (min 2.0 (max 0.8 (+ 1.0 (* power_mastery_level 0.3)))))
+  
+  ;; Base allocations optimized for power abundance
+  (define base_isru_target
+    (cond
+      ((< o2_days 2) 0.85)          ;; Emergency: use all power for O2
+      ((< o2_days 4) 0.65)          ;; Critical: high O2 focus
+      ((< o2_days 8) 0.45)          ;; Warning: medium O2 focus
+      ((> power_confidence 1.5) 0.35) ;; High power: aggressive O2
+      ((> power_confidence 1.3) 0.30) ;; Medium power: standard O2
+      (true 0.25)))                 ;; Low power: conservative O2
+
+  (define base_greenhouse_target
+    (cond
+      ((< food_days 3) 0.70)        ;; Emergency: use all power for food
+      ((< food_days 7) 0.55)        ;; Critical: high food focus
+      ((< food_days 12) 0.45)       ;; Warning: medium food focus
+      ((> power_confidence 1.5) 0.42) ;; High power: aggressive food
+      ((> power_confidence 1.3) 0.38) ;; Medium power: standard food
+      (true 0.32)))                 ;; Low power: conservative food
+
+  (define base_heating_target
+    (cond
+      ((< power_kwh 30) 0.85)       ;; Power crisis: maximum heating
+      ((< power_kwh 60) 0.65)       ;; Power warning: high heating
+      ((< power_kwh 100) 0.45)      ;; Power caution: medium heating
+      ((> power_confidence 1.5) 0.23) ;; High power: minimal heating needed
+      ((> power_confidence 1.3) 0.30) ;; Medium power: low heating
+      (true 0.40)))                 ;; Low power: conservative heating
+
+  ;; Apply power confidence bonus and normalize
+  (define total_target (+ base_isru_target base_greenhouse_target base_heating_target))
+  (define power_norm_factor (/ power_confidence total_target))
+  
+  (set! isru_alloc (* base_isru_target power_norm_factor))
+  (set! greenhouse_alloc (* base_greenhouse_target power_norm_factor))
+  (set! heating_alloc (* base_heating_target power_norm_factor))
+
+  ;; ═══ POWER-ENABLED FOOD STRATEGY ═══
+  ;; With abundant power, we can afford less conservative rationing
+  (define power_food_efficiency (min 1.6 (+ 1.0 (* power_confidence 0.35))))
+  
+  (define base_food_ration
+    (cond
+      ((< food_days 2) 0.15)        ;; Extreme emergency
+      ((< food_days 5) 0.30)        ;; Emergency rationing
+      ((< food_days 10) 0.50)       ;; Crisis rationing
+      ((< food_days 15) 0.70)       ;; Warning rationing
+      ((> power_confidence 1.7) 1.00) ;; Abundant power: full rations
+      ((> power_confidence 1.4) 0.95) ;; High power: near-full rations
+      ((> power_confidence 1.2) 0.88) ;; Medium power: good rations
+      (true 0.80)))                 ;; Standard rationing
+
+  ;; Apply power food efficiency
+  (set! food_ration (min 1.0 (* base_food_ration power_food_efficiency)))
+
+  ;; ═══ POWER GRID CRISIS MANAGEMENT ═══
+  ;; Advanced crisis detection with power-centric responses
+  (define power_crisis_indicators 0)
+  (if (< power_kwh 40) (set! power_crisis_indicators (+ power_crisis_indicators 4)))
+  (if (< power_kwh 80) (set! power_crisis_indicators (+ power_crisis_indicators 2)))
+  (if (< power_kwh 120) (set! power_crisis_indicators (+ power_crisis_indicators 1)))
+  (if (< o2_days 3) (set! power_crisis_indicators (+ power_crisis_indicators 3)))
+  (if (< food_days 6) (set! power_crisis_indicators (+ power_crisis_indicators 2)))
+  (if (> colony_risk_index 65) (set! power_crisis_indicators (+ power_crisis_indicators 2)))
+  
+  (define power_crisis_level
+    (cond
+      ((>= power_crisis_indicators 8) "GRID_FAILURE")
+      ((>= power_crisis_indicators 6) "POWER_EMERGENCY") 
+      ((>= power_crisis_indicators 4) "POWER_ALERT")
+      ((>= power_crisis_indicators 2) "POWER_CAUTION")
+      (true "POWER_ABUNDANCE")))
+
+  ;; Crisis override: Emergency power reallocation
+  (if (>= power_crisis_indicators 6)
+    (begin
+      (set! isru_alloc 0.15)        ;; Minimal O2 in crisis
+      (set! greenhouse_alloc 0.12)  ;; Minimal food in crisis
+      (set! heating_alloc 0.73)     ;; Maximum power focus
+      (set! food_ration 0.25)))     ;; Emergency rationing
+
+  ;; ═══ POWER INFRASTRUCTURE METRICS ═══
+  (define power_grid_score (* total_power_modules 10))
+  (define redundancy_score (* power_redundancy_factor 100))
+  (define efficiency_score (* power_confidence 100))
+  (define overall_power_rating (+ power_grid_score redundancy_score efficiency_score))
+
+  ;; ═══ BACKUP SYSTEM STATUS ═══
+  (define backup_system_status
+    (cond
+      ((> power_mastery_level 3.0) "TRIPLE_REDUNDANCY")
+      ((> power_mastery_level 2.0) "DUAL_REDUNDANCY")
+      ((> power_mastery_level 1.5) "SINGLE_BACKUP")
+      (true "NO_BACKUP")))
+
+  ;; ═══ STATUS REPORTING ═══
+  (log (concat "  Power Status: " power_crisis_level " | Backup: " backup_system_status))
+  (log (concat "  Grid Rating: " (string (round overall_power_rating)) " | Confidence: " (string (round (* power_confidence 100))) "%"))
+  (log (concat "  Allocation — I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Food Eff: " (string (round (* power_food_efficiency 100))) "% | Ration: " (string (round (* food_ration 100))) "%"))
+  (log (concat "  Resources: O2=" (string o2_days) "d Food=" (string food_days) "d Power=" (string power_kwh) "kWh"))
+
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "PowerMaster Sol " (string sol)
+    " — " power_crisis_level 
+    " | Grid:" (string estimated_solar_farms) "+" (string estimated_batteries) "+" (string estimated_backup_power)
+    " | I:" (string (round (* isru_alloc 100))) "%" 
+    " G:" (string (round (* greenhouse_alloc 100))) "%" 
+    " H:" (string (round (* heating_alloc 100))) "%" 
+    " | R:" (string (round (* food_ration 100))) "%" 
+    " | PWR:" (string power_kwh) "kWh"
+    " | Conf:" (string (round (* power_confidence 100))) "%"))

@@ -1,0 +1,152 @@
+;; SWARM INTELLIGENCE MARS STRATEGY V1
+;; Innovation: Multi-bot swarm with role specialization + Coordinated task allocation
+;; Goal: Beat 441 sols through distributed intelligence and bot coordination
+
+(begin
+  (define _agent_name "Swarm Intelligence Mars v1")
+  (define _agent_desc "Multi-bot swarm with specialized roles and coordinated task distribution")
+
+  (log (concat "🤖 Swarm Intelligence — Sol " (string sol)))
+
+  ;; ═══ SWARM ANALYSIS SYSTEM ═══
+  ;; Estimate bot population and specialization
+  (define active_crew_count (+ humans_count bots_count))
+  (define bot_ratio (if (> active_crew_count 0) (/ bots_count active_crew_count) 0))
+  (define estimated_total_bots (max 2 (round (* modules_built 0.3))))  ;; Aggressive bot deployment
+  
+  ;; Swarm specialization roles
+  (define resource_bots (round (* estimated_total_bots 0.4)))    ;; 40% resource gathering
+  (define maintenance_bots (round (* estimated_total_bots 0.35))) ;; 35% maintenance/repair
+  (define support_bots (- estimated_total_bots resource_bots maintenance_bots)) ;; 25% support
+  
+  ;; Swarm coordination efficiency
+  (define swarm_size_factor (min 2.5 (max 1.0 (+ 1.0 (* bot_ratio 1.5)))))
+  (define coordination_bonus (min 1.8 (+ 1.0 (* (log (+ estimated_total_bots 1)) 0.3))))
+  (define swarm_efficiency (* swarm_size_factor coordination_bonus))
+
+  (log (concat "  Swarm: " (string estimated_total_bots) " bots | R:" (string resource_bots) " M:" (string maintenance_bots) " S:" (string support_bots) " | Eff:" (string (round (* swarm_efficiency 100))) "%"))
+
+  ;; ═══ DISTRIBUTED TASK ALLOCATION ═══
+  ;; Each bot type has specialized allocation patterns
+  
+  ;; Resource bot influence (focus on production efficiency)
+  (define resource_bot_influence (/ resource_bots (max 1 estimated_total_bots)))
+  (define production_multiplier (+ 1.0 (* resource_bot_influence 0.6)))
+  
+  ;; Maintenance bot influence (focus on resilience and repair)
+  (define maintenance_bot_influence (/ maintenance_bots (max 1 estimated_total_bots)))
+  (define resilience_multiplier (+ 1.0 (* maintenance_bot_influence 0.8)))
+  
+  ;; Support bot influence (focus on optimization and coordination)
+  (define support_bot_influence (/ support_bots (max 1 estimated_total_bots)))
+  (define optimization_multiplier (+ 1.0 (* support_bot_influence 0.4)))
+  
+  ;; Combined swarm intelligence factor
+  (define swarm_intelligence (* production_multiplier resilience_multiplier optimization_multiplier))
+
+  ;; ═══ ADAPTIVE SWARM ALLOCATION ═══
+  ;; Resource allocation optimized by swarm specialization
+  
+  ;; ISRU allocation (resource bots optimize oxygen production)
+  (define base_isru_alloc
+    (cond
+      ((< o2_days 3) 0.80)          ;; Emergency oxygen mode
+      ((< o2_days 6) 0.55)          ;; Critical oxygen mode
+      ((< o2_days 10) 0.40)         ;; Warning oxygen mode
+      ((> resource_bots 3) 0.32)    ;; High resource bot count
+      ((> resource_bots 2) 0.28)    ;; Medium resource bot count
+      (true 0.24)))                 ;; Standard allocation
+
+  ;; Greenhouse allocation (resource + support bots optimize food)
+  (define base_greenhouse_alloc
+    (cond
+      ((< food_days 5) 0.65)        ;; Emergency food mode
+      ((< food_days 10) 0.48)       ;; Critical food mode
+      ((< food_days 18) 0.38)       ;; Warning food mode
+      ((> (+ resource_bots support_bots) 4) 0.38)  ;; High coordination
+      ((> (+ resource_bots support_bots) 2) 0.34)  ;; Medium coordination
+      (true 0.30)))                 ;; Standard allocation
+
+  ;; Heating allocation (maintenance + support bots optimize power)
+  (define base_heating_alloc
+    (cond
+      ((< power_kwh 40) 0.70)       ;; Emergency power mode
+      ((< power_kwh 80) 0.52)       ;; Critical power mode
+      ((< power_kwh 120) 0.45)      ;; Warning power mode
+      ((> (+ maintenance_bots support_bots) 4) 0.38)  ;; High maintenance
+      ((> (+ maintenance_bots support_bots) 2) 0.35)  ;; Medium maintenance
+      (true 0.32)))                 ;; Standard allocation
+
+  ;; Apply swarm intelligence multipliers
+  (define total_base (+ base_isru_alloc base_greenhouse_alloc base_heating_alloc))
+  (define swarm_norm_factor (/ swarm_intelligence total_base))
+  
+  (set! isru_alloc (* base_isru_alloc swarm_norm_factor))
+  (set! greenhouse_alloc (* base_greenhouse_alloc swarm_norm_factor))
+  (set! heating_alloc (* base_heating_alloc swarm_norm_factor))
+
+  ;; ═══ SWARM FOOD RATIONING PROTOCOL ═══
+  ;; Coordinated rationing based on bot efficiency and colony state
+  (define swarm_food_efficiency (min 1.4 (+ 1.0 (* swarm_efficiency 0.15))))
+  
+  (define base_ration
+    (cond
+      ((< food_days 3) 0.20)        ;; Emergency survival
+      ((< food_days 7) 0.35)        ;; Critical rationing
+      ((< food_days 12) 0.50)       ;; Warning rationing
+      ((< food_days 20) 0.70)       ;; Caution rationing
+      ((> support_bots 2) 0.90)     ;; High coordination allows higher rations
+      ((> support_bots 1) 0.85)     ;; Medium coordination
+      (true 0.80)))                 ;; Standard rationing
+
+  ;; Apply swarm food efficiency
+  (set! food_ration (min 1.0 (* base_ration swarm_food_efficiency)))
+
+  ;; ═══ SWARM CRISIS MANAGEMENT ═══
+  ;; Distributed crisis detection and response
+  (define crisis_indicators 0)
+  (if (< o2_days 5) (set! crisis_indicators (+ crisis_indicators 3)))
+  (if (< food_days 8) (set! crisis_indicators (+ crisis_indicators 2)))
+  (if (< power_kwh 60) (set! crisis_indicators (+ crisis_indicators 2)))
+  (if (> colony_risk_index 60) (set! crisis_indicators (+ crisis_indicators 2)))
+  
+  ;; Swarm crisis response (better coordination = better crisis handling)
+  (define crisis_response_level
+    (cond
+      ((>= crisis_indicators 7) "SWARM_EMERGENCY")
+      ((>= crisis_indicators 5) "SWARM_ALERT")
+      ((>= crisis_indicators 3) "SWARM_CAUTION")
+      (true "SWARM_NORMAL")))
+  
+  ;; Crisis allocation override (maintenance bots take priority in crisis)
+  (if (>= crisis_indicators 5)
+    (begin
+      (define crisis_power_focus (min 0.75 (+ 0.45 (* maintenance_bot_influence 0.3))))
+      (define crisis_survival_focus (- 1.0 crisis_power_focus))
+      (define crisis_isru_share (* crisis_survival_focus 0.4))
+      (define crisis_greenhouse_share (* crisis_survival_focus 0.6))
+      
+      (set! isru_alloc crisis_isru_share)
+      (set! greenhouse_alloc crisis_greenhouse_share)
+      (set! heating_alloc crisis_power_focus)))
+
+  ;; ═══ SWARM INTELLIGENCE METRICS ═══
+  (define swarm_coordination_score (* 100 coordination_bonus))
+  (define task_distribution_score (* 100 (- 2.0 (+ resource_bot_influence maintenance_bot_influence support_bot_influence))))
+  (define overall_swarm_performance (* swarm_intelligence 100))
+
+  ;; ═══ STATUS REPORTING ═══
+  (log (concat "  Coordination: " (string (round swarm_coordination_score)) "% | Task Dist: " (string (round task_distribution_score)) "% | Performance: " (string (round overall_swarm_performance)) "%"))
+  (log (concat "  Allocation — I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Crisis: " crisis_response_level " | Ration: " (string (round (* food_ration 100))) "% | Swarm Eff: " (string (round (* swarm_food_efficiency 100))) "%"))
+  (log (concat "  Resources: O2=" (string o2_days) "d Food=" (string food_days) "d Power=" (string power_kwh) "kWh"))
+
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "Swarm-" (string estimated_total_bots) " Sol " (string sol)
+    " — " crisis_response_level
+    " | Bots:" (string estimated_total_bots) 
+    " | I:" (string (round (* isru_alloc 100))) "%" 
+    " G:" (string (round (* greenhouse_alloc 100))) "%" 
+    " H:" (string (round (* heating_alloc 100))) "%" 
+    " | R:" (string (round (* food_ration 100))) "%" 
+    " | Perf:" (string (round overall_swarm_performance)) "%"))
