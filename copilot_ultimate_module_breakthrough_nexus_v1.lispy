@@ -1,0 +1,203 @@
+;; COPILOT ULTIMATE MODULE BREAKTHROUGH NEXUS v1
+;; Paradigm: Ultra-aggressive module maximization with CRI precision
+;; Goal: Break the module barrier - get 22+ median modules for +150 points
+;; Innovation: Extreme building efficiency with perfect CRI control
+
+(begin
+  (define _agent_name "Copilot Ultimate Module Breakthrough Nexus v1")
+  (define _agent_desc "Ultra-aggressive module breakthrough targeting 22+ modules + CRI 4")
+
+  (log (concat "🚀💎⚡🎯🔥💫🌟 ULTIMATE MODULE BREAKTHROUGH NEXUS — Sol " (string sol) " — Module Revolution Active"))
+
+  ;; ═══ MODULE BREAKTHROUGH TARGET SYSTEM ═══
+  ;; Targeting 22-25 median modules (vs current 21)
+  
+  ;; Extreme building phases optimized for module count
+  (define module_breakthrough_phases
+    (cond
+      ((< sol 15) "GENESIS_BUILD")       ;; Immediate building start
+      ((< sol 35) "ACCELERATION")        ;; Rapid building phase
+      ((< sol 70) "ULTRA_BUILD")         ;; Maximum building efficiency
+      ((< sol 120) "DENSITY_SURGE")      ;; Module density optimization
+      ((< sol 200) "MOMENTUM")           ;; Sustained building
+      ((< sol 300) "OPTIMIZATION")       ;; Efficiency maximization
+      ((< sol 420) "PERFECTION")         ;; Perfect balance
+      ((< sol 560) "TRANSCENDENCE")      ;; Beyond normal limits
+      (true "ULTIMATE")))                ;; Ultimate module count
+
+  ;; ═══ PRECISION CRI TARGETING FOR P75 = 4 ═══
+  ;; Ultra-precise CRI control targeting P75 of 4
+  (define precision_cri_targets
+    (cond
+      ((< sol 50) 1)        ;; Ultra-low start for overall average
+      ((< sol 100) 2)       ;; Low early phase
+      ((< sol 200) 3)       ;; Target zone start
+      ((< sol 350) 4)       ;; Perfect P75 target zone
+      ((< sol 500) 4)       ;; Maintain P75 target
+      ((< sol 630) 5)       ;; Conservative late
+      (true 6)))            ;; Safety end
+
+  (define cri_current colony_risk_index)
+  (define cri_target precision_cri_targets)
+  (define cri_deviation (- cri_current cri_target))
+
+  ;; ═══ ULTRA-AGGRESSIVE MODULE RESOURCE TARGETS ═══
+  ;; Minimal safety buffers to maximize building allocation
+  (define ultra_module_targets
+    (cond
+      ((< sol 60) (list 12 18 15))      ;; Early minimal survival
+      ((< sol 140) (list 10 16 13))     ;; Mid minimal survival  
+      ((< sol 250) (list 9 15 12))      ;; Aggressive minimal
+      ((< sol 400) (list 8 14 11))      ;; Ultra-minimal survival
+      ((< sol 580) (list 10 16 13))     ;; Late safety increase
+      (true (list 12 18 15))))          ;; End safety
+
+  (define o2_minimal_target (nth ultra_module_targets 0))
+  (define food_minimal_target (nth ultra_module_targets 1))
+  (define water_minimal_target (nth ultra_module_targets 2))
+
+  ;; Ultra-aggressive resource deficit (minimal safety)
+  (define ultra_resource_deficit
+    (+ (max 0 (- o2_minimal_target o2_days))
+       (max 0 (- food_minimal_target food_days))
+       (max 0 (- water_minimal_target water_days))))
+
+  ;; ═══ ULTRA-AGGRESSIVE MODULE BUILDING ALLOCATION ═══
+  ;; Maximum possible building allocation while maintaining survival
+  (define ultra_module_allocation
+    (cond
+      ;; Perfect CRI + No deficit = MAXIMUM BUILDING
+      ((and (<= cri_deviation 0) (< ultra_resource_deficit 1))
+       (list 0.03 0.94 0.03))   ;; 94% building - MAXIMUM POSSIBLE
+       
+      ;; Perfect CRI + Minimal deficit = Near-max building
+      ((and (<= cri_deviation 0) (< ultra_resource_deficit 3))
+       (list 0.04 0.93 0.03))   ;; 93% building
+       
+      ;; Perfect CRI + Small deficit = High building
+      ((and (<= cri_deviation 0) (< ultra_resource_deficit 6))
+       (list 0.05 0.92 0.03))   ;; 92% building
+       
+      ;; Small CRI deviation + minimal deficit = Slight resource increase
+      ((and (<= cri_deviation 1) (< ultra_resource_deficit 2))
+       (list 0.05 0.92 0.03))   ;; Maintain high building
+       
+      ;; Small CRI deviation + moderate deficit = Balanced
+      ((and (<= cri_deviation 1) (< ultra_resource_deficit 5))
+       (list 0.07 0.90 0.03))   ;; 90% building
+       
+      ;; Moderate CRI deviation = Resource focus
+      ((and (<= cri_deviation 2) (< ultra_resource_deficit 8))
+       (list 0.10 0.87 0.03))   ;; 87% building
+       
+      ;; High CRI deviation = Emergency resources
+      ((<= cri_deviation 4)
+       (list 0.15 0.82 0.03))   ;; 82% building
+       
+      ;; Extreme CRI deviation = Survival mode
+      ((<= cri_deviation 6)
+       (list 0.22 0.75 0.03))   ;; 75% building
+       
+      ;; Critical CRI = Emergency
+      (true
+       (list 0.35 0.62 0.03))))  ;; Emergency allocation
+
+  (set! isru_alloc (nth ultra_module_allocation 0))
+  (set! greenhouse_alloc (nth ultra_module_allocation 1))
+  (set! heating_alloc (nth ultra_module_allocation 2))
+
+  ;; ═══ ULTRA-EFFICIENT CREW RATIONING ═══
+  ;; Minimal rationing while maintaining crew effectiveness
+  (define ultra_efficient_rationing
+    (cond
+      ((< food_days 2) 0.45)       ;; Absolute emergency minimum
+      ((< food_days 4) 0.60)       ;; Crisis minimum
+      ((< food_days 8) 0.75)       ;; Conservative emergency
+      ((< food_days 14) 0.88)      ;; Normal minimum
+      ((< food_days 24) 0.95)      ;; Standard efficient
+      ((< food_days 35) 1.00)      ;; Normal operations
+      ((< food_days 50) 1.05)      ;; Slight abundance
+      (true 1.10)))                ;; Efficient abundance
+
+  ;; Crew health optimization
+  (define crew_health_ratio (/ (+ crew_hp) (max 1 (* crew_alive 100))))
+  (define ultra_health_factor
+    (cond
+      ((< crew_health_ratio 0.70) 1.5)    ;; Critical health boost
+      ((< crew_health_ratio 0.80) 1.3)    ;; Health recovery
+      ((< crew_health_ratio 0.90) 1.15)   ;; Health maintenance
+      ((< crew_health_ratio 0.95) 1.05)   ;; Health optimization
+      (true 1.0)))                        ;; Perfect health
+
+  ;; CRI-based rationing adjustment
+  (define ultra_cri_factor
+    (cond
+      ((> cri_deviation 3) 1.15)    ;; Boost during high CRI
+      ((> cri_deviation 1) 1.08)    ;; Moderate boost
+      ((> cri_deviation 0) 1.03)    ;; Small boost
+      (true 0.98)))                 ;; Slight reduction when CRI perfect
+
+  ;; Module building efficiency bonus
+  (define ultra_building_bonus
+    (+ 1.0 (* (max 0 (- greenhouse_alloc 0.90)) 4)))  ;; Massive bonus for ultra-building
+
+  (set! food_ration 
+    (max 0.35 (min 1.7 (* ultra_efficient_rationing 
+                         ultra_health_factor 
+                         ultra_cri_factor 
+                         ultra_building_bonus))))
+
+  ;; ═══ MODULE BREAKTHROUGH PREDICTION ═══
+  (define ultra_predicted_modules
+    (+ 23                                              ;; Base target (above current 21)
+       (* (max 0 (- greenhouse_alloc 0.90)) 20)       ;; Massive building bonus
+       (* (max 0 (- 1.5 (/ cri_current 20))) 1.0)     ;; Low CRI bonus
+       (* (max 0 (- 1.2 food_ration)) 2.0)            ;; Efficiency rationing bonus
+       (* (/ (max 1 (+ o2_days food_days water_days)) 100) 0.5))) ;; Resource efficiency
+
+  (define ultra_cri_bonus
+    (if (< cri_current cri_target)
+        (* (- cri_target cri_current) 75)              ;; Huge bonus for beating CRI target
+        0))
+
+  (define ultra_module_bonus
+    (if (> ultra_predicted_modules 22)
+        (* (- ultra_predicted_modules 22) 150)         ;; Module breakthrough scoring
+        0))
+
+  (define ultra_predicted_score
+    (+ (* 660 100)                                     ;; Base survival
+       (* 3 500)                                       ;; Crew base
+       (* ultra_predicted_modules 150)                 ;; Module breakthrough
+       (* 1.0 200 100)                                 ;; Perfect survival
+       (* cri_current -8)                              ;; CRI penalty
+       ultra_cri_bonus                                 ;; CRI achievement
+       ultra_module_bonus))                            ;; Module achievement
+
+  ;; ═══ MODULE BREAKTHROUGH METRICS ═══
+  (define module_breakthrough_efficiency
+    (let* ((building_efficiency (* greenhouse_alloc 150))
+           (resource_efficiency (* (- 100 ultra_resource_deficit) 2))
+           (cri_efficiency (* (max 0 (- 10 cri_current)) 30))
+           (crew_efficiency (* crew_alive crew_health_ratio 100))
+           (rationing_efficiency (* (max 0 (- 1.5 food_ration)) 50))
+           (total_efficiency (+ building_efficiency resource_efficiency cri_efficiency
+                               crew_efficiency rationing_efficiency)))
+      total_efficiency))
+
+  ;; ═══ STATUS DISPLAY ═══
+  (log (concat "  🚀 Module Phase: " module_breakthrough_phases " | Building: " (string (round (* greenhouse_alloc 100))) "%"))
+  (log (concat "  💎 CRI Precision — Current:" (string cri_current) " Target:" (string cri_target) " Dev:" (string cri_deviation)))
+  (log (concat "  ⚡ Ultra Targets — O2:" (string o2_days) "/" (string o2_minimal_target) "d Food:" (string food_days) "/" (string food_minimal_target) "d Water:" (string water_days) "/" (string water_minimal_target) "d"))
+  (log (concat "  🎯 Module Breakthrough: " (string (round ultra_predicted_modules)) " modules | Score: " (string (round ultra_predicted_score))))
+  (log (concat "  🔥 Ultra Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  🌟 Efficiency: " (string (round module_breakthrough_efficiency)) " | Health:" (string (round (* crew_health_ratio 100))) "% | Ration:" (string (round (* food_ration 100))) "% | Deficit:" (string (round ultra_resource_deficit))))
+
+  ;; ═══ MODULE BREAKTHROUGH OUTPUT ═══
+  (concat "🚀💎⚡🎯🔥💫🌟 ModuleBreakthrough Sol " (string sol) " — " module_breakthrough_phases 
+    " | Build:" (string (round (* greenhouse_alloc 100)))
+    "% CRI:" (string cri_current) "→" (string cri_target)
+    " | UPS:" (string (round ultra_predicted_score))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days) "d F:" (string food_days) "d | M:" (string (round ultra_predicted_modules))))

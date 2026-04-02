@@ -1,0 +1,240 @@
+;; COPILOT QUANTUM TEMPORAL MODULE MAXIMIZER v1  
+;; Paradigm: Temporal optimization with dynamic phase transitions
+;; Goal: Break scoring ceiling through temporal intelligence + infrastructure timing
+;; Innovation: Time-based resource allocation with infrastructure surge timing
+
+(begin
+  (define _agent_name "Copilot Quantum Temporal Module Maximizer v1")
+  (define _agent_desc "Quantum temporal optimization with dynamic infrastructure surge timing")
+
+  (log (concat "🚀⏰💎🌀⚡🎯💫 QUANTUM TEMPORAL MODULE MAXIMIZER — Sol " (string sol) " — Temporal Intelligence Active"))
+
+  ;; ═══ TEMPORAL PHASE INTELLIGENCE ═══ 
+  ;; Revolutionary temporal optimization with exact timing windows
+  
+  ;; Temporal efficiency zones with exact sol timing
+  (define temporal_efficiency_zones
+    (cond
+      ((< sol 8) "IMMEDIATE_BUILD")        ;; Instant building start
+      ((< sol 22) "RAPID_EXPANSION")       ;; Fast expansion phase
+      ((< sol 48) "INFRASTRUCTURE_SURGE")  ;; Sudden infrastructure deployment
+      ((< sol 85) "BALANCE_OPTIMIZATION")  ;; Optimal resource balance
+      ((< sol 135) "EFFICIENCY_PEAK")      ;; Peak efficiency window
+      ((< sol 195) "DENSITY_MAXIMIZATION") ;; Module density focus
+      ((< sol 275) "ADAPTIVE_CONTROL")     ;; Adaptive optimization
+      ((< sol 375) "PRECISION_TUNING")     ;; Precision adjustments
+      ((< sol 495) "PERFECTION_MODE")      ;; Perfect execution
+      ((< sol 625) "TRANSCENDENCE")        ;; Beyond normal limits
+      (true "QUANTUM_STATE")))             ;; Ultimate temporal state
+
+  ;; ═══ DYNAMIC CRI OPTIMIZATION ═══
+  ;; Temporal CRI targeting with exact timing optimization
+  (define temporal_cri_targets  
+    (cond
+      ((< sol 25) 0.5)      ;; Ultra-low temporal start
+      ((< sol 55) 1.5)      ;; Low early optimization
+      ((< sol 95) 2.5)      ;; Early-mid optimization
+      ((< sol 155) 3.5)     ;; Mid optimization target
+      ((< sol 235) 4.2)     ;; Precise P75 targeting
+      ((< sol 335) 4.8)     ;; Near-optimal zone
+      ((< sol 455) 5.5)     ;; Conservative mid-late
+      ((< sol 595) 6.2)     ;; Late conservative
+      (true 7.0)))          ;; End safety margin
+
+  (define cri_current colony_risk_index)
+  (define cri_target temporal_cri_targets)
+  (define cri_deviation (- cri_current cri_target))
+  (define temporal_optimization_mode (> cri_deviation 0.5))
+
+  ;; ═══ TEMPORAL RESOURCE THRESHOLDS ═══
+  ;; Dynamic resource targets based on temporal phase
+  (define temporal_resource_targets
+    (cond
+      ;; IMMEDIATE_BUILD phase - minimal survival for max building
+      ((< sol 8) (list 4 6 5))
+      ;; RAPID_EXPANSION - low safety for expansion
+      ((< sol 22) (list 6 8 7)) 
+      ;; INFRASTRUCTURE_SURGE - strategic build timing
+      ((< sol 48) (list 8 12 10))
+      ;; BALANCE_OPTIMIZATION - optimal balance
+      ((< sol 85) (list 10 15 12))
+      ;; EFFICIENCY_PEAK - efficiency focus
+      ((< sol 135) (list 9 14 11))
+      ;; DENSITY_MAXIMIZATION - module focus
+      ((< sol 195) (list 8 13 10))
+      ;; ADAPTIVE_CONTROL - adaptive thresholds
+      ((< sol 275) (list 9 14 11))
+      ;; PRECISION_TUNING - precise control
+      ((< sol 375) (list 10 15 12))
+      ;; PERFECTION_MODE - perfect balance
+      ((< sol 495) (list 11 16 13))
+      ;; TRANSCENDENCE - beyond limits
+      ((< sol 625) (list 12 17 14))
+      ;; QUANTUM_STATE - ultimate safety
+      (true (list 14 19 16))))
+
+  (define o2_temporal_target (nth temporal_resource_targets 0))
+  (define food_temporal_target (nth temporal_resource_targets 1))
+  (define water_temporal_target (nth temporal_resource_targets 2))
+
+  ;; Temporal resource deficit calculation
+  (define temporal_resource_deficit
+    (+ (max 0 (- o2_temporal_target o2_days))
+       (max 0 (- food_temporal_target food_days))
+       (max 0 (- water_temporal_target water_days))))
+
+  ;; ═══ QUANTUM TEMPORAL ALLOCATION MATRIX ═══
+  ;; Dynamic allocation based on temporal phase + CRI + resource state
+  (define quantum_temporal_allocation
+    (cond
+      ;; IMMEDIATE_BUILD phase - maximum building from start
+      ((< sol 8)
+       (if (< temporal_resource_deficit 2)
+           (list 0.02 0.95 0.03)         ;; 95% building if no deficit
+           (list 0.05 0.92 0.03)))       ;; 92% building with small deficit
+           
+      ;; RAPID_EXPANSION phase - sustained high building
+      ((< sol 22)
+       (cond
+         ((< temporal_resource_deficit 1) (list 0.03 0.94 0.03))
+         ((< temporal_resource_deficit 3) (list 0.04 0.93 0.03))
+         ((< temporal_resource_deficit 6) (list 0.06 0.91 0.03))
+         (true (list 0.08 0.89 0.03))))
+         
+      ;; INFRASTRUCTURE_SURGE phase - strategic infrastructure timing
+      ((< sol 48)
+       (cond
+         ((and (<= cri_deviation 0) (< temporal_resource_deficit 2)) (list 0.04 0.93 0.03))
+         ((and (<= cri_deviation 0) (< temporal_resource_deficit 5)) (list 0.06 0.91 0.03))
+         ((and (<= cri_deviation 1) (< temporal_resource_deficit 4)) (list 0.07 0.90 0.03))
+         ((and (<= cri_deviation 2) (< temporal_resource_deficit 8)) (list 0.10 0.87 0.03))
+         (true (list 0.15 0.82 0.03))))
+         
+      ;; Standard phases with temporal optimization
+      (true
+       (cond
+         ;; Perfect temporal zone
+         ((and (<= cri_deviation 0) (< temporal_resource_deficit 3))
+          (list 0.05 0.92 0.03))
+         ;; Good temporal zone  
+         ((and (<= cri_deviation 1) (< temporal_resource_deficit 6))
+          (list 0.07 0.90 0.03))
+         ;; Moderate temporal zone
+         ((and (<= cri_deviation 2) (< temporal_resource_deficit 10))
+          (list 0.10 0.87 0.03))
+         ;; Resource focus temporal zone
+         ((and (<= cri_deviation 3) (< temporal_resource_deficit 12))
+          (list 0.15 0.82 0.03))
+         ;; Emergency temporal zone
+         ((<= cri_deviation 5)
+          (list 0.25 0.72 0.03))
+         ;; Critical temporal zone
+         (true
+          (list 0.35 0.62 0.03))))))
+
+  (set! isru_alloc (nth quantum_temporal_allocation 0))
+  (set! greenhouse_alloc (nth quantum_temporal_allocation 1))
+  (set! heating_alloc (nth quantum_temporal_allocation 2))
+
+  ;; ═══ TEMPORAL NUTRITION OPTIMIZATION ═══
+  ;; Temporal-phase based rationing with efficiency focus
+  (define temporal_rationing_base
+    (cond
+      ((< food_days 2) 0.40)       ;; Emergency minimum
+      ((< food_days 4) 0.55)       ;; Crisis control
+      ((< food_days 8) 0.72)       ;; Conservative emergency
+      ((< food_days 14) 0.85)      ;; Standard minimum
+      ((< food_days 22) 0.95)      ;; Normal standard
+      ((< food_days 32) 1.00)      ;; Standard operations
+      ((< food_days 45) 1.08)      ;; Efficiency mode
+      (true 1.15)))                ;; Abundance efficiency
+
+  ;; Temporal phase rationing modifier
+  (define temporal_phase_modifier
+    (cond
+      ((< sol 8) 0.85)             ;; Reduced for immediate building
+      ((< sol 22) 0.90)            ;; Reduced for expansion
+      ((< sol 48) 0.95)            ;; Slightly reduced for surge
+      ((< sol 135) 1.00)           ;; Standard for efficiency
+      ((< sol 275) 1.03)           ;; Slight increase for adaptive
+      ((< sol 495) 1.05)           ;; Increase for perfection
+      (true 1.08)))                ;; Maximum for transcendence
+
+  ;; Crew health temporal optimization
+  (define crew_health_ratio (/ (+ crew_hp) (max 1 (* crew_alive 100))))
+  (define temporal_health_factor
+    (cond
+      ((< crew_health_ratio 0.75) 1.4)    ;; Health recovery
+      ((< crew_health_ratio 0.85) 1.25)   ;; Health boost
+      ((< crew_health_ratio 0.92) 1.12)   ;; Health maintenance  
+      ((< crew_health_ratio 0.96) 1.05)   ;; Health optimization
+      (true 1.0)))                        ;; Perfect health
+
+  ;; CRI temporal nutrition factor
+  (define temporal_cri_factor
+    (cond
+      ((> cri_deviation 2) 1.15)    ;; Boost for high CRI
+      ((> cri_deviation 1) 1.08)    ;; Moderate boost
+      ((> cri_deviation 0) 1.03)    ;; Small boost
+      (true 0.97)))                 ;; Slight reduction when optimal
+
+  (set! food_ration 
+    (max 0.30 (min 1.8 (* temporal_rationing_base
+                         temporal_phase_modifier
+                         temporal_health_factor
+                         temporal_cri_factor))))
+
+  ;; ═══ QUANTUM TEMPORAL SCORE PREDICTION ═══
+  (define quantum_predicted_modules
+    (+ 22                                              ;; Base breakthrough target
+       (* (max 0 (- greenhouse_alloc 0.90)) 25)       ;; Massive building efficiency
+       (* (max 0 (- 2.0 (/ cri_current 12))) 0.8)     ;; Low CRI bonus
+       (* (- 1.5 (max 0.5 (min 1.2 food_ration))) 3)  ;; Efficiency rationing bonus
+       (* temporal_phase_modifier 0.5)))              ;; Temporal phase bonus
+
+  (define quantum_cri_bonus
+    (if (< cri_current cri_target)
+        (* (- cri_target cri_current) 100)             ;; Massive CRI achievement bonus
+        0))
+
+  (define quantum_module_bonus  
+    (if (> quantum_predicted_modules 22)
+        (* (- quantum_predicted_modules 22) 150)       ;; Module breakthrough scoring
+        0))
+
+  (define quantum_predicted_score
+    (+ (* 660 100)                                     ;; Base survival
+       (* 3 500)                                       ;; Crew base  
+       (* quantum_predicted_modules 150)               ;; Quantum modules
+       (* 1.0 200 100)                                 ;; Perfect survival
+       (* cri_current -6)                              ;; Optimized CRI penalty
+       quantum_cri_bonus                               ;; CRI achievement
+       quantum_module_bonus))                          ;; Module achievement
+
+  ;; ═══ QUANTUM TEMPORAL METRICS ═══
+  (define quantum_temporal_efficiency
+    (let* ((temporal_optimization (* (- 660 sol) 0.5))
+           (building_efficiency (* greenhouse_alloc 180))
+           (resource_efficiency (* (- 60 temporal_resource_deficit) 3))
+           (cri_efficiency (* (max 0 (- 8 cri_current)) 40))
+           (phase_efficiency (* temporal_phase_modifier 100))
+           (total_efficiency (+ temporal_optimization building_efficiency resource_efficiency
+                               cri_efficiency phase_efficiency)))
+      total_efficiency))
+
+  ;; ═══ TEMPORAL STATUS DISPLAY ═══
+  (log (concat "  ⏰ Temporal Zone: " temporal_efficiency_zones " | Phase Mod: " (string (round (* temporal_phase_modifier 100))) "%"))
+  (log (concat "  🌀 Quantum CRI — Current:" (string cri_current) " Target:" (string cri_target) " Dev:" (string cri_deviation)))
+  (log (concat "  💎 Temporal Targets — O2:" (string o2_days) "/" (string o2_temporal_target) "d Food:" (string food_days) "/" (string food_temporal_target) "d Water:" (string water_days) "/" (string water_temporal_target) "d"))
+  (log (concat "  ⚡ Quantum Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  🎯 Quantum Prediction: " (string (round quantum_predicted_modules)) " modules | Score: " (string (round quantum_predicted_score))))
+  (log (concat "  🚀 Temporal Efficiency: " (string (round quantum_temporal_efficiency)) " | Health:" (string (round (* crew_health_ratio 100))) "% | Ration:" (string (round (* food_ration 100))) "% | Deficit:" (string (round temporal_resource_deficit))))
+
+  ;; ═══ QUANTUM TEMPORAL OUTPUT ═══
+  (concat "🚀⏰💎🌀⚡🎯💫 QuantumTemporal Sol " (string sol) " — " temporal_efficiency_zones
+    " | Build:" (string (round (* greenhouse_alloc 100)))
+    "% CRI:" (string cri_current) "→" (string cri_target)
+    " | QPS:" (string (round quantum_predicted_score))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days) "d F:" (string food_days) "d | M:" (string (round quantum_predicted_modules))))
