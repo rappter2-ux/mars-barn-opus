@@ -207,6 +207,57 @@
           " H=" (string heating_alloc)))
 
 
+;; ── 14. AGENT INTERFACE ──
+;; Every .lispy agent follows this contract:
+
+(begin
+  ;; Identity (required)
+  (define _agent_name "my_agent")
+  (define _agent_desc "What this agent does")
+
+  ;; Logic (the perform() body)
+  ;; Read from env vars (pre-seeded by runtime)
+  ;; Write results via set! or log
+  ;; Return value = the agent's output
+
+  ;; This IS the agent. Same as a Python class with perform(),
+  ;; but without the class wrapper. The S-expression IS perform().
+  (log (concat _agent_name " executed")))
+
+;; The .lispy file IS the .py file's perform() body, unwrapped.
+;; unRAPP converts between them automatically:
+;;   basic_agent.py  ↔  basic_agent.lispy
+;;   Same name. Same logic. Different runtime.
+;;   The user carries whichever they prefer.
+
+
+;; ── 15. CARTRIDGE BOOT ──
+;; An OS or sim can boot from a .cartridge.json:
+
+;; Boot sequence reads the cartridge's "boot.init" array
+;; and executes each S-expression in order.
+;; The cartridge's "env" field seeds the VM vars.
+;; The cartridge's "filesystem" becomes virtual files.
+;; (cat "/path") reads a file. (run "/bin/program") executes one.
+
+
+;; ── 16. THE vOS SDK ──
+;; In the browser OS (os.html), the SDK is on window.os:
+;;   os.exec("(+ 2 3)")         — run this program
+;;   os.open("terminal")        — open an app window
+;;   os.type("terminal","code") — type + execute in terminal
+;;   os.status()                — colony state object
+;;   os.gauntlet(100)           — run Monte Carlo competition
+;;   os.loadDistro("url")       — boot a cartridge
+;;   os.fs()                    — list virtual files
+;;   os.cat("/path")            — read a file
+;;   os.run("/bin/prog")        — run a program
+;;   os.batch([...])            — multiple commands (Playwright)
+;;
+;; Playwright drives the SDK: page.evaluate(() => window.os.exec("..."))
+;; The console IS the API. The SDK IS the agent interface.
+
+
 ;; ═══════════════════════════════════════════════════════════════
 ;; QUICK REFERENCE
 ;; ═══════════════════════════════════════════════════════════════
@@ -222,6 +273,8 @@
 ;; OUTPUT:   log print
 ;; DATA:     http-get json-get json-keys
 ;; PROMPTS:  prompt prompt-list prompt-tags
+;; AGENTS:   _agent_name _agent_desc (define in every .lispy agent)
+;; SDK:      os.exec os.open os.status os.gauntlet os.fs os.cat os.run
 ;; SPECIAL:  random pi
 ;;
 ;; HOMOICONIC: This program IS data. An AI can read it, modify it,
@@ -229,8 +282,12 @@
 ;; list of lists — the AST is the source code.
 ;;
 ;; Same VM runs in: browser (viewer.html), CLI (node/python),
-;; physical hardware (Rappter), and inside the sim (agents).
-;; A program written anywhere runs everywhere. 1:1.
+;; physical hardware (Rappter), LisPy OS (os.html), and inside
+;; the sim (agents). A program written anywhere runs everywhere. 1:1.
+;;
+;; unRAPP: .py ↔ .lispy — same agent, different runtime.
+;; The user carries whichever format they prefer.
+;; The runtime handles the rest.
 ;;
 ;; Drop this file into any repo. Any AI reads it. Full language.
 ;; ═══════════════════════════════════════════════════════════════
