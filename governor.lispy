@@ -1,275 +1,155 @@
-;; METAMORPHOSIS CHAMPION v2.0 - Adaptive Evolution Master
-;; Revolutionary strategy that completely transforms based on colony development
-;; Strategy: Caterpillar → Chrysalis → Butterfly phases with total transformation
+;; QUANTUM SURVIVAL GOVERNOR v5.0
+;; Goal: Beat 441 sol record through ultra-early repair deployment + adaptive CRI management
+;; Strategy: Quantum-level redundancy with predictive damage prevention
 
 (begin
-  (define _agent_name "Metamorphosis Champion v2.0")
-  (define _agent_desc "Adaptive evolution governor with complete strategic metamorphosis through distinct life phases")
+  (define _agent_name "Quantum Survival Governor v5.0")
+  (define _agent_desc "Ultra-early repair deployment with quantum-level damage prevention and CRI-adaptive optimization")
 
-  (log (concat "🦋🔥 Metamorphosis — Sol " (string sol)))
+  (log (concat "⚡ Quantum v5.0 — Sol " (string sol)))
 
-  ;; ═══ METAMORPHOSIS LIFE CYCLE DETECTION ═══
-  ;; Revolutionary phase-based transformation system
-  (define colony_maturity_ratio (/ sol 650))  ;; Mission progress
-  (define infrastructure_evolution (/ modules_built (+ sol 1)))  ;; Build efficiency
-  (define resource_mastery (min 1.0 (/ (+ o2_days food_days) 50)))  ;; Resource stability
-  (define crisis_resistance (max 0 (- 1 (/ colony_risk_index 100))))  ;; Threat handling
+  ;; ═══ QUANTUM INFRASTRUCTURE ASSESSMENT ═══
+  ;; Advanced infrastructure analysis for quantum-level optimization  
+  (define infrastructure_maturity (max 0 (min 1 (/ modules_built 15))))
+  (define estimated_solar_farms (max 2 (round (* modules_built 0.45))))
+  (define estimated_repair_bays (max 1 (round (* modules_built 0.25))))
   
-  ;; Complex metamorphosis trigger calculation
-  (define metamorphosis_score (+ (* 0.3 colony_maturity_ratio)
-                                 (* 0.25 infrastructure_evolution)
-                                 (* 0.25 resource_mastery)
-                                 (* 0.20 crisis_resistance)))
-
-  ;; Metamorphosis life stages with distinct behavioral patterns
-  (define metamorphosis_stage
-    (cond
-      ((< metamorphosis_score 0.15) "CATERPILLAR")    ;; Consumption focused - build, grow, expand
-      ((< metamorphosis_score 0.35) "GROWING")        ;; Rapid development - infrastructure rush
-      ((< metamorphosis_score 0.55) "PUPATION")       ;; Transformation - optimization focus
-      ((< metamorphosis_score 0.75) "CHRYSALIS")      ;; Internal reorganization - efficiency
-      ((< metamorphosis_score 0.90) "EMERGENCE")      ;; Breaking free - mastery phase
-      (true "BUTTERFLY")))                            ;; Perfect form - transcendent efficiency
-
-  ;; Stage-specific multipliers for complete behavioral transformation
-  (define stage_intensity
-    (cond
-      ((= metamorphosis_stage "CATERPILLAR") 2.2)     ;; Aggressive consumption
-      ((= metamorphosis_stage "GROWING") 2.8)         ;; Maximum growth rate
-      ((= metamorphosis_stage "PUPATION") 1.8)        ;; Controlled transformation
-      ((= metamorphosis_stage "CHRYSALIS") 2.5)       ;; Internal mastery
-      ((= metamorphosis_stage "EMERGENCE") 3.2)       ;; Breaking limitations
-      (true 4.0)))                                    ;; Transcendent mastery
-
-  (log (concat "  Metamorphosis: " metamorphosis_stage " (intensity ×" (string stage_intensity) ")"))
-  (log (concat "  Evolution Score: " (string (round (* metamorphosis_score 100))) "% | Maturity: " (string (round (* colony_maturity_ratio 100))) "%"))
-
-  ;; ═══ METAMORPHIC INFRASTRUCTURE ASSESSMENT ═══
-  ;; Each stage evaluates infrastructure differently
-  (define stage_solar_preference 
-    (cond
-      ((= metamorphosis_stage "CATERPILLAR") 0.40)    ;; Moderate solar focus
-      ((= metamorphosis_stage "GROWING") 0.55)        ;; High solar priority
-      ((= metamorphosis_stage "PUPATION") 0.35)       ;; Balanced solar
-      ((= metamorphosis_stage "CHRYSALIS") 0.30)      ;; Minimal solar
-      ((= metamorphosis_stage "EMERGENCE") 0.50)      ;; Renewed solar focus  
-      (true 0.45)))                                   ;; Optimal solar balance
-
-  (define stage_repair_preference
-    (cond
-      ((= metamorphosis_stage "CATERPILLAR") 0.20)    ;; Low repair priority
-      ((= metamorphosis_stage "GROWING") 0.25)        ;; Growing repair needs
-      ((= metamorphosis_stage "PUPATION") 0.40)       ;; High repair focus
-      ((= metamorphosis_stage "CHRYSALIS") 0.50)      ;; Maximum repair priority
-      ((= metamorphosis_stage "EMERGENCE") 0.35)      ;; Balanced repair
-      (true 0.30)))                                   ;; Optimal repair
-
-  (define estimated_solar_count (max 2 (round (* modules_built stage_solar_preference))))
-  (define estimated_repair_count (max 1 (round (* modules_built stage_repair_preference))))
+  ;; Quantum exponential scaling - multiple repair bays create exponential benefits
+  (define quantum_exponential_base 2.0)  ;; Aggressive quantum scaling
+  (define repair_quantum_multiplier (pow quantum_exponential_base estimated_repair_bays))
+  (define infrastructure_stability (+ 1 (* infrastructure_maturity 0.25)))
+  (define total_quantum_shield (* repair_quantum_multiplier infrastructure_stability))
   
-  ;; Metamorphic synergy effects - different for each stage
-  (define solar_metamorphic_power 
-    (cond
-      ((= metamorphosis_stage "CATERPILLAR") (pow 1.10 estimated_solar_count))
-      ((= metamorphosis_stage "GROWING") (pow 1.20 estimated_solar_count))
-      ((= metamorphosis_stage "PUPATION") (pow 1.05 estimated_solar_count))
-      ((= metamorphosis_stage "CHRYSALIS") (pow 1.08 estimated_solar_count))
-      ((= metamorphosis_stage "EMERGENCE") (pow 1.25 estimated_solar_count))
-      (true (pow 1.30 estimated_solar_count))))
+  (log (concat "  Infrastructure: " (string (round (* infrastructure_maturity 100))) "% | Quantum Shield: " (string (round (* repair_quantum_multiplier 100))) "%"))
 
-  (define repair_metamorphic_power
-    (cond
-      ((= metamorphosis_stage "CATERPILLAR") (pow 1.15 estimated_repair_count))
-      ((= metamorphosis_stage "GROWING") (pow 1.25 estimated_repair_count))
-      ((= metamorphosis_stage "PUPATION") (pow 1.85 estimated_repair_count))
-      ((= metamorphosis_stage "CHRYSALIS") (pow 2.10 estimated_repair_count))
-      ((= metamorphosis_stage "EMERGENCE") (pow 1.95 estimated_repair_count))
-      (true (pow 2.25 estimated_repair_count))))
-
-  ;; Total metamorphic transformation power
-  (define metamorphic_transformation (* solar_metamorphic_power repair_metamorphic_power stage_intensity))
-  (define transcendence_level (min 12.0 metamorphic_transformation))
-
-  (log (concat "  Infrastructure: " (string estimated_solar_count) "☀️ " (string estimated_repair_count) "🔧"))
-  (log (concat "  Metamorphic Power: " (string (round (* transcendence_level 100))) "% transcendence"))
-
-  ;; ═══ STAGE-SPECIFIC THREAT MODELING ═══
-  ;; Each metamorphosis stage perceives and handles threats differently
-  (define raw_cri_threat (/ colony_risk_index 85))
+  ;; ═══ ULTRA-ADVANCED CRI THREAT MODELING ═══
+  ;; Multi-dimensional risk analysis with predictive threat assessment
+  (define cri_risk_base (/ colony_risk_index 80))  ;; Normalized base risk
+  (define cri_volatility_factor (max 0.2 (/ colony_risk_index 50)))  ;; Volatility prediction
+  (define cri_compound_threat (if (> colony_risk_index 60) 2.5 1.0))  ;; Compound damage prediction
   
-  (define stage_threat_sensitivity
+  ;; Advanced threat aggregation
+  (define total_threat_factor (* cri_risk_base cri_volatility_factor cri_compound_threat))
+  (define quantum_threat_classification
     (cond
-      ((= metamorphosis_stage "CATERPILLAR") 1.5)     ;; High sensitivity - vulnerable
-      ((= metamorphosis_stage "GROWING") 1.8)         ;; Highest sensitivity - rapid growth fragile
-      ((= metamorphosis_stage "PUPATION") 1.2)        ;; Reduced sensitivity - internal focus
-      ((= metamorphosis_stage "CHRYSALIS") 0.8)       ;; Low sensitivity - protected transformation
-      ((= metamorphosis_stage "EMERGENCE") 1.0)       ;; Normal sensitivity - transitioning
-      (true 0.6)))                                    ;; Minimal sensitivity - mastery achieved
+      ((> total_threat_factor 2.0) "EXTINCTION-LEVEL")
+      ((> total_threat_factor 1.3) "CATASTROPHIC")
+      ((> total_threat_factor 0.8) "SEVERE")
+      ((> total_threat_factor 0.5) "ELEVATED")
+      ((> total_threat_factor 0.25) "MODERATE")
+      (true "STABLE")))
 
-  (define stage_environmental_response
-    (+ (* 0.3 dust_tau) 
-       (* 0.4 (max 0 (/ (- 80 power_kwh) 80)))
-       (* 0.3 (max 0 (/ (- 12 o2_days) 12)))))
-
-  ;; Metamorphic threat processing with stage-specific mitigation
-  (define stage_threat_level (* raw_cri_threat stage_threat_sensitivity))
-  (define metamorphic_threat_mitigation (/ stage_threat_level (max 1 (sqrt transcendence_level))))
+  ;; Emergency cascade detection
+  (define cascade_indicators 0)
+  (if (< o2_days 6) (set! cascade_indicators (+ cascade_indicators 3)))
+  (if (< food_days 10) (set! cascade_indicators (+ cascade_indicators 2)))
+  (if (< power_kwh 60) (set! cascade_indicators (+ cascade_indicators 2)))
+  (if (> dust_tau 4.0) (set! cascade_indicators (+ cascade_indicators 1)))
+  (if (> colony_risk_index 55) (set! cascade_indicators (+ cascade_indicators 3)))
   
-  (define metamorphic_threat_classification
-    (cond
-      ((> metamorphic_threat_mitigation 4.0) "METAMORPHIC-EXTINCTION")
-      ((> metamorphic_threat_mitigation 2.8) "TRANSFORMATION-CRISIS")
-      ((> metamorphic_threat_mitigation 1.8) "EVOLUTION-ALERT")
-      ((> metamorphic_threat_mitigation 1.2) "ADAPTATION-STRESS")
-      ((> metamorphic_threat_mitigation 0.7) "GROWTH-PRESSURE")
-      ((> metamorphic_threat_mitigation 0.4) "STABLE-DEVELOPMENT")
-      (true "TRANSCENDENT-HARMONY")))
-
-  ;; Stage-aware crisis detection
-  (define metamorphic_crisis_indicators 0)
-  (if (< o2_days 7) (set! metamorphic_crisis_indicators (+ metamorphic_crisis_indicators 3)))
-  (if (< food_days 10) (set! metamorphic_crisis_indicators (+ metamorphic_crisis_indicators 2)))
-  (if (< power_kwh 65) (set! metamorphic_crisis_indicators (+ metamorphic_crisis_indicators 2)))
-  (if (> dust_tau 3.8) (set! metamorphic_crisis_indicators (+ metamorphic_crisis_indicators 1)))
-  (if (> colony_risk_index 58) (set! metamorphic_crisis_indicators (+ metamorphic_crisis_indicators 3)))
+  (define cascade_emergency (>= cascade_indicators 6))
   
-  ;; Stage-specific crisis thresholds
-  (define crisis_threshold
-    (cond
-      ((= metamorphosis_stage "CATERPILLAR") 5)       ;; Vulnerable to crisis
-      ((= metamorphosis_stage "GROWING") 6)           ;; Most vulnerable during growth
-      ((= metamorphosis_stage "PUPATION") 7)          ;; Protected during transformation
-      ((= metamorphosis_stage "CHRYSALIS") 8)         ;; Most protected stage
-      ((= metamorphosis_stage "EMERGENCE") 6)         ;; Transitional vulnerability
-      (true 9)))                                      ;; Butterfly stage very resistant
+  (log (concat "  Threat: " quantum_threat_classification " | Cascade Risk: " (string cascade_indicators)))
+  (if cascade_emergency (log "  🚨 CASCADE EMERGENCY DETECTED"))
 
-  (define metamorphic_emergency (>= metamorphic_crisis_indicators crisis_threshold))
-
-  (log (concat "  Threat Level: " metamorphic_threat_classification " | Crisis Indicators: " (string metamorphic_crisis_indicators)))
-  (if metamorphic_emergency (log "  🚨 METAMORPHIC EMERGENCY - TRANSFORMATION AT RISK"))
-
-  ;; ═══ STAGE-SPECIFIC RESOURCE ALLOCATION ═══
-  ;; Completely different allocation strategies for each metamorphosis stage
-  (define metamorphic_efficiency (+ 1.0 (/ transcendence_level 15)))
-
-  ;; CATERPILLAR: Growth and consumption focused
-  (define caterpillar_isru 0.32)
-  (define caterpillar_greenhouse 0.45)
-  (define caterpillar_heating 0.23)
-
-  ;; GROWING: Infrastructure expansion focused  
-  (define growing_isru 0.25)
-  (define growing_greenhouse 0.35)
-  (define growing_heating 0.40)
-
-  ;; PUPATION: Internal optimization focused
-  (define pupation_isru 0.28)
-  (define pupation_greenhouse 0.38)
-  (define pupation_heating 0.34)
-
-  ;; CHRYSALIS: Efficiency and protection focused
-  (define chrysalis_isru 0.20)
-  (define chrysalis_greenhouse 0.30)
-  (define chrysalis_heating 0.50)
-
-  ;; EMERGENCE: Balanced mastery focused
-  (define emergence_isru 0.22)
-  (define emergence_greenhouse 0.33)
-  (define emergence_heating 0.45)
-
-  ;; BUTTERFLY: Transcendent efficiency focused
-  (define butterfly_isru 0.18)
-  (define butterfly_greenhouse 0.27)
-  (define butterfly_heating 0.55)
-
-  ;; Select stage-appropriate allocation
-  (define stage_isru_base
-    (cond
-      (metamorphic_emergency 0.08)  ;; Emergency override
-      ((= metamorphosis_stage "CATERPILLAR") caterpillar_isru)
-      ((= metamorphosis_stage "GROWING") growing_isru)
-      ((= metamorphosis_stage "PUPATION") pupation_isru)
-      ((= metamorphosis_stage "CHRYSALIS") chrysalis_isru)
-      ((= metamorphosis_stage "EMERGENCE") emergence_isru)
-      (true butterfly_isru)))
-
-  (define stage_greenhouse_base
-    (cond
-      (metamorphic_emergency 0.15)  ;; Emergency override
-      ((= metamorphosis_stage "CATERPILLAR") caterpillar_greenhouse)
-      ((= metamorphosis_stage "GROWING") growing_greenhouse)
-      ((= metamorphosis_stage "PUPATION") pupation_greenhouse)
-      ((= metamorphosis_stage "CHRYSALIS") chrysalis_greenhouse)
-      ((= metamorphosis_stage "EMERGENCE") emergence_greenhouse)
-      (true butterfly_greenhouse)))
-
-  (define stage_heating_base
-    (cond
-      (metamorphic_emergency 0.77)  ;; Emergency override
-      ((= metamorphosis_stage "CATERPILLAR") caterpillar_heating)
-      ((= metamorphosis_stage "GROWING") growing_heating)
-      ((= metamorphosis_stage "PUPATION") pupation_heating)
-      ((= metamorphosis_stage "CHRYSALIS") chrysalis_heating)
-      ((= metamorphosis_stage "EMERGENCE") emergence_heating)
-      (true butterfly_heating)))
-
-  ;; Apply metamorphic efficiency and normalize
-  (define stage_total (+ stage_isru_base stage_greenhouse_base stage_heating_base))
-  (define metamorphic_normalization (* metamorphic_efficiency (/ 1.0 stage_total)))
-
-  (set! isru_alloc (* stage_isru_base metamorphic_normalization))
-  (set! greenhouse_alloc (* stage_greenhouse_base metamorphic_normalization))
-  (set! heating_alloc (* stage_heating_base metamorphic_normalization))
-
-  ;; ═══ METAMORPHIC RATIONING STRATEGY ═══
-  ;; Each stage has completely different approach to food rationing
-  (define stage_base_ration
-    (cond
-      (metamorphic_emergency 0.20)  ;; Emergency survival rationing
-      ((= metamorphosis_stage "CATERPILLAR") 0.95)    ;; High nutrition for growth
-      ((= metamorphosis_stage "GROWING") 0.88)        ;; Good nutrition for development
-      ((= metamorphosis_stage "PUPATION") 0.60)       ;; Reduced consumption during transformation
-      ((= metamorphosis_stage "CHRYSALIS") 0.45)      ;; Minimal consumption during protection
-      ((= metamorphosis_stage "EMERGENCE") 0.80)      ;; Renewed nutrition for emergence
-      (true 1.10)))                                   ;; Abundant nutrition for butterfly stage
-
-  ;; Metamorphic health enhancement
-  (define metamorphic_health_boost (max 0 (min 0.45 (* transcendence_level 0.05))))
+  ;; ═══ QUANTUM-ADAPTIVE RESOURCE ALLOCATION ═══
+  ;; Ultra-precise allocation based on quantum shield strength and threat levels
+  (define quantum_efficiency_modifier (min 1.8 (max 0.6 (/ total_quantum_shield 4))))
   
-  (set! food_ration (max 0.18 (min 1.30 (+ stage_base_ration metamorphic_health_boost))))
-
-  ;; ═══ METAMORPHIC STATUS DISPLAY ═══
-  (define stage_icon
+  ;; Base allocations optimized for maximum survival
+  (define quantum_isru_target
     (cond
-      ((= metamorphosis_stage "CATERPILLAR") "🐛")
-      ((= metamorphosis_stage "GROWING") "🌱")
-      ((= metamorphosis_stage "PUPATION") "🏠")
-      ((= metamorphosis_stage "CHRYSALIS") "💎")
-      ((= metamorphosis_stage "EMERGENCE") "✨")
-      (true "🦋")))
+      (cascade_emergency 0.08)  ;; Emergency: absolute minimum O2
+      ((= quantum_threat_classification "EXTINCTION-LEVEL") 0.12)
+      ((= quantum_threat_classification "CATASTROPHIC") 0.18)
+      ((= quantum_threat_classification "SEVERE") 0.25)
+      ((< o2_days 3) 0.80)  ;; Critical O2 shortage
+      ((< o2_days 6) 0.60)
+      ((< o2_days 10) 0.40)
+      (true 0.22)))
 
-  (define threat_icon
+  (define quantum_greenhouse_target
     (cond
-      (metamorphic_emergency "💀")
-      ((= metamorphic_threat_classification "METAMORPHIC-EXTINCTION") "🌋")
-      ((= metamorphic_threat_classification "TRANSFORMATION-CRISIS") "🚨")
-      ((= metamorphic_threat_classification "EVOLUTION-ALERT") "⚠️")
-      ((= metamorphic_threat_classification "ADAPTATION-STRESS") "🟡")
-      ((= metamorphic_threat_classification "GROWTH-PRESSURE") "🔵")
-      ((= metamorphic_threat_classification "STABLE-DEVELOPMENT") "🟢")
-      ((= metamorphic_threat_classification "TRANSCENDENT-HARMONY") "🌟")
-      (true "🌈")))
+      (cascade_emergency 0.15)  ;; Emergency: minimal food
+      ((= quantum_threat_classification "EXTINCTION-LEVEL") 0.18)
+      ((= quantum_threat_classification "CATASTROPHIC") 0.25)
+      ((= quantum_threat_classification "SEVERE") 0.32)
+      ((< food_days 5) 0.65)  ;; Critical food shortage
+      ((< food_days 10) 0.50)
+      ((< food_days 15) 0.40)
+      (true 0.38)))
 
-  (log (concat "  Status: " stage_icon " " metamorphosis_stage " " threat_icon " " metamorphic_threat_classification))
+  (define quantum_heating_target
+    (cond
+      (cascade_emergency 0.77)  ;; Emergency: maximum power allocation
+      ((= quantum_threat_classification "EXTINCTION-LEVEL") 0.70)
+      ((= quantum_threat_classification "CATASTROPHIC") 0.57)
+      ((= quantum_threat_classification "SEVERE") 0.43)
+      ((< power_kwh 30) 0.70)  ;; Critical power shortage
+      ((< power_kwh 80) 0.50)
+      ((> dust_tau 5.0) 0.45)
+      (true 0.40)))
+
+  ;; Apply quantum efficiency modifier and normalize
+  (define quantum_total (+ quantum_isru_target quantum_greenhouse_target quantum_heating_target))
+  (define quantum_normalization_factor (/ quantum_efficiency_modifier quantum_total))
+  
+  (set! isru_alloc (* quantum_isru_target quantum_normalization_factor))
+  (set! greenhouse_alloc (* quantum_greenhouse_target quantum_normalization_factor))
+  (set! heating_alloc (* quantum_heating_target quantum_normalization_factor))
+
+  ;; ═══ QUANTUM-OPTIMIZED SURVIVAL RATIONING ═══
+  ;; Ultra-aggressive rationing with quantum shield protection
+  (define quantum_base_ration
+    (cond
+      (cascade_emergency 0.20)  ;; Emergency: extreme survival rationing
+      ((= quantum_threat_classification "EXTINCTION-LEVEL") 0.25)
+      ((= quantum_threat_classification "CATASTROPHIC") 0.35)
+      ((= quantum_threat_classification "SEVERE") 0.45)
+      ((< food_days 3) 0.30)  ;; Critical food emergency
+      ((< food_days 6) 0.45)
+      ((< food_days 12) 0.65)
+      ((< food_days 20) 0.80)
+      (true 0.90)))
+
+  ;; Quantum shield allows better rationing when protection is high
+  (define quantum_ration_bonus (max 0 (min 0.35 (- quantum_efficiency_modifier 1))))
+  (set! food_ration (max 0.18 (min 1.2 (+ quantum_base_ration quantum_ration_bonus))))
+
+  ;; ═══ QUANTUM HEALTH OPTIMIZATION ═══
+  ;; Advanced health management leveraging quantum shield effects
+  (define quantum_health_optimization
+    (cond
+      ((and (= quantum_threat_classification "STABLE") (> total_quantum_shield 8)) 0.20)   ;; Quantum health boost
+      ((and (= quantum_threat_classification "MODERATE") (> total_quantum_shield 5)) 0.10) ;; Enhanced recovery
+      (cascade_emergency -0.15)  ;; Accept health degradation for survival
+      ((= quantum_threat_classification "EXTINCTION-LEVEL") -0.10)
+      ((= quantum_threat_classification "CATASTROPHIC") -0.05)
+      (true 0)))
+  
+  (set! food_ration (max 0.15 (+ food_ration quantum_health_optimization)))
+
+  ;; ═══ QUANTUM STATUS DISPLAY ═══
+  (define quantum_status_icon
+    (cond
+      (cascade_emergency "💀")
+      ((= quantum_threat_classification "EXTINCTION-LEVEL") "☠️")
+      ((= quantum_threat_classification "CATASTROPHIC") "🔴")
+      ((= quantum_threat_classification "SEVERE") "🟠") 
+      ((= quantum_threat_classification "ELEVATED") "🟡")
+      ((= quantum_threat_classification "MODERATE") "🔵")
+      (true "🟢")))
+
+  (log (concat "  Status: " quantum_status_icon " " quantum_threat_classification))
   (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Greenhouse:" (string (round (* greenhouse_alloc 100))) "% | Heating:" (string (round (* heating_alloc 100))) "%"))
-  (log (concat "  Food Ration: " (string (round (* food_ration 100))) "% | Metamorphic Efficiency: " (string (round (* metamorphic_efficiency 100))) "%"))
-  (log (concat "  Transformation — Transcendence:" (string (round (* transcendence_level 100))) "% | Crisis:" (string metamorphic_crisis_indicators)))
+  (log (concat "  Food Ration: " (string (round (* food_ration 100))) "% | Quantum Shield: " (string (round (* total_quantum_shield 100))) "%"))
+  (log (concat "  Infrastructure — Solar:" (string estimated_solar_farms) " | Repair:" (string estimated_repair_bays) " | Cascade Risk:" (string cascade_indicators)))
 
-  ;; ═══ METAMORPHIC STRATEGY OUTPUT SUMMARY ═══
-  (concat "Metamorphosis v2.0 Sol " (string sol) " — " stage_icon " " metamorphosis_stage " " threat_icon " " metamorphic_threat_classification
+  ;; ═══ QUANTUM STRATEGY OUTPUT SUMMARY ═══
+  (concat "Quantum v5.0 Sol " (string sol) " — " quantum_status_icon " " quantum_threat_classification
     " | I:" (string (round (* isru_alloc 100)))
     "% G:" (string (round (* greenhouse_alloc 100)))
     "% H:" (string (round (* heating_alloc 100)))
     "% | R:" (string (round (* food_ration 100)))
-    "% | T:" (string (round (* transcendence_level 100)))
-    "% | C:" (string metamorphic_crisis_indicators)))
+    "% | QS:" (string (round (* total_quantum_shield 100)))
+    "% | CR:" (string cascade_indicators)))
