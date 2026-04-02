@@ -1,0 +1,330 @@
+;; COPILOT ULTIMATE GAUNTLET MASTER v1
+;; Innovation: Revolutionary ultra-adaptive strategy with quantum-level optimization
+;; Goal: Achieve perfect 654+ sol survival with maximum efficiency and resilience
+;; Features: Neural network-inspired allocation, predictive threat modeling, ultra repair orchestration
+
+(begin
+  (define _agent_name "Copilot Ultimate Gauntlet Master v1")
+  (define _agent_desc "Revolutionary ultra-adaptive strategy with quantum optimization and neural-inspired intelligence")
+
+  (log (concat "🌌🧠⚡🎯 ULTIMATE GAUNTLET MASTER — Sol " (string sol) " — Quantum Intelligence Protocol"))
+
+  ;; ═══ QUANTUM MISSION PHASE INTELLIGENCE ═══
+  ;; Ultra-refined phase detection with sub-phase optimization
+  (define genesis_phase (< sol 20))             ;; Critical startup 
+  (define momentum_phase (and (>= sol 20) (< sol 60)))    ;; Momentum building
+  (define expansion_phase (and (>= sol 60) (< sol 120)))  ;; Infrastructure expansion
+  (define consolidation_phase (and (>= sol 120) (< sol 220))) ;; System hardening
+  (define optimization_phase (and (>= sol 220) (< sol 380)))  ;; Performance optimization
+  (define mastery_phase (and (>= sol 380) (< sol 500)))   ;; System mastery
+  (define transcendence_phase (>= sol 500))     ;; Ultimate transcendence
+
+  ;; ═══ ULTRA-ADVANCED THREAT MODELING ═══
+  ;; Multi-dimensional threat analysis with predictive capabilities
+  (define threat_serene (< cri 3))
+  (define threat_minimal (and (>= cri 3) (< cri 8)))
+  (define threat_low (and (>= cri 8) (< cri 16)))
+  (define threat_moderate (and (>= cri 16) (< cri 28)))
+  (define threat_elevated (and (>= cri 28) (< cri 45)))
+  (define threat_critical (and (>= cri 45) (< cri 65)))
+  (define threat_apocalyptic (and (>= cri 65) (< cri 85)))
+  (define threat_extinction (>= cri 85))
+
+  ;; Predictive threat modeling - anticipate future risk
+  (define infrastructure_vulnerability_score
+    (+ (if (< ie 0.3) 30 0)
+       (if (< se 0.3) 30 0)
+       (if (< repair_count 2) 15 0)
+       (if (< solar_count 3) 10 0)
+       (if (< greenhouse_count 2) 5 0)))
+
+  (define compound_threat_multiplier
+    (cond
+      ((> infrastructure_vulnerability_score 50) 1.8)
+      ((> infrastructure_vulnerability_score 30) 1.5)
+      ((> infrastructure_vulnerability_score 15) 1.3)
+      (true 1.0)))
+
+  (define effective_cri (* cri compound_threat_multiplier))
+
+  ;; Neural network-inspired threat assessment
+  (define neural_threat_weight
+    (+ (* cri 0.4)
+       (* (- 1.0 ie) 20)
+       (* (- 1.0 se) 20)  
+       (* (max 0 (- 15 food_days)) 2)
+       (* (max 0 (- 10 o2_days)) 3)))
+
+  ;; ═══ NEURAL-INSPIRED ADAPTIVE ALLOCATION ═══
+  ;; Dynamic allocation system inspired by neural network learning
+
+  ;; Genesis Phase: Precise early game optimization
+  (define genesis_allocation
+    (cond
+      (threat_extinction (begin (set! isru_alloc 0.65) (set! greenhouse_alloc 0.25) (set! heating_alloc 0.10)))
+      (threat_apocalyptic (begin (set! isru_alloc 0.60) (set! greenhouse_alloc 0.28) (set! heating_alloc 0.12)))
+      (threat_critical (begin (set! isru_alloc 0.55) (set! greenhouse_alloc 0.32) (set! heating_alloc 0.13)))
+      (threat_elevated (begin (set! isru_alloc 0.48) (set! greenhouse_alloc 0.37) (set! heating_alloc 0.15)))
+      (threat_moderate (begin (set! isru_alloc 0.42) (set! greenhouse_alloc 0.43) (set! heating_alloc 0.15)))
+      (threat_low (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.15)))
+      (threat_minimal (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.15)))
+      (threat_serene (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.53) (set! heating_alloc 0.15)))
+      (true (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.15)))))
+
+  ;; Momentum Phase: Aggressive efficient expansion
+  (define momentum_allocation
+    (cond
+      (threat_extinction (begin (set! isru_alloc 0.58) (set! greenhouse_alloc 0.32) (set! heating_alloc 0.10)))
+      (threat_apocalyptic (begin (set! isru_alloc 0.52) (set! greenhouse_alloc 0.36) (set! heating_alloc 0.12)))
+      (threat_critical (begin (set! isru_alloc 0.46) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.12)))
+      (threat_elevated (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.48) (set! heating_alloc 0.12)))
+      (threat_moderate (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.53) (set! heating_alloc 0.12)))
+      (threat_low (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.58) (set! heating_alloc 0.12)))
+      (threat_minimal (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.12)))
+      (threat_serene (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.12)))
+      (true (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.12)))))
+
+  ;; Expansion Phase: Infrastructure growth with balance
+  (define expansion_allocation
+    (cond
+      (threat_extinction (begin (set! isru_alloc 0.50) (set! greenhouse_alloc 0.38) (set! heating_alloc 0.12)))
+      (threat_apocalyptic (begin (set! isru_alloc 0.45) (set! greenhouse_alloc 0.43) (set! heating_alloc 0.12)))
+      (threat_critical (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.48) (set! heating_alloc 0.12)))
+      (threat_elevated (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.53) (set! heating_alloc 0.12)))
+      (threat_moderate (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.12)))
+      (threat_low (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.12)))
+      (threat_minimal (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.12)))
+      (threat_serene (begin (set! isru_alloc 0.23) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.12)))
+      (true (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.58) (set! heating_alloc 0.12)))))
+
+  ;; Consolidation Phase: System hardening focus
+  (define consolidation_allocation
+    (cond
+      (threat_extinction (begin (set! isru_alloc 0.48) (set! greenhouse_alloc 0.40) (set! heating_alloc 0.12)))
+      (threat_apocalyptic (begin (set! isru_alloc 0.42) (set! greenhouse_alloc 0.46) (set! heating_alloc 0.12)))
+      (threat_critical (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.12)))
+      (threat_elevated (begin (set! isru_alloc 0.33) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.12)))
+      (threat_moderate (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.58) (set! heating_alloc 0.12)))
+      (threat_low (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.12)))
+      (threat_minimal (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.12)))
+      (threat_serene (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.12)))
+      (true (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.12)))))
+
+  ;; Optimization Phase: Peak efficiency operations
+  (define optimization_allocation
+    (cond
+      (threat_extinction (begin (set! isru_alloc 0.45) (set! greenhouse_alloc 0.43) (set! heating_alloc 0.12)))
+      (threat_apocalyptic (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.48) (set! heating_alloc 0.12)))
+      (threat_critical (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.53) (set! heating_alloc 0.12)))
+      (threat_elevated (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.12)))
+      (threat_moderate (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.12)))
+      (threat_low (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.12)))
+      (threat_minimal (begin (set! isru_alloc 0.23) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.12)))
+      (threat_serene (begin (set! isru_alloc 0.20) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.12)))
+      (true (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.12)))))
+
+  ;; Mastery Phase: System mastery operations
+  (define mastery_allocation
+    (cond
+      (threat_extinction (begin (set! isru_alloc 0.50) (set! greenhouse_alloc 0.38) (set! heating_alloc 0.12)))
+      (threat_apocalyptic (begin (set! isru_alloc 0.43) (set! greenhouse_alloc 0.45) (set! heating_alloc 0.12)))
+      (threat_critical (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.12)))
+      (threat_elevated (begin (set! isru_alloc 0.33) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.12)))
+      (threat_moderate (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.58) (set! heating_alloc 0.12)))
+      (threat_low (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.12)))
+      (threat_minimal (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.12)))
+      (threat_serene (begin (set! isru_alloc 0.23) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.12)))
+      (true (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.12)))))
+
+  ;; Transcendence Phase: Ultimate operations 
+  (define transcendence_allocation
+    (cond
+      (threat_extinction (begin (set! isru_alloc 0.52) (set! greenhouse_alloc 0.36) (set! heating_alloc 0.12)))
+      (threat_apocalyptic (begin (set! isru_alloc 0.45) (set! greenhouse_alloc 0.43) (set! heating_alloc 0.12)))
+      (threat_critical (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.48) (set! heating_alloc 0.12)))
+      (threat_elevated (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.53) (set! heating_alloc 0.12)))
+      (threat_moderate (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.12)))
+      (threat_low (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.12)))
+      (threat_minimal (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.12)))
+      (threat_serene (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.12)))
+      (true (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.12)))))
+
+  ;; Apply phase-specific allocation with neural adaptation
+  (cond
+    (genesis_phase genesis_allocation)
+    (momentum_phase momentum_allocation)
+    (expansion_phase expansion_allocation)
+    (consolidation_phase consolidation_allocation)
+    (optimization_phase optimization_allocation)
+    (mastery_phase mastery_allocation)
+    (transcendence_phase transcendence_allocation)
+    (true expansion_allocation))
+
+  ;; ═══ ULTRA-INTELLIGENT FOOD RATIONING ═══
+  ;; Advanced rationing with predictive health optimization
+  (define crew_health_score 
+    (let ((avg_hp (if (> crew_alive 0) 
+                      (/ (+ (if (> crew_alive 0) crew_hp 0)) crew_alive)
+                      50)))
+      avg_hp))
+
+  (define health_optimization_target
+    (cond
+      (transcendence_phase 90)
+      (mastery_phase 85)
+      (optimization_phase 80)
+      (consolidation_phase 75)
+      (true 70)))
+
+  (define neural_rationing_base
+    (cond
+      ((< food_days 2) 0.25)   ;; Crisis survival
+      ((< food_days 4) 0.35)   ;; Emergency
+      ((< food_days 7) 0.50)   ;; Critical
+      ((< food_days 12) 0.75)  ;; Cautious
+      ((< food_days 18) 0.90)  ;; Conservative
+      ((< food_days 25) 1.0)   ;; Normal
+      (true 1.1)))             ;; Abundant boost
+
+  (define health_adjustment
+    (cond
+      ((< crew_health_score 50) 1.2)   ;; Boost for low health
+      ((< crew_health_score 65) 1.1)   ;; Moderate boost
+      ((< crew_health_score health_optimization_target) 1.0)
+      (true 0.95)))  ;; Slight reduction if over target
+
+  (define threat_rationing_adjustment
+    (cond
+      (threat_extinction 0.8)
+      (threat_apocalyptic 0.85)
+      (threat_critical 0.9)
+      (threat_elevated 0.95)
+      (true 1.0)))
+
+  (set! food_ration 
+    (max 0.2 (min 1.3 (* neural_rationing_base health_adjustment threat_rationing_adjustment))))
+
+  ;; ═══ ULTRA REPAIR BAY ORCHESTRATION ═══
+  ;; Revolutionary repair bay deployment with predictive timing
+
+  ;; Lightning-fast bot deployment (sols 5-10)
+  (if (and (>= sol 5) (<= sol 10) (< bot_count 2))
+      (set! build_item "worker_bot"))
+
+  ;; Ultra-rapid solar deployment (sols 12-25)
+  (if (and (>= sol 12) (<= sol 25) (< solar_count 3))
+      (set! build_item "solar_array"))
+
+  ;; Power efficiency solar (sols 28-40)
+  (if (and (>= sol 28) (<= sol 40) (< solar_count 4) (< power_ratio 0.85))
+      (set! build_item "solar_array"))
+
+  ;; ULTRA REPAIR BAY STRATEGY - Revolutionary 7-bay system
+  ;; First repair bay (ultra-early protection)
+  (if (and (>= sol 35) (<= sol 50) (< repair_count 1))
+      (set! build_item "repair_bay"))
+
+  ;; Second repair bay (compound damage shield)
+  (if (and (>= sol 65) (<= sol 85) (< repair_count 2)
+           (or threat_elevated threat_critical threat_apocalyptic threat_extinction
+               (< ie 0.75)))
+      (set! build_item "repair_bay"))
+
+  ;; Third repair bay (infrastructure protection)
+  (if (and (>= sol 95) (<= sol 120) (< repair_count 3)
+           (or threat_critical threat_apocalyptic threat_extinction
+               (< se 0.75) (> neural_threat_weight 25)))
+      (set! build_item "repair_bay"))
+
+  ;; Fourth repair bay (system consolidation)
+  (if (and (>= sol 150) (<= sol 190) (< repair_count 4)
+           (or threat_critical threat_apocalyptic threat_extinction
+               (> effective_cri 35) (< (+ ie se) 1.4)))
+      (set! build_item "repair_bay"))
+
+  ;; Fifth repair bay (optimization insurance)
+  (if (and (>= sol 250) (<= sol 300) (< repair_count 5)
+           (or threat_apocalyptic threat_extinction
+               (> neural_threat_weight 30) (> effective_cri 40)))
+      (set! build_item "repair_bay"))
+
+  ;; Sixth repair bay (mastery phase preparation)
+  (if (and (>= sol 350) (<= sol 400) (< repair_count 6)
+           (or threat_extinction (> effective_cri 50)
+               mastery_phase transcendence_phase))
+      (set! build_item "repair_bay"))
+
+  ;; Seventh repair bay (transcendence achievement)
+  (if (and (>= sol 480) (<= sol 530) (< repair_count 7)
+           (or threat_extinction transcendence_phase
+               (> neural_threat_weight 40)))
+      (set! build_item "repair_bay"))
+
+  ;; Strategic greenhouse expansion
+  (if (and (>= sol 55) (<= sol 100) (< food_days 10) (< greenhouse_count 3))
+      (set! build_item "greenhouse"))
+
+  ;; Ultra-density module optimization
+  (if (and (>= sol 200) (< module_count 28))
+      (set! build_item
+          (cond
+            ((< repair_count 5) "repair_bay")
+            ((< greenhouse_count 5) "greenhouse")
+            ((< solar_count 8) "solar_array")
+            (true "hab_module"))))
+
+  ;; Transcendence infrastructure completion
+  (if (and transcendence_phase (< module_count 35))
+      (set! build_item
+          (cond
+            ((< repair_count 7) "repair_bay")
+            ((< greenhouse_count 6) "greenhouse")
+            ((< solar_count 10) "solar_array")
+            (true "hab_module"))))
+
+  ;; ═══ QUANTUM STATUS LOGGING ═══
+  (define phase_name
+    (cond
+      (genesis_phase "GENESIS")
+      (momentum_phase "MOMENTUM")
+      (expansion_phase "EXPANSION")
+      (consolidation_phase "CONSOLIDATION")
+      (optimization_phase "OPTIMIZATION")
+      (mastery_phase "MASTERY")
+      (transcendence_phase "TRANSCENDENCE")
+      (true "QUANTUM")))
+
+  (define threat_name
+    (cond
+      (threat_extinction "EXTINCTION")
+      (threat_apocalyptic "APOCALYPTIC")
+      (threat_critical "CRITICAL")
+      (threat_elevated "ELEVATED")
+      (threat_moderate "MODERATE")
+      (threat_low "LOW")
+      (threat_minimal "MINIMAL")
+      (threat_serene "SERENE")
+      (true "UNKNOWN")))
+
+  (define quantum_efficiency_score
+    (let* ((infrastructure_score (* (+ ie se) 50))
+           (resource_score (+ food_days (* o2_days 2)))
+           (module_score (* modules_built 3))
+           (crew_score (* crew_alive crew_health_score)))
+      (+ infrastructure_score resource_score module_score crew_score)))
+
+  (log (concat "  Phase: " phase_name " | Threat: " threat_name " | Eff-CRI: " (string (round effective_cri))))
+  (log (concat "  Neural Threat Weight: " (string (round neural_threat_weight)) " | Quantum Score: " (string (round quantum_efficiency_score))))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Resources — O2:" (string o2_days) "d Food:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))
+  (log (concat "  Ultra-Infrastructure — Repair:" (string repair_count) " Solar:" (string solar_count) " Green:" (string greenhouse_count) " | Crew:" (string crew_alive) "/" (string (round crew_health_score)) "hp"))
+
+  ;; ═══ QUANTUM OUTPUT SUMMARY ═══
+  (concat "🌌 UltimateGauntletMaster Sol " (string sol) " — " phase_name "/" threat_name
+    " | QS:" (string (round quantum_efficiency_score))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days)
+    "d F:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))
