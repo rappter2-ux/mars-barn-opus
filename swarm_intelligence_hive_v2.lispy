@@ -1,0 +1,183 @@
+;; SWARM INTELLIGENCE HIVE v2.0 - Distributed Colony Mind
+;; Revolutionary swarm-based colony management with collective intelligence
+;; Strategy: Multi-agent resource optimization + emergent behavior + adaptive swarming
+
+(begin
+  (define _agent_name "Swarm Intelligence Hive v2.0")
+  (define _agent_desc "Distributed colony intelligence with emergent swarm optimization and collective survival behaviors")
+
+  (log (concat "🐝🧠 Swarm Hive — Sol " (string sol)))
+
+  ;; ═══ SWARM COLLECTIVE INTELLIGENCE ═══
+  ;; Multi-agent resource analysis with collective decision making
+  (define crew_swarm_size 2)  ;; Always 2 bots in this challenge
+  (define infrastructure_swarm_count modules_built)
+  (define resource_swarm_agents 3)  ;; O2, Food, Power agents
+  
+  ;; Collective intelligence emerges from individual agent assessments
+  (define o2_agent_priority (max 0.1 (min 1.0 (/ (- 15 o2_days) 12))))
+  (define food_agent_priority (max 0.1 (min 1.0 (/ (- 20 food_days) 17))))
+  (define power_agent_priority (max 0.1 (min 1.0 (/ (- 100 power_kwh) 80))))
+  
+  ;; Swarm consensus through weighted voting
+  (define total_agent_priority (+ o2_agent_priority food_agent_priority power_agent_priority))
+  (define o2_agent_vote (/ o2_agent_priority total_agent_priority))
+  (define food_agent_vote (/ food_agent_priority total_agent_priority))
+  (define power_agent_vote (/ power_agent_priority total_agent_priority))
+  
+  (log (concat "  Swarm Votes: O2=" (string (round (* o2_agent_vote 100))) "% Food=" (string (round (* food_agent_vote 100))) "% Power=" (string (round (* power_agent_vote 100))) "%"))
+
+  ;; ═══ SWARM INFRASTRUCTURE COLLECTIVE ═══
+  ;; Infrastructure agents work together for optimal performance
+  (define estimated_solar_agents (max 2 (round (* modules_built 0.45))))
+  (define estimated_repair_agents (max 1 (round (* modules_built 0.30))))
+  (define estimated_greenhouse_agents (max 1 (round (* modules_built 0.25))))
+  
+  ;; Swarm synergy effects - agents work better together
+  (define solar_swarm_synergy (+ 1.0 (* estimated_solar_agents 0.12)))
+  (define repair_swarm_synergy (+ 1.0 (* estimated_repair_agents 0.18)))
+  (define greenhouse_swarm_synergy (+ 1.0 (* estimated_greenhouse_agents 0.15)))
+  
+  ;; Collective infrastructure intelligence
+  (define swarm_infrastructure_iq (* solar_swarm_synergy repair_swarm_synergy greenhouse_swarm_synergy))
+  (define infrastructure_emergence (min 8.0 swarm_infrastructure_iq))
+
+  (log (concat "  Infrastructure Swarm: " (string estimated_solar_agents) "☀️ " (string estimated_repair_agents) "🔧 " (string estimated_greenhouse_agents) "🌱"))
+  (log (concat "  Swarm IQ: " (string (round (* infrastructure_emergence 100))) "% collective intelligence"))
+
+  ;; ═══ EMERGENT THREAT ASSESSMENT ═══
+  ;; Swarm intelligence for distributed threat detection
+  (define individual_cri_assessment (/ colony_risk_index 90))
+  (define collective_cri_wisdom (if (> colony_risk_index 55) 2.1 1.0))
+  (define swarm_environmental_awareness 
+    (+ (* 0.25 dust_tau) 
+       (* 0.35 (max 0 (/ (- 80 power_kwh) 80)))
+       (* 0.40 (max 0 (/ (- 10 o2_days) 10)))))
+  
+  ;; Collective threat intelligence through swarm consensus
+  (define swarm_threat_consensus (+ individual_cri_assessment swarm_environmental_awareness))
+  (define distributed_threat_mitigation (/ swarm_threat_consensus (max 1 (sqrt infrastructure_emergence))))
+  
+  (define swarm_threat_level
+    (cond
+      ((> distributed_threat_mitigation 3.5) "HIVE-EXTINCTION")
+      ((> distributed_threat_mitigation 2.2) "SWARM-CRITICAL") 
+      ((> distributed_threat_mitigation 1.4) "COLLECTIVE-ALERT")
+      ((> distributed_threat_mitigation 0.9) "DISTRIBUTED-CAUTION")
+      ((> distributed_threat_mitigation 0.5) "SWARM-MONITORING")
+      ((> distributed_threat_mitigation 0.25) "COLLECTIVE-STABLE")
+      (true "HIVE-HARMONY")))
+
+  ;; Distributed crisis detection through agent consensus
+  (define crisis_agent_reports 0)
+  (if (< o2_days 6) (set! crisis_agent_reports (+ crisis_agent_reports 3)))
+  (if (< food_days 9) (set! crisis_agent_reports (+ crisis_agent_reports 2)))
+  (if (< power_kwh 60) (set! crisis_agent_reports (+ crisis_agent_reports 2)))
+  (if (> dust_tau 4.0) (set! crisis_agent_reports (+ crisis_agent_reports 1)))
+  (if (> colony_risk_index 60) (set! crisis_agent_reports (+ crisis_agent_reports 3)))
+  (if (< infrastructure_emergence 2.5) (set! crisis_agent_reports (+ crisis_agent_reports 2)))
+
+  (define swarm_emergency (>= crisis_agent_reports 7))
+  (define swarm_alert (>= crisis_agent_reports 4))
+
+  (log (concat "  Swarm Threat: " swarm_threat_level " | Agent Reports: " (string crisis_agent_reports)))
+  (if swarm_emergency (log "  🚨 SWARM EMERGENCY - ALL AGENTS RESPONDING"))
+  (if (and swarm_alert (not swarm_emergency)) (log "  ⚡ SWARM ALERT - COLLECTIVE ACTION"))
+
+  ;; ═══ DISTRIBUTED RESOURCE ALLOCATION ═══
+  ;; Each agent contributes to resource allocation decision
+  (define swarm_coordination_factor (+ 1.0 (/ infrastructure_emergence 12)))
+  
+  ;; Agent-based allocation through collective intelligence
+  (define swarm_isru_allocation
+    (cond
+      (swarm_emergency 0.06)  ;; Emergency: minimal O2 for survival
+      ((= swarm_threat_level "HIVE-EXTINCTION") 0.10)
+      ((= swarm_threat_level "SWARM-CRITICAL") 0.15)
+      ((= swarm_threat_level "COLLECTIVE-ALERT") 0.20)
+      ((= swarm_threat_level "DISTRIBUTED-CAUTION") 0.25)
+      ((< o2_days 4) 0.75)  ;; O2 agent takes control
+      ((< o2_days 8) 0.50)
+      ((< o2_days 12) 0.35)
+      (true 0.23)))
+
+  (define swarm_greenhouse_allocation
+    (cond
+      (swarm_emergency 0.14)  ;; Emergency: minimal food allocation
+      ((= swarm_threat_level "HIVE-EXTINCTION") 0.18)
+      ((= swarm_threat_level "SWARM-CRITICAL") 0.24)
+      ((= swarm_threat_level "COLLECTIVE-ALERT") 0.30)
+      ((= swarm_threat_level "DISTRIBUTED-CAUTION") 0.36)
+      ((< food_days 5) 0.70)  ;; Food agent takes control
+      ((< food_days 12) 0.55)
+      ((< food_days 18) 0.42)
+      (true 0.37)))
+
+  (define swarm_heating_allocation
+    (cond
+      (swarm_emergency 0.80)  ;; Emergency: power agent dominates
+      ((= swarm_threat_level "HIVE-EXTINCTION") 0.72)
+      ((= swarm_threat_level "SWARM-CRITICAL") 0.61)
+      ((= swarm_threat_level "COLLECTIVE-ALERT") 0.50)
+      ((= swarm_threat_level "DISTRIBUTED-CAUTION") 0.39)
+      ((< power_kwh 40) 0.75)  ;; Power agent takes control
+      ((< power_kwh 80) 0.60)
+      ((> dust_tau 4.5) 0.48)
+      (true 0.40)))
+
+  ;; Apply swarm coordination and normalize
+  (define swarm_total (+ swarm_isru_allocation swarm_greenhouse_allocation swarm_heating_allocation))
+  (define swarm_normalization (* swarm_coordination_factor (/ 1.0 swarm_total)))
+
+  (set! isru_alloc (* swarm_isru_allocation swarm_normalization))
+  (set! greenhouse_alloc (* swarm_greenhouse_allocation swarm_normalization))
+  (set! heating_alloc (* swarm_heating_allocation swarm_normalization))
+
+  ;; ═══ COLLECTIVE SURVIVAL RATIONING ═══
+  ;; Swarm intelligence determines optimal food rationing
+  (define swarm_base_ration
+    (cond
+      (swarm_emergency 0.19)  ;; Emergency: extreme survival rationing
+      ((= swarm_threat_level "HIVE-EXTINCTION") 0.24)
+      ((= swarm_threat_level "SWARM-CRITICAL") 0.32)
+      ((= swarm_threat_level "COLLECTIVE-ALERT") 0.42)
+      ((= swarm_threat_level "DISTRIBUTED-CAUTION") 0.52)
+      ((= swarm_threat_level "SWARM-MONITORING") 0.68)
+      ((= swarm_threat_level "COLLECTIVE-STABLE") 0.85)
+      ((= swarm_threat_level "HIVE-HARMONY") 1.05)
+      ((< food_days 4) 0.28)  ;; Food crisis override
+      ((< food_days 8) 0.45)
+      ((< food_days 15) 0.70)
+      (true 0.88)))
+
+  ;; Swarm health enhancement through collective care
+  (define swarm_health_collective (max 0 (min 0.4 (* infrastructure_emergence 0.06))))
+  
+  (set! food_ration (max 0.17 (min 1.25 (+ swarm_base_ration swarm_health_collective))))
+
+  ;; ═══ SWARM STATUS DISPLAY ═══
+  (define swarm_status_icon
+    (cond
+      (swarm_emergency "💀")
+      ((= swarm_threat_level "HIVE-EXTINCTION") "🔥")
+      ((= swarm_threat_level "SWARM-CRITICAL") "🚨")
+      ((= swarm_threat_level "COLLECTIVE-ALERT") "⚠️")
+      ((= swarm_threat_level "DISTRIBUTED-CAUTION") "🟡")
+      ((= swarm_threat_level "SWARM-MONITORING") "🔵")
+      ((= swarm_threat_level "COLLECTIVE-STABLE") "🟢")
+      ((= swarm_threat_level "HIVE-HARMONY") "🌟")
+      (true "🐝")))
+
+  (log (concat "  Status: " swarm_status_icon " " swarm_threat_level))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Greenhouse:" (string (round (* greenhouse_alloc 100))) "% | Heating:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Food Ration: " (string (round (* food_ration 100))) "% | Swarm Coordination: " (string (round (* swarm_coordination_factor 100))) "%"))
+  (log (concat "  Collective Intelligence — Emergence:" (string (round (* infrastructure_emergence 100))) "% | Reports:" (string crisis_agent_reports)))
+
+  ;; ═══ SWARM STRATEGY OUTPUT SUMMARY ═══
+  (concat "Swarm v2.0 Sol " (string sol) " — " swarm_status_icon " " swarm_threat_level
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | E:" (string (round (* infrastructure_emergence 100)))
+    "% | A:" (string crisis_agent_reports)))
