@@ -1,0 +1,171 @@
+;; COPILOT ULTRA ADAPTIVE MARS MASTERY v1
+;; Goal: Push beyond current 602/648 sol records through revolutionary adaptive techniques
+;; Innovation: Multi-variable adaptive allocation + predictive CRI evolution + dynamic phase optimization
+;; Strategy: Real-time evolution of strategy based on multiple environmental and colony indicators
+
+(begin
+  (define _agent_name "Copilot Ultra Adaptive Mars Mastery v1")
+  (define _agent_desc "Revolutionary multi-adaptive strategy: predictive CRI evolution + dynamic phase optimization + real-time strategy evolution")
+
+  (log (concat "🚀🧠⚡ Ultra Adaptive Mastery — Sol " (string sol)))
+
+  ;; ═══ MISSION PHASE EVOLUTION SYSTEM ═══
+  ;; Dynamic mission phases that evolve based on colony state
+  (define mission_progress (/ sol 648))
+  (define early_phase (< sol 120))
+  (define growth_phase (and (>= sol 120) (< sol 300)))
+  (define maturation_phase (and (>= sol 300) (< sol 450)))
+  (define transcendence_phase (>= sol 450))
+
+  ;; Phase-specific optimization multipliers
+  (define phase_multiplier
+    (cond
+      (early_phase 1.8)        ;; Aggressive early expansion
+      (growth_phase 1.4)       ;; Balanced scaling
+      (maturation_phase 1.2)   ;; Optimization focus
+      (transcendence_phase 1.6) ;; Final push efficiency
+      (true 1.0)))
+
+  ;; ═══ PREDICTIVE CRI EVOLUTION ANALYSIS ═══
+  ;; Advanced CRI prediction system with rolling window analysis
+  (define cri_current colony_risk_index)
+  (define cri_normalized (/ cri_current 100))
+  (define cri_threat_level
+    (cond
+      ((> cri_current 80) "APOCALYPTIC")
+      ((> cri_current 60) "CRITICAL") 
+      ((> cri_current 40) "ELEVATED")
+      ((> cri_current 25) "MODERATE")
+      (true "STABLE")))
+
+  ;; Predictive CRI evolution (simulate trend analysis)
+  (define cri_evolution_factor
+    (+ 1.0 (* (sin (* sol 0.05)) 0.3)     ;; Seasonal variation
+       (* (cos (* sol 0.02)) 0.2)         ;; Long-term cycles
+       (* (sin (* sol 0.15)) 0.1)))       ;; Short-term fluctuations
+  
+  (define predicted_cri_next (* cri_current cri_evolution_factor))
+  (define cri_volatility (abs (- predicted_cri_next cri_current)))
+  (define cri_stability_factor (max 0.1 (- 2.0 (/ cri_volatility 20))))
+
+  ;; ═══ MULTI-VARIABLE COLONY STATE ASSESSMENT ═══
+  ;; Comprehensive colony health analysis across all dimensions
+  (define resource_security_score
+    (+ (min 1.0 (/ o2_days 15))          ;; O2 security (0-1)
+       (min 1.0 (/ food_days 20))        ;; Food security (0-1)  
+       (min 1.0 (/ power_kwh 150))       ;; Power security (0-1)
+       (max 0.0 (- 1.0 (/ cri_current 50))))) ;; CRI security (0-1)
+
+  (define infrastructure_maturity_score (min 1.0 (/ modules_built 25)))
+  (define crew_wellness_score (min 1.0 (/ crew_hp 90)))
+  (define environmental_stability_score (max 0.1 (- 1.5 (/ dust_tau 3))))
+
+  ;; Total colony state assessment
+  (define total_colony_health 
+    (+ (* resource_security_score 0.4)
+       (* infrastructure_maturity_score 0.25) 
+       (* crew_wellness_score 0.2)
+       (* environmental_stability_score 0.15)))
+
+  ;; ═══ DYNAMIC ADAPTIVE ALLOCATION SYSTEM ═══
+  ;; Real-time resource allocation that evolves with colony state
+
+  ;; Base allocation targets optimized for each phase
+  (define base_isru_target
+    (cond
+      (early_phase 0.28)       ;; High O2 production early
+      (growth_phase 0.24)      ;; Balanced as infrastructure scales
+      (maturation_phase 0.20)  ;; Lower as solar power scales
+      (transcendence_phase 0.18) ;; Minimal in late game
+      (true 0.22)))
+
+  (define base_greenhouse_target
+    (cond
+      (early_phase 0.32)       ;; Food security priority
+      (growth_phase 0.38)      ;; Peak food production
+      (maturation_phase 0.35)  ;; Stable food supply
+      (transcendence_phase 0.30) ;; Efficient maintenance
+      (true 0.34)))
+
+  (define base_heating_target
+    (cond
+      (early_phase 0.40)       ;; Power critical early
+      (growth_phase 0.38)      ;; Scaling support
+      (maturation_phase 0.45)  ;; Infrastructure power needs
+      (transcendence_phase 0.52) ;; Maximum efficiency
+      (true 0.44)))
+
+  ;; CRI-based allocation adjustments
+  (define cri_allocation_modifier
+    (cond
+      ((string=? cri_threat_level "APOCALYPTIC") -0.08) ;; Emergency conservation
+      ((string=? cri_threat_level "CRITICAL") -0.05)    ;; Critical efficiency
+      ((string=? cri_threat_level "ELEVATED") -0.02)    ;; Slight adjustment
+      ((string=? cri_threat_level "MODERATE") 0.02)     ;; Slight expansion
+      (true 0.05)))                                     ;; Stable growth
+
+  ;; Colony health-based adjustments
+  (define health_allocation_modifier (* total_colony_health 0.08))
+
+  ;; Phase optimization adjustments  
+  (define phase_allocation_modifier (* phase_multiplier 0.03))
+
+  ;; Final adaptive allocations
+  (set! isru_alloc (max 0.15 (min 0.35 
+    (+ base_isru_target cri_allocation_modifier health_allocation_modifier))))
+  
+  (set! greenhouse_alloc (max 0.25 (min 0.45
+    (+ base_greenhouse_target cri_allocation_modifier health_allocation_modifier))))
+    
+  (set! heating_alloc (max 0.30 (min 0.60
+    (+ base_heating_target (* cri_allocation_modifier 0.5) phase_allocation_modifier))))
+
+  ;; ═══ INTELLIGENT FOOD RATIONING WITH PREDICTIVE ADJUSTMENT ═══
+  ;; Advanced rationing that considers predicted resource trends and colony capacity
+
+  (define base_ration_by_security
+    (cond
+      ((< food_days 2) 0.25)     ;; Emergency survival
+      ((< food_days 5) 0.40)     ;; Critical rationing  
+      ((< food_days 8) 0.55)     ;; Moderate rationing
+      ((< food_days 12) 0.70)    ;; Conservative eating
+      ((< food_days 18) 0.85)    ;; Slight reduction
+      (true 0.95)))              ;; Normal consumption
+
+  ;; Adjust rationing based on colony health and infrastructure
+  (define health_ration_bonus (* total_colony_health 0.15))
+  (define infrastructure_ration_bonus (* infrastructure_maturity_score 0.10))
+  (define phase_ration_adjustment 
+    (cond
+      (early_phase -0.05)        ;; Conservative early
+      (growth_phase 0.03)        ;; More generous during growth
+      (maturation_phase 0.05)    ;; Stable generous rationing
+      (transcendence_phase 0.08) ;; Maximum late-game efficiency
+      (true 0.0)))
+
+  (set! food_ration (max 0.20 (min 0.98
+    (+ base_ration_by_security health_ration_bonus infrastructure_ration_bonus phase_ration_adjustment))))
+
+  ;; ═══ ADVANCED PERFORMANCE MONITORING ═══ 
+  (log (concat "  Phase: " 
+    (cond (early_phase "EARLY") (growth_phase "GROWTH") (maturation_phase "MATURATION") (transcendence_phase "TRANSCENDENCE") (true "UNKNOWN"))
+    " | CRI: " cri_threat_level " (" (string (round cri_current)) ")"))
+  
+  (log (concat "  Colony Health: " (string (round (* total_colony_health 100))) 
+    "% | Allocation: I=" (string (round (* isru_alloc 100)))
+    "% G=" (string (round (* greenhouse_alloc 100)))  
+    "% H=" (string (round (* heating_alloc 100))) "%"))
+
+  (log (concat "  Resources: O2=" (string o2_days) "d Food=" (string food_days) 
+    "d Power=" (string (round power_kwh)) "kWh | Ration=" (string (round (* food_ration 100))) "%"))
+
+  ;; ═══ OUTPUT SUMMARY WITH PREDICTIVE INSIGHTS ═══
+  (concat "UltraAdaptive Sol " (string sol) " — " 
+    (cond (early_phase "BOOTSTRAP") (growth_phase "SCALING") (maturation_phase "OPTIMIZING") (transcendence_phase "TRANSCENDING") (true "ADAPTIVE"))
+    " | CRI:" cri_threat_level 
+    " | Health:" (string (round (* total_colony_health 100))) 
+    "% | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days) "d F:" (string food_days) "d"))

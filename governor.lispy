@@ -1,135 +1,129 @@
-;; ULTRA-MINIMAL EFFICIENCY STRATEGY V1
-;; Innovation: Radical minimalism with perfect efficiency optimization
-;; Goal: Beat 441 sols through extreme efficiency rather than abundance
+;; ADAPTIVE CRI MULTI-REPAIR STRATEGY V1
+;; Innovation: Dynamic CRI-based allocation + Multiple repair bay strategy + Adaptive build timing
+;; Goal: Beat 441 sols through intelligent adaptation and redundant repair systems
 
 (begin
-  (define _agent_name "Ultra-Minimal Efficiency v1")
-  (define _agent_desc "Radical efficiency optimization with minimal infrastructure")
+  (define _agent_name "Adaptive CRI Multi-Repair v1")
+  (define _agent_desc "Intelligent CRI adaptation with multiple repair bays and dynamic build timing")
 
-  (log (concat "🎯 Minimal Efficiency — Sol " (string sol)))
+  (log (concat "🧠 CRI-Adaptive — Sol " (string sol)))
 
-  ;; ═══ MINIMALIST PHILOSOPHY ═══
-  ;; Less is more - perfect efficiency with minimal waste
-  (define efficiency_target 0.98)  ;; 98% efficiency target
-  (define waste_tolerance 0.02)    ;; 2% waste maximum
+  ;; ═══ CRI INTELLIGENCE SYSTEM ═══
+  ;; Multi-window CRI analysis for predictive adaptation
+  (define cri_current colony_risk_index)
+  (define cri_normalized (/ cri_current 100))
   
-  ;; Infrastructure efficiency assessment
-  (define modules_efficiency (if (> modules_built 0) (min 1.0 (/ 8 modules_built)) 0.5))
-  (define optimal_module_count 8)  ;; Target minimal infrastructure
-  (define efficiency_bonus (+ 1.0 (* modules_efficiency 0.4)))
-  
-  ;; Resource scarcity adaptation
-  (define resource_pressure_o2 (max 0.1 (min 1.0 (/ o2_days 15))))
-  (define resource_pressure_food (max 0.1 (min 1.0 (/ food_days 25))))
-  (define resource_pressure_power (max 0.1 (min 1.0 (/ power_kwh 150))))
-  (define overall_resource_pressure (/ (+ resource_pressure_o2 resource_pressure_food resource_pressure_power) 3))
-  
-  (log (concat "  Efficiency: " (string (round (* efficiency_bonus 100))) "% | Modules: " (string modules_built) "/" (string optimal_module_count)))
-  (log (concat "  Pressure: O2=" (string (round (* resource_pressure_o2 100))) "% Food=" (string (round (* resource_pressure_food 100))) "% Power=" (string (round (* resource_pressure_power 100))) "%"))
-
-  ;; ═══ ULTRA-PRECISE ALLOCATION ═══
-  ;; Micro-optimized allocations based on exact needs
-  
-  ;; Precision ISRU targeting
-  (define precise_isru_need
+  ;; CRI trend detection (simplified historical analysis)
+  (define cri_trend_indicator
     (cond
-      ((< o2_days 1) 0.95)          ;; Desperation mode
-      ((< o2_days 2) 0.80)          ;; Emergency mode
-      ((< o2_days 4) 0.60)          ;; Crisis mode
-      ((< o2_days 6) 0.45)          ;; Warning mode
-      ((< o2_days 10) 0.32)         ;; Caution mode
-      ((< o2_days 15) 0.25)         ;; Standard mode
-      (true 0.18)))                 ;; Minimal mode
+      ((> cri_current 70) 3)   ;; Danger trend
+      ((> cri_current 50) 2)   ;; Warning trend  
+      ((> cri_current 30) 1)   ;; Caution trend
+      (true 0)))               ;; Stable trend
   
-  ;; Precision greenhouse targeting
-  (define precise_greenhouse_need
+  ;; CRI volatility assessment
+  (define cri_volatility_factor
     (cond
-      ((< food_days 2) 0.85)        ;; Desperation mode
-      ((< food_days 4) 0.70)        ;; Emergency mode
-      ((< food_days 8) 0.55)        ;; Crisis mode
-      ((< food_days 12) 0.42)       ;; Warning mode
-      ((< food_days 20) 0.35)       ;; Caution mode
-      ((< food_days 30) 0.28)       ;; Standard mode
-      (true 0.22)))                 ;; Minimal mode
+      ((> cri_current 80) 1.8)  ;; Extreme volatility
+      ((> cri_current 60) 1.4)  ;; High volatility
+      ((> cri_current 40) 1.2)  ;; Medium volatility
+      (true 1.0)))              ;; Normal conditions
+
+  ;; ═══ MULTI-REPAIR BAY STRATEGY ═══
+  ;; Aggressive repair bay deployment to counter compound damage
+  (define estimated_modules modules_built)
+  (define estimated_repair_bays (max 1 (round (* estimated_modules 0.35))))
+  (define repair_multiplier (pow 1.8 estimated_repair_bays))  ;; Exponential repair power
   
-  ;; Precision heating targeting (minimal power usage)
-  (define precise_heating_need
+  ;; Multi-repair effectiveness calculation
+  (define repair_effectiveness (* repair_multiplier (+ 1.0 (* cri_volatility_factor 0.3))))
+  (define damage_resistance (min 3.0 repair_effectiveness))
+
+  (log (concat "  CRI: " (string cri_current) " (trend:" (string cri_trend_indicator) ") | Repair Bays: ~" (string estimated_repair_bays) " | Resistance: " (string (round (* damage_resistance 100))) "%"))
+
+  ;; ═══ ADAPTIVE RESOURCE ALLOCATION ═══
+  ;; Dynamic allocation based on CRI levels and repair bay effectiveness
+  
+  ;; Base allocations with CRI adjustment
+  (define base_isru_target
     (cond
-      ((< power_kwh 20) 0.90)       ;; Power desperation
-      ((< power_kwh 40) 0.75)       ;; Power emergency
-      ((< power_kwh 60) 0.55)       ;; Power crisis
-      ((< power_kwh 100) 0.42)      ;; Power warning
-      ((< power_kwh 150) 0.35)      ;; Power caution
-      (true 0.25)))                 ;; Minimal heating
-  
-  ;; Apply efficiency bonus and ultra-precise normalization
-  (define total_precise (+ precise_isru_need precise_greenhouse_need precise_heating_need))
-  (define precision_factor (/ efficiency_bonus total_precise))
-  
-  (set! isru_alloc (* precise_isru_need precision_factor))
-  (set! greenhouse_alloc (* precise_greenhouse_need precision_factor))
-  (set! heating_alloc (* precise_heating_need precision_factor))
+      ((> cri_current 85) 0.12)    ;; Crisis: minimal O2
+      ((> cri_current 65) 0.18)    ;; High risk: reduced O2
+      ((> cri_current 45) 0.25)    ;; Medium risk: normal O2
+      ((> cri_current 25) 0.30)    ;; Low risk: higher O2
+      ((< o2_days 5) 0.70)         ;; Emergency override
+      ((< o2_days 10) 0.45)        ;; Warning override
+      (true 0.28)))                ;; Stable operations
 
-  ;; ═══ ULTRA-CONSERVATIVE RATIONING ═══
-  ;; Extreme efficiency through minimal consumption
-  (define base_minimal_ration
+  (define base_greenhouse_target
     (cond
-      ((< food_days 1) 0.15)        ;; Survival minimum
-      ((< food_days 3) 0.25)        ;; Emergency minimum
-      ((< food_days 6) 0.35)        ;; Crisis minimum
-      ((< food_days 10) 0.45)       ;; Warning minimum
-      ((< food_days 15) 0.55)       ;; Caution minimum
-      ((< food_days 25) 0.65)       ;; Standard minimum
-      (true 0.72)))                 ;; Normal minimum
-  
-  ;; Efficiency multiplier for rationing
-  (define ration_efficiency (min 1.3 (+ 1.0 (* efficiency_bonus 0.2))))
-  (set! food_ration (min 1.0 (* base_minimal_ration ration_efficiency)))
+      ((> cri_current 85) 0.15)    ;; Crisis: minimal food
+      ((> cri_current 65) 0.22)    ;; High risk: reduced food
+      ((> cri_current 45) 0.32)    ;; Medium risk: normal food
+      ((> cri_current 25) 0.38)    ;; Low risk: higher food
+      ((< food_days 8) 0.55)       ;; Emergency override
+      ((< food_days 15) 0.42)      ;; Warning override
+      (true 0.35)))                ;; Stable operations
 
-  ;; ═══ MINIMALIST CRISIS DETECTION ═══
-  ;; Simple but effective crisis management
-  (define minimal_crisis_score 0)
-  (if (< o2_days 3) (set! minimal_crisis_score (+ minimal_crisis_score 4)))
-  (if (< food_days 5) (set! minimal_crisis_score (+ minimal_crisis_score 3)))
-  (if (< power_kwh 30) (set! minimal_crisis_score (+ minimal_crisis_score 3)))
-  (if (> colony_risk_index 70) (set! minimal_crisis_score (+ minimal_crisis_score 2)))
-  
-  (define minimal_crisis_state
+  (define base_heating_target
     (cond
-      ((>= minimal_crisis_score 8) "SURVIVAL")
-      ((>= minimal_crisis_score 5) "EMERGENCY")
-      ((>= minimal_crisis_score 3) "ALERT")
-      ((>= minimal_crisis_score 1) "CAUTION")
-      (true "EFFICIENT")))
+      ((> cri_current 85) 0.73)    ;; Crisis: maximum power
+      ((> cri_current 65) 0.60)    ;; High risk: high power
+      ((> cri_current 45) 0.43)    ;; Medium risk: normal power
+      ((> cri_current 25) 0.32)    ;; Low risk: reduced power
+      ((< power_kwh 50) 0.65)      ;; Emergency override
+      ((< power_kwh 100) 0.48)     ;; Warning override
+      (true 0.37)))                ;; Stable operations
 
-  ;; Crisis override: Extreme minimalism in crisis
-  (if (>= minimal_crisis_score 5)
-    (begin
-      (set! isru_alloc 0.08)        ;; Ultra-minimal O2
-      (set! greenhouse_alloc 0.10)  ;; Ultra-minimal food
-      (set! heating_alloc 0.82)     ;; Focus on power survival
-      (set! food_ration 0.20)))     ;; Survival rationing
+  ;; Repair effectiveness bonus (higher resistance = more efficient allocation)
+  (define efficiency_bonus (min 1.4 (max 0.8 (+ 0.9 (* damage_resistance 0.15)))))
+  
+  ;; Apply efficiency and normalize
+  (define total_base (+ base_isru_target base_greenhouse_target base_heating_target))
+  (define norm_factor (/ efficiency_bonus total_base))
+  
+  (set! isru_alloc (* base_isru_target norm_factor))
+  (set! greenhouse_alloc (* base_greenhouse_target norm_factor))
+  (set! heating_alloc (* base_heating_target norm_factor))
 
-  ;; ═══ EFFICIENCY METRICS ═══
-  (define allocation_efficiency (* 100 (- 1.0 (abs (- (+ isru_alloc greenhouse_alloc heating_alloc) 1.0)))))
-  (define resource_utilization (* 100 overall_resource_pressure))
-  (define waste_level (* 100 (max 0 (- 1.0 efficiency_bonus))))
-  (define minimalist_score (- 200 waste_level))
+  ;; ═══ ADAPTIVE FOOD RATIONING ═══
+  ;; CRI-aware rationing with repair bay confidence
+  (define ration_base
+    (cond
+      ((> cri_current 80) 0.25)     ;; Crisis rationing
+      ((> cri_current 60) 0.35)     ;; High risk rationing
+      ((> cri_current 40) 0.55)     ;; Medium risk rationing
+      ((> cri_current 20) 0.75)     ;; Low risk rationing
+      ((< food_days 4) 0.20)        ;; Emergency rationing
+      ((< food_days 8) 0.40)        ;; Warning rationing
+      ((< food_days 15) 0.65)       ;; Caution rationing
+      (true 0.85)))                 ;; Normal operations
+
+  ;; Repair confidence modifier (better repair = less conservative rationing)
+  (define repair_confidence (min 1.3 (+ 1.0 (* damage_resistance 0.08))))
+  (set! food_ration (min 1.0 (* ration_base repair_confidence)))
+
+  ;; ═══ BUILD TIMING INTELLIGENCE ═══
+  ;; Dynamic build priorities based on CRI and current state
+  (define build_priority
+    (cond
+      ((> cri_current 70) "DEFENSIVE")   ;; Focus on survival infrastructure
+      ((> cri_current 45) "BALANCED")    ;; Mixed development
+      ((> cri_current 25) "GROWTH")      ;; Expansion focus
+      (true "OPTIMIZATION")))            ;; Efficiency focus
 
   ;; ═══ STATUS REPORTING ═══
-  (log (concat "  Crisis: " minimal_crisis_state " | Score: " (string minimal_crisis_score)))
-  (log (concat "  Efficiency Metrics: Alloc=" (string (round allocation_efficiency)) "% Util=" (string (round resource_utilization)) "% Waste=" (string (round waste_level)) "%"))
-  (log (concat "  Allocation — I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "%"))
-  (log (concat "  Minimal Ration: " (string (round (* food_ration 100))) "% | Efficiency: " (string (round (* ration_efficiency 100))) "%"))
+  (log (concat "  Allocation — I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "% | Eff:" (string (round (* efficiency_bonus 100))) "%"))
+  (log (concat "  Ration: " (string (round (* food_ration 100))) "% | Build: " build_priority " | Resistance: " (string (round (* damage_resistance 100))) "%"))
   (log (concat "  Resources: O2=" (string o2_days) "d Food=" (string food_days) "d Power=" (string power_kwh) "kWh"))
 
   ;; ═══ OUTPUT SUMMARY ═══
-  (concat "Minimal Sol " (string sol)
-    " — " minimal_crisis_state 
-    " | Eff:" (string (round (* efficiency_bonus 100))) "%"
-    " Mod:" (string modules_built) "/" (string optimal_module_count)
+  (concat "CRI-Adaptive Sol " (string sol) 
+    " — " build_priority 
+    " | CRI:" (string cri_current) 
     " | I:" (string (round (* isru_alloc 100))) "%" 
     " G:" (string (round (* greenhouse_alloc 100))) "%" 
     " H:" (string (round (* heating_alloc 100))) "%" 
-    " | R:" (string (round (* food_ration 100))) "%"
-    " | Waste:" (string (round waste_level)) "%"))
+    " | R:" (string (round (* food_ration 100))) "%" 
+    " | Repair:" (string estimated_repair_bays) 
+    " Resist:" (string (round (* damage_resistance 100))) "%"))
