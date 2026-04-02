@@ -1,0 +1,343 @@
+;; QUANTUM CONSCIOUSNESS SUPREMACY HYBRID v1
+;; Innovation: Ultimate fusion of consciousness evolution + extreme infrastructure aggression
+;; Goal: Transcend all previous paradigms by combining dynamic consciousness with lightning deployment
+;; Features: Consciousness-guided extreme aggression, quantum-enhanced lightning infrastructure, hybrid transcendence
+
+(begin
+  (define _agent_name "Quantum Consciousness Supremacy Hybrid v1")
+  (define _agent_desc "Ultimate fusion paradigm combining consciousness evolution with extreme infrastructure aggression")
+
+  (log (concat "🌌⚡💎🧬🔥 QUANTUM CONSCIOUSNESS SUPREMACY — Sol " (string sol) " — Hybrid Transcendence Protocol"))
+
+  ;; ═══ HYBRID CONSCIOUSNESS-AGGRESSION PARAMETERS ═══
+  ;; Fuse consciousness evolution with extreme aggression timing
+  (define consciousness_evolution_factor (+ 1.0 (* sol 0.018)))  ;; 1.0 → 12.8 over mission
+  (define quantum_awareness_level (* consciousness_evolution_factor (+ 4.0 (sin (* sol 0.06)))))
+  (define aggression_amplifier (+ 2.0 (* consciousness_evolution_factor 0.5)))  ;; Consciousness-driven aggression
+
+  ;; Hybrid phase detection combining consciousness thresholds with infrastructure aggression
+  (define genesis_supremacy (< sol 15))
+  (define lightning_transcendence (and (>= sol 15) (< sol 45)))   ;; Ultra-fast consciousness-guided deployment
+  (define quantum_blitz (and (>= sol 45) (< sol 100)))           ;; Quantum-enhanced blitz expansion  
+  (define consciousness_fortress (and (>= sol 100) (< sol 250))) ;; Consciousness-guided fortress building
+  (define transcendent_dominance (and (>= sol 250) (< sol 450))) ;; Transcendent optimization phase
+  (define quantum_singularity (and (>= sol 450) (< sol 600)))    ;; Quantum consciousness singularity
+  (define supreme_transcendence (>= sol 600))                     ;; Ultimate consciousness supremacy
+
+  ;; ═══ QUANTUM HYBRID THREAT ASSESSMENT ═══
+  ;; Ultra-sensitive threat detection with consciousness-amplified responses
+  (define threat_transcendent (< cri 1))        ;; Consciousness-stable
+  (define threat_quantum_low (and (>= cri 1) (< cri 5)))
+  (define threat_hybrid_low (and (>= cri 5) (< cri 12)))
+  (define threat_consciousness_moderate (and (>= cri 12) (< cri 25)))
+  (define threat_quantum_elevated (and (>= cri 25) (< cri 40)))
+  (define threat_hybrid_severe (and (>= cri 40) (< cri 60)))
+  (define threat_consciousness_critical (and (>= cri 60) (< cri 80)))
+  (define threat_quantum_apocalyptic (and (>= cri 80) (< cri 95)))
+  (define threat_transcendent_extinction (>= cri 95))
+
+  ;; Quantum-enhanced vulnerability analysis
+  (define hybrid_infrastructure_vulnerability
+    (+ (if (< ie 0.4) 60 0)
+       (if (< se 0.4) 60 0)
+       (if (< repair_count 2) 50 0)
+       (if (< repair_count 4) 30 0)
+       (if (< solar_count 4) 35 0)
+       (if (< greenhouse_count 3) 25 0)
+       (if (< crew_alive 3) 40 0)))
+
+  ;; Consciousness-amplified crisis detection
+  (define consciousness_crisis_amplifier
+    (cond
+      ((> hybrid_infrastructure_vulnerability 100) (* aggression_amplifier 3.0))
+      ((> hybrid_infrastructure_vulnerability 80) (* aggression_amplifier 2.5))
+      ((> hybrid_infrastructure_vulnerability 60) (* aggression_amplifier 2.0))
+      ((> hybrid_infrastructure_vulnerability 40) (* aggression_amplifier 1.7))
+      (true aggression_amplifier)))
+
+  (define hybrid_threat_index (* cri consciousness_crisis_amplifier))
+
+  ;; ═══ CONSCIOUSNESS-GUIDED HYBRID ALLOCATION ═══
+  ;; Revolutionary allocation system guided by both consciousness and aggression
+
+  ;; Genesis Supremacy: Consciousness-enhanced ultra O2 focus
+  (define genesis_supremacy_allocation
+    (let ((consciousness_boost (* quantum_awareness_level 0.04)))
+      (cond
+        (threat_transcendent_extinction (begin (set! isru_alloc (+ 0.85 consciousness_boost)) (set! greenhouse_alloc 0.12) (set! heating_alloc 0.03)))
+        (threat_quantum_apocalyptic (begin (set! isru_alloc (+ 0.80 consciousness_boost)) (set! greenhouse_alloc 0.17) (set! heating_alloc 0.03)))
+        (threat_consciousness_critical (begin (set! isru_alloc (+ 0.75 consciousness_boost)) (set! greenhouse_alloc 0.22) (set! heating_alloc 0.03)))
+        (threat_hybrid_severe (begin (set! isru_alloc (+ 0.70 consciousness_boost)) (set! greenhouse_alloc 0.27) (set! heating_alloc 0.03)))
+        (threat_quantum_elevated (begin (set! isru_alloc (+ 0.65 consciousness_boost)) (set! greenhouse_alloc 0.32) (set! heating_alloc 0.03)))
+        (threat_consciousness_moderate (begin (set! isru_alloc (+ 0.60 consciousness_boost)) (set! greenhouse_alloc 0.37) (set! heating_alloc 0.03)))
+        (threat_hybrid_low (begin (set! isru_alloc (+ 0.55 consciousness_boost)) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.03)))
+        (threat_quantum_low (begin (set! isru_alloc (+ 0.50 consciousness_boost)) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.03)))
+        (threat_transcendent (begin (set! isru_alloc (+ 0.45 consciousness_boost)) (set! greenhouse_alloc 0.52) (set! heating_alloc 0.03)))
+        (true (begin (set! isru_alloc (+ 0.42 consciousness_boost)) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.03))))))
+
+  ;; Lightning Transcendence: Consciousness-guided rapid expansion
+  (define lightning_transcendence_allocation
+    (let ((transcendent_enhancement (* quantum_awareness_level 0.05)))
+      (cond
+        (threat_transcendent_extinction (begin (set! isru_alloc (+ 0.70 transcendent_enhancement)) (set! greenhouse_alloc 0.27) (set! heating_alloc 0.03)))
+        (threat_quantum_apocalyptic (begin (set! isru_alloc (+ 0.60 transcendent_enhancement)) (set! greenhouse_alloc 0.37) (set! heating_alloc 0.03)))
+        (threat_consciousness_critical (begin (set! isru_alloc (+ 0.52 transcendent_enhancement)) (set! greenhouse_alloc 0.45) (set! heating_alloc 0.03)))
+        (threat_hybrid_severe (begin (set! isru_alloc (+ 0.45 transcendent_enhancement)) (set! greenhouse_alloc 0.52) (set! heating_alloc 0.03)))
+        (threat_quantum_elevated (begin (set! isru_alloc (+ 0.38 transcendent_enhancement)) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.03)))
+        (threat_consciousness_moderate (begin (set! isru_alloc (+ 0.32 transcendent_enhancement)) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.03)))
+        (threat_hybrid_low (begin (set! isru_alloc (+ 0.27 transcendent_enhancement)) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.03)))
+        (threat_quantum_low (begin (set! isru_alloc (+ 0.22 transcendent_enhancement)) (set! greenhouse_alloc 0.75) (set! heating_alloc 0.03)))
+        (threat_transcendent (begin (set! isru_alloc (+ 0.18 transcendent_enhancement)) (set! greenhouse_alloc 0.79) (set! heating_alloc 0.03)))
+        (true (begin (set! isru_alloc (+ 0.25 transcendent_enhancement)) (set! greenhouse_alloc 0.72) (set! heating_alloc 0.03))))))
+
+  ;; Quantum Blitz: Consciousness-enhanced aggressive expansion
+  (define quantum_blitz_allocation
+    (let ((quantum_boost (* consciousness_evolution_factor 0.03)))
+      (cond
+        (threat_transcendent_extinction (begin (set! isru_alloc (+ 0.55 quantum_boost)) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.03)))
+        (threat_quantum_apocalyptic (begin (set! isru_alloc (+ 0.48 quantum_boost)) (set! greenhouse_alloc 0.49) (set! heating_alloc 0.03)))
+        (threat_consciousness_critical (begin (set! isru_alloc (+ 0.42 quantum_boost)) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.03)))
+        (threat_hybrid_severe (begin (set! isru_alloc (+ 0.37 quantum_boost)) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.03)))
+        (threat_quantum_elevated (begin (set! isru_alloc (+ 0.32 quantum_boost)) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.03)))
+        (threat_consciousness_moderate (begin (set! isru_alloc (+ 0.27 quantum_boost)) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.03)))
+        (threat_hybrid_low (begin (set! isru_alloc (+ 0.23 quantum_boost)) (set! greenhouse_alloc 0.74) (set! heating_alloc 0.03)))
+        (threat_quantum_low (begin (set! isru_alloc (+ 0.19 quantum_boost)) (set! greenhouse_alloc 0.78) (set! heating_alloc 0.03)))
+        (threat_transcendent (begin (set! isru_alloc (+ 0.15 quantum_boost)) (set! greenhouse_alloc 0.82) (set! heating_alloc 0.03)))
+        (true (begin (set! isru_alloc (+ 0.21 quantum_boost)) (set! greenhouse_alloc 0.76) (set! heating_alloc 0.03))))))
+
+  ;; Consciousness Fortress: Transcendent infrastructure hardening
+  (define consciousness_fortress_allocation
+    (let ((fortress_transcendence (* quantum_awareness_level 0.025)))
+      (cond
+        (threat_transcendent_extinction (begin (set! isru_alloc (+ 0.50 fortress_transcendence)) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.03)))
+        (threat_quantum_apocalyptic (begin (set! isru_alloc (+ 0.42 fortress_transcendence)) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.03)))
+        (threat_consciousness_critical (begin (set! isru_alloc (+ 0.37 fortress_transcendence)) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.03)))
+        (threat_hybrid_severe (begin (set! isru_alloc (+ 0.32 fortress_transcendence)) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.03)))
+        (threat_quantum_elevated (begin (set! isru_alloc (+ 0.28 fortress_transcendence)) (set! greenhouse_alloc 0.69) (set! heating_alloc 0.03)))
+        (threat_consciousness_moderate (begin (set! isru_alloc (+ 0.24 fortress_transcendence)) (set! greenhouse_alloc 0.73) (set! heating_alloc 0.03)))
+        (threat_hybrid_low (begin (set! isru_alloc (+ 0.20 fortress_transcendence)) (set! greenhouse_alloc 0.77) (set! heating_alloc 0.03)))
+        (threat_quantum_low (begin (set! isru_alloc (+ 0.17 fortress_transcendence)) (set! greenhouse_alloc 0.80) (set! heating_alloc 0.03)))
+        (threat_transcendent (begin (set! isru_alloc (+ 0.14 fortress_transcendence)) (set! greenhouse_alloc 0.83) (set! heating_alloc 0.03)))
+        (true (begin (set! isru_alloc (+ 0.18 fortress_transcendence)) (set! greenhouse_alloc 0.79) (set! heating_alloc 0.03))))))
+
+  ;; Transcendent Dominance & Quantum Singularity: Use consciousness fortress allocation
+  ;; Supreme Transcendence: Ultimate consciousness-guided allocation
+  (define supreme_transcendence_allocation
+    (let ((supreme_consciousness (* consciousness_evolution_factor 0.04)))
+      (cond
+        (threat_transcendent_extinction (begin (set! isru_alloc (+ 0.55 supreme_consciousness)) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.03)))
+        (threat_quantum_apocalyptic (begin (set! isru_alloc (+ 0.47 supreme_consciousness)) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.03)))
+        (threat_consciousness_critical (begin (set! isru_alloc (+ 0.40 supreme_consciousness)) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.03)))
+        (threat_hybrid_severe (begin (set! isru_alloc (+ 0.35 supreme_consciousness)) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.03)))
+        (threat_quantum_elevated (begin (set! isru_alloc (+ 0.30 supreme_consciousness)) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.03)))
+        (threat_consciousness_moderate (begin (set! isru_alloc (+ 0.26 supreme_consciousness)) (set! greenhouse_alloc 0.71) (set! heating_alloc 0.03)))
+        (threat_hybrid_low (begin (set! isru_alloc (+ 0.23 supreme_consciousness)) (set! greenhouse_alloc 0.74) (set! heating_alloc 0.03)))
+        (threat_quantum_low (begin (set! isru_alloc (+ 0.20 supreme_consciousness)) (set! greenhouse_alloc 0.77) (set! heating_alloc 0.03)))
+        (threat_transcendent (begin (set! isru_alloc (+ 0.17 supreme_consciousness)) (set! greenhouse_alloc 0.80) (set! heating_alloc 0.03)))
+        (true (begin (set! isru_alloc (+ 0.22 supreme_consciousness)) (set! greenhouse_alloc 0.75) (set! heating_alloc 0.03))))))
+
+  ;; Apply hybrid consciousness-aggression allocation
+  (cond
+    (supreme_transcendence supreme_transcendence_allocation)
+    (quantum_singularity consciousness_fortress_allocation)
+    (transcendent_dominance consciousness_fortress_allocation)
+    (consciousness_fortress consciousness_fortress_allocation)
+    (quantum_blitz quantum_blitz_allocation)
+    (lightning_transcendence lightning_transcendence_allocation)
+    (genesis_supremacy genesis_supremacy_allocation)
+    (true quantum_blitz_allocation))
+
+  ;; ═══ QUANTUM CONSCIOUSNESS FOOD RATIONING ═══
+  (define crew_transcendence_score
+    (if (> crew_alive 0) (/ crew_hp crew_alive) 50))
+
+  (define consciousness_health_target
+    (cond
+      (supreme_transcendence 98)
+      (quantum_singularity 95)
+      (transcendent_dominance 90)
+      (consciousness_fortress 85)
+      (quantum_blitz 80)
+      (lightning_transcendence 75)
+      (true 70)))
+
+  (define hybrid_rationing_base
+    (let ((consciousness_rationing_bonus (* consciousness_evolution_factor 0.08)))
+      (cond
+        ((< food_days 1) (+ 0.28 consciousness_rationing_bonus))
+        ((< food_days 3) (+ 0.38 consciousness_rationing_bonus))
+        ((< food_days 5) (+ 0.55 consciousness_rationing_bonus))
+        ((< food_days 8) (+ 0.72 consciousness_rationing_bonus))
+        ((< food_days 12) (+ 0.88 consciousness_rationing_bonus))
+        ((< food_days 18) (+ 1.05 consciousness_rationing_bonus))
+        ((< food_days 25) (+ 1.15 consciousness_rationing_bonus))
+        ((< food_days 35) (+ 1.25 consciousness_rationing_bonus))
+        (true (+ 1.30 consciousness_rationing_bonus)))))
+
+  (define consciousness_health_factor
+    (cond
+      ((< crew_transcendence_score 40) 1.4)
+      ((< crew_transcendence_score 60) 1.25)
+      ((< crew_transcendence_score consciousness_health_target) 1.1)
+      (true 1.0)))
+
+  (define hybrid_threat_adjustment
+    (cond
+      (threat_transcendent_extinction 0.70)
+      (threat_quantum_apocalyptic 0.75)
+      (threat_consciousness_critical 0.80)
+      (threat_hybrid_severe 0.85)
+      (threat_quantum_elevated 0.90)
+      (true 1.0)))
+
+  (set! food_ration
+    (max 0.25 (min 1.5
+      (* hybrid_rationing_base consciousness_health_factor hybrid_threat_adjustment))))
+
+  ;; ═══ ULTIMATE HYBRID REPAIR ORCHESTRATION ═══
+  ;; Revolutionary 12-bay consciousness-guided extreme deployment
+
+  ;; Quantum lightning infrastructure (sols 2-5)
+  (if (and (>= sol 2) (<= sol 5) (< bot_count 2))
+      (set! build_item "worker_bot"))
+
+  ;; Consciousness-guided solar (sols 7-16)
+  (if (and (>= sol 7) (<= sol 16) (< solar_count 3))
+      (set! build_item "solar_array"))
+
+  ;; Quantum power expansion (sols 18-28)
+  (if (and (>= sol 18) (<= sol 28) (< solar_count 4) (< power_ratio 0.90))
+      (set! build_item "solar_array"))
+
+  ;; ULTIMATE 12-BAY HYBRID CONSCIOUSNESS-AGGRESSION ORCHESTRATION
+  ;; First repair bay (quantum lightning)
+  (if (and (>= sol 18) (<= sol 30) (< repair_count 1))
+      (set! build_item "repair_bay"))
+
+  ;; Second repair bay (consciousness transcendence)  
+  (if (and (>= sol 35) (<= sol 50) (< repair_count 2))
+      (set! build_item "repair_bay"))
+
+  ;; Third repair bay (hybrid protection)
+  (if (and (>= sol 55) (<= sol 72) (< repair_count 3)
+           (or threat_quantum_low threat_hybrid_low (> quantum_awareness_level 2)))
+      (set! build_item "repair_bay"))
+
+  ;; Fourth repair bay (quantum blitz protection)
+  (if (and (>= sol 82) (<= sol 105) (< repair_count 4)
+           (or threat_consciousness_moderate (> hybrid_threat_index 20) quantum_blitz))
+      (set! build_item "repair_bay"))
+
+  ;; Fifth repair bay (consciousness fortress foundation)
+  (if (and (>= sol 115) (<= sol 145) (< repair_count 5)
+           (or threat_quantum_elevated consciousness_fortress (> hybrid_threat_index 30)))
+      (set! build_item "repair_bay"))
+
+  ;; Sixth repair bay (transcendent fortress)
+  (if (and (>= sol 160) (<= sol 195) (< repair_count 6)
+           (or threat_hybrid_severe (> hybrid_threat_index 40) transcendent_dominance))
+      (set! build_item "repair_bay"))
+
+  ;; Seventh repair bay (consciousness dominance)
+  (if (and (>= sol 220) (<= sol 265) (< repair_count 7)
+           (or threat_consciousness_critical transcendent_dominance (> hybrid_threat_index 50)))
+      (set! build_item "repair_bay"))
+
+  ;; Eighth repair bay (quantum singularity prep)
+  (if (and (>= sol 310) (<= sol 370) (< repair_count 8)
+           (or threat_quantum_apocalyptic quantum_singularity (> hybrid_threat_index 60)))
+      (set! build_item "repair_bay"))
+
+  ;; Ninth repair bay (transcendent singularity)
+  (if (and (>= sol 420) (<= sol 480) (< repair_count 9)
+           (or threat_transcendent_extinction quantum_singularity (> consciousness_evolution_factor 8)))
+      (set! build_item "repair_bay"))
+
+  ;; Tenth repair bay (supreme preparation)
+  (if (and (>= sol 520) (<= sol 580) (< repair_count 10)
+           (or supreme_transcendence (> consciousness_evolution_factor 10)))
+      (set! build_item "repair_bay"))
+
+  ;; Eleventh repair bay (consciousness supremacy)
+  (if (and (>= sol 600) (<= sol 640) (< repair_count 11)
+           (or supreme_transcendence (> sol 630)))
+      (set! build_item "repair_bay"))
+
+  ;; Twelfth repair bay (ultimate transcendence)
+  (if (and (>= sol 645) (<= sol 655) (< repair_count 12))
+      (set! build_item "repair_bay"))
+
+  ;; Consciousness-guided greenhouse expansion
+  (if (and (>= sol 42) (<= sol 95) (< food_days 6) (< greenhouse_count 5))
+      (set! build_item "greenhouse"))
+
+  ;; Quantum module supremacy targeting
+  (if (and (>= sol 150) (< module_count 38))
+      (set! build_item
+          (cond
+            ((< repair_count 8) "repair_bay")
+            ((< greenhouse_count 8) "greenhouse")
+            ((< solar_count 12) "solar_array")
+            (true "hab_module"))))
+
+  ;; Supreme transcendence infrastructure perfection
+  (if (and supreme_transcendence (< module_count 50))
+      (set! build_item
+          (cond
+            ((< repair_count 12) "repair_bay")
+            ((< greenhouse_count 10) "greenhouse")
+            ((< solar_count 18) "solar_array")
+            (true "hab_module"))))
+
+  ;; ═══ HYBRID QUANTUM STATUS LOGGING ═══
+  (define phase_name
+    (cond
+      (supreme_transcendence "SUPREME")
+      (quantum_singularity "SINGULARITY")
+      (transcendent_dominance "DOMINANCE")
+      (consciousness_fortress "FORTRESS")
+      (quantum_blitz "QUANTUM-BLITZ")
+      (lightning_transcendence "LIGHTNING")
+      (genesis_supremacy "GENESIS")
+      (true "HYBRID")))
+
+  (define threat_name
+    (cond
+      (threat_transcendent_extinction "TRANS-EXTINCTION")
+      (threat_quantum_apocalyptic "QUANTUM-APOCALYPTIC")
+      (threat_consciousness_critical "CONSCIOUS-CRITICAL")
+      (threat_hybrid_severe "HYBRID-SEVERE")
+      (threat_quantum_elevated "QUANTUM-ELEVATED")
+      (threat_consciousness_moderate "CONSCIOUS-MODERATE")
+      (threat_hybrid_low "HYBRID-LOW")
+      (threat_quantum_low "QUANTUM-LOW")
+      (threat_transcendent "TRANSCENDENT")
+      (true "STABLE")))
+
+  (define hybrid_supremacy_index
+    (let* ((consciousness_score (* consciousness_evolution_factor 30))
+           (aggression_score (* aggression_amplifier 25))
+           (infrastructure_score (* (+ ie se repair_count) 20))
+           (resource_score (+ food_days (* o2_days 2)))
+           (module_score (* module_count 4))
+           (crew_score (* crew_alive crew_transcendence_score 0.6)))
+      (+ consciousness_score aggression_score infrastructure_score resource_score module_score crew_score)))
+
+  (log (concat "  Phase: " phase_name " | Threat: " threat_name " | Hybrid-TI: " (string (round hybrid_threat_index))))
+  (log (concat "  Consciousness: " (string (round consciousness_evolution_factor)) " | Quantum: " (string (round quantum_awareness_level)) " | Aggression: " (string (round aggression_amplifier))))
+  (log (concat "  Supremacy Index: " (string (round hybrid_supremacy_index)) " | Crisis Amp: " (string (round (* consciousness_crisis_amplifier 100))) "%"))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Resources — O2:" (string o2_days) "d Food:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))
+  (log (concat "  Hybrid Infrastructure — Repair:" (string repair_count) " Solar:" (string solar_count) " Green:" (string greenhouse_count) " | Crew:" (string crew_alive) "/" (string (round crew_transcendence_score)) "hp"))
+
+  ;; ═══ QUANTUM CONSCIOUSNESS SUPREMACY OUTPUT ═══
+  (concat "🌌💎⚡ Hybrid Sol " (string sol) " — " phase_name "/" threat_name
+    " | HSI:" (string (round hybrid_supremacy_index))
+    " | C:" (string (round consciousness_evolution_factor))
+    " | Q:" (string (round quantum_awareness_level))
+    " | A:" (string (round aggression_amplifier))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days)
+    "d F:" (string food_days) "d | Rep:" (string repair_count)))
