@@ -24,7 +24,7 @@ const VERSIONS_PATH = path.join(__dirname, '..', 'data', 'frame-versions', 'vers
 const PA=15, EF=0.22, SH=12.3, ISRU_O2=2.8, ISRU_H2O=1.2, GK=3500;
 const OP=0.84, HP=2.5, FP=2500, PCRIT=50;
 
-function rng32(s){let t=s&0xFFFFFFFF;return()=>{t=(t*1664525+1013904223)&0xFFFFFFFF;return t/0xFFFFFFFF}}
+function rng32(s){let t=s&0xFFFFFFFF;return()=>{t=(t*1664525+1013904223)&0xFFFFFFFF;return(t>>>0)/0xFFFFFFFF}}
 function solIrr(sol,dust){const y=sol%669,a=2*Math.PI*(y-445)/669;return 589*(1+0.09*Math.cos(a))*Math.max(0.3,Math.cos(2*Math.PI*y/669)*0.5+0.5)*(dust?0.25:1)}
 
 function loadFrames(){
@@ -178,6 +178,121 @@ function tick(st, sol, frame, R){
       }
       if(h.type==='supply_cache_contamination'){
         st.food = Math.max(0, st.food * (1 - (h.food_loss_pct||0.15)));
+      }
+
+      // ═══ v6 AUTONOMOUS OPERATIONS hazards ═══
+      // Robot-only pre-deployment: the base runs 1+ year without humans.
+      // Robots break. Constantly. In creative ways.
+
+      if(h.type==='wheel_degradation'){
+        // Spirit lost a wheel at Sol 779. Curiosity has 13 punctures.
+        st.ie = Math.max(0.1, st.ie - (h.severity||0.02));
+        // Mobility loss reduces construction/repair efficiency
+        st.se = Math.max(0.1, st.se - (h.mobility_loss||0.03));
+      }
+
+      if(h.type==='navigation_error'){
+        // No GPS on Mars. Robot gets lost, wastes hours/days.
+        st.se = Math.max(0.1, st.se - (h.efficiency_penalty||0.1));
+        // Might get stuck
+        if(R() < (h.stuck_probability||0.05)){
+          st.ie = Math.max(0.1, st.ie * 0.85);
+          st.power = Math.max(0, st.power - 20);
+        }
+      }
+
+      if(h.type==='software_watchdog_trip'){
+        // Safe mode reboot. State loss. Downtime.
+        const downtime = h.downtime_sols||2;
+        st.power = Math.max(0, st.power - downtime * 15);
+        st.se = Math.max(0.1, st.se * (1 - (h.state_loss_pct||0.3)));
+        st.ie = Math.max(0.1, st.ie * (1 - (h.state_loss_pct||0.3) * 0.5));
+      }
+
+      if(h.type==='actuator_seizure'){
+        // Joints freeze from thermal cycling + perchlorate
+        const joints = h.affected_joints||1;
+        st.ie = Math.max(0.1, st.ie - joints * 0.03);
+        const workaround = h.workaround_efficiency||0.5;
+        st.se = Math.max(0.1, st.se * (1 - (1 - workaround) * joints * 0.1));
+        // Crew (robots) take damage
+        const bots = st.crew.filter(c=>c.a&&c.bot&&c.hp>0);
+        if(bots.length) bots[Math.floor(R()*bots.length)%bots.length].hp -= joints * 3;
+      }
+
+      if(h.type==='communication_delay'){
+        // 4-24 min light delay. Robot must decide alone.
+        // Reduces effective intelligence/efficiency
+        st.se = Math.max(0.1, st.se - 0.02);
+        // Increases chance of autonomous logic failure
+        if(R() < 0.05) st.ie = Math.max(0.1, st.ie * 0.95);
+      }
+
+      if(h.type==='power_brownout'){
+        // Battery capacity permanently lost each cycle
+        const capLoss = (h.capacity_loss_pct||1.5) / 100;
+        st.power = Math.max(0, st.power * (1 - capLoss));
+        // Charge controller fault
+        if(R() < (h.charge_controller_fault_prob||0.03)){
+          st.power = Math.max(0, st.power * 0.8);
+        }
+      }
+
+      if(h.type==='sensor_blindness'){
+        // Cameras, lidar, IMU — all degrade
+        const deg = h.degradation||0.1;
+        st.se = Math.max(0.1, st.se - deg * 0.3);
+        st.ie = Math.max(0.1, st.ie - deg * 0.2);
+      }
+
+      if(h.type==='thermal_shock'){
+        // 140°C daily swing. Solder cracks. PCBs warp.
+        if(R() < (h.component_failure_prob||0.04)){
+          // Random component dies
+          const bots = st.crew.filter(c=>c.a&&c.bot&&c.hp>0);
+          if(bots.length) bots[Math.floor(R()*bots.length)%bots.length].hp -= 10;
+          st.ie = Math.max(0.1, st.ie * 0.9);
+        }
+      }
+
+      if(h.type==='regolith_entrapment'){
+        // Spirit got stuck and never got out.
+        if(R() < (1 - (h.success_probability||0.7))){
+          // Robot stuck permanently — effectively lost
+          const bots = st.crew.filter(c=>c.a&&c.bot&&c.hp>10);
+          if(bots.length) bots[Math.floor(R()*bots.length)%bots.length].hp = 0;
+        } else {
+          // Extraction takes time
+          st.power = Math.max(0, st.power - (h.extraction_time_sols||5) * 10);
+          st.se = Math.max(0.1, st.se - 0.1);
+        }
+      }
+
+      if(h.type==='cable_wear'){
+        // Frayed cables, corroded connectors, intermittent faults
+        st.ie = Math.max(0.1, st.ie - (h.degradation||0.02));
+        if(R() < (h.intermittent_fault_prob||0.04)){
+          // Intermittent: system randomly drops offline
+          st.power = Math.max(0, st.power - 15);
+          st.se = Math.max(0.1, st.se * 0.95);
+        }
+      }
+
+      if(h.type==='autonomous_logic_failure'){
+        // Bad decisions with no human in the loop
+        const sev = h.severity||0.3;
+        st.se = Math.max(0.1, st.se - sev * 0.15);
+        st.ie = Math.max(0.1, st.ie - sev * 0.1);
+        st.power = Math.max(0, st.power - sev * 30);
+        // Wasted time
+        st.se = Math.max(0.1, st.se * (1 - sev * 0.1));
+      }
+
+      if(h.type==='dust_storm_immobilization'){
+        // Opportunity died this way. Total solar loss for weeks.
+        const solarLoss = h.solar_loss_pct||0.8;
+        st.se = Math.max(0.05, st.se * (1 - solarLoss));
+        st.power = Math.max(0, st.power * (1 - solarLoss * 0.5));
       }
     }
   }

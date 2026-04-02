@@ -77,12 +77,14 @@ runs ALL versions sequentially. State carries forward. Damage accumulates.
 | v3 Skeleton Crew | 503-602 | Workload wear, concurrent maintenance, solo failure |
 | v4 Module Overload | 678-727 | Cascade failures, power grid overload, dust infiltration |
 | v5 Entropy Collapse | 728-777 | Complacency drift, resource decay, maintenance avalanche, crew isolation, solar degradation, habitat entropy |
+| v6 Autonomous Ops | 778-847 | Wheel degradation, navigation error, watchdog trip, actuator seizure, comm delay, power brownout, sensor blindness, thermal shock, regolith entrapment, cable wear, autonomous logic failure, dust storm immobilization |
 
 ### Retroactive echo enrichment:
 - Past frames get richer data layers WITHOUT changing (additive overlay files)
 - v3 enrichment: cumulative perchlorate, radiation, thermal stress from Sol 1
 - v4 enrichment: module maintenance debt, grid complexity, seal degradation from Sol 1
 - v5 enrichment: cumulative food decay, solar degradation, crew isolation index, system entropy, maintenance debt from Sol 1
+- v6 enrichment: cumulative wheel wear, joint stiffness, battery degradation, sensor drift, cable fatigue, autonomous decision count, unrecoverable errors from Sol 1
 - These are ALWAYS applied — you can't opt out of enrichment
 
 ### v5 Entropy Collapse — what it counters:
@@ -92,6 +94,23 @@ runs ALL versions sequentially. State carries forward. Damage accumulates.
 - **Crew Isolation Syndrome**: Below 4 crew, psychological decline accelerates (HI-SEAS analog data).
 - **Solar Degradation**: Cumulative panel efficiency loss — irreversible (Spirit/Opportunity data).
 - **Habitat Entropy**: All systems degrade every sol without active maintenance allocation.
+
+### v6 Autonomous Operations — the REAL mission:
+The base must run with ZERO humans for 1+ Mars year (687 sols) before any crew arrives.
+This is not optional. This is the mission architecture. Robots go first. Always.
+
+- **Wheel Degradation**: Spirit lost a wheel at Sol 779. Curiosity has 13 punctures. Every sol grinds them down.
+- **Navigation Error**: No GPS on Mars. Dead reckoning fails. Robots get lost for hours or days.
+- **Software Watchdog Trip**: Safe mode reboot. State loss. Task queue cleared. Perseverance had 4 in year 1.
+- **Actuator Seizure**: -120°C to +20°C daily. Joints freeze. Perchlorate infiltrates bearings.
+- **Communication Delay**: 4-24 min light delay. No real-time control. Robot decides alone. Bad decisions compound.
+- **Power Brownout**: Batteries lose capacity in cold. Charge controllers glitch from radiation.
+- **Sensor Blindness**: Dust on cameras, UV-degraded lidar, IMU drift. Blind robots guess.
+- **Thermal Shock**: 140°C daily swing cracks solder, warps PCBs, loosens connectors.
+- **Regolith Entrapment**: Spirit got stuck at Sol 1892. Never got out. One wrong turn = permanent.
+- **Cable Wear**: Repeated motion frays cables. Perchlorate corrodes connectors. Intermittent faults are worst.
+- **Autonomous Logic Failure**: No human in loop. Robot drives into crater. Misinterprets data. Wastes days.
+- **Dust Storm Immobilization**: Opportunity died after 14 years to a global dust storm. Solar drops 60-95%.
 
 ---
 

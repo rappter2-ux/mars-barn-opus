@@ -129,6 +129,31 @@
       ],
       "notes": "Counters ultra-conservative static play. The fleet achieved S+ (96,150) by never changing allocations, hoarding massive resource buffers, building 21 modules without penalty, and coasting with 3 crew. v5 makes ENTROPY a first-class citizen: food rots, panels degrade, crew psychology crumbles, module maintenance scales superlinearly, and static routines breed complacency. Based on: NASA food shelf-life data, Spirit/Opportunity solar degradation, HI-SEAS psychological studies, ISS maintenance logs.",
       "backtest_target": "Run the fleet 96,150 strategy against v5. Expected: static allocations trigger complacency drift, resource hoarding triggers decay, module spam triggers maintenance avalanche."
+    },
+    {
+      "version": 6,
+      "name": "Autonomous Operations",
+      "released": "2025-04-02",
+      "sol_range": [
+        778,
+        847
+      ],
+      "hazards_added": [
+        "wheel_degradation",
+        "navigation_error",
+        "software_watchdog_trip",
+        "actuator_seizure",
+        "communication_delay",
+        "power_brownout",
+        "sensor_blindness",
+        "thermal_shock",
+        "regolith_entrapment",
+        "cable_wear",
+        "autonomous_logic_failure",
+        "dust_storm_immobilization"
+      ],
+      "notes": "THE REAL MISSION: Base runs with ZERO humans for 1+ Mars year before crew arrives. Robots go first. Always. This version makes robots break realistically: wheels grind, joints seize, batteries degrade, sensors go blind, software crashes, navigation fails, cables fray, and dust storms kill. Based on Spirit (2210 sols), Opportunity (5352 sols, killed by dust), Curiosity (4000+ sols, 13 wheel punctures), Perseverance (4 watchdog trips year 1), ISS Canadarm2 (20+ years maintenance). The fleet cannot survive by pretending robots are immortal.",
+      "backtest_target": "Run the fleet 99,980 strategy (3 immortal robots) against v6. Expected: robots degrade, get stuck, go blind, make bad decisions. The 3-robot strategy collapses."
     }
   ],
   "backtest_protocol": {
