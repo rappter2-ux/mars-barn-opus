@@ -90,8 +90,86 @@ function tick(st, sol, frame, R){
         st.se = Math.max(0.1, st.se - efficiencyLoss);
         st.ie = Math.max(0.1, st.ie - efficiencyLoss);
       }
+
+      // ═══ v5 ENTROPY COLLAPSE hazards ═══
+      
+      if(h.type==='complacency_drift'){
+        // Punishes static allocations: if governor hasn't changed allocs recently, crew gets sloppy
+        // Check allocation variance (compare to previous sol's allocs)
+        const prevAlloc = st._prevAlloc || {h:0,i:0,g:0};
+        const allocDelta = Math.abs(a.h-prevAlloc.h) + Math.abs(a.i-prevAlloc.i) + Math.abs(a.g-prevAlloc.g);
+        if(allocDelta < (h.allocation_variance_threshold||0.02)){
+          st.morale = Math.max(0, st.morale - (h.morale_penalty||5));
+          st.se = Math.max(0.1, st.se - (h.efficiency_penalty||0.02));
+          st.ie = Math.max(0.1, st.ie - (h.efficiency_penalty||0.02));
+        }
+      }
+      
+      if(h.type==='resource_decay'){
+        // Hoarded resources spoil: food rots, O2 leaks, water gets contaminated
+        const foodDecay = h.food_decay_rate||0.01;
+        const o2Leak = h.o2_leak_rate||0.005;
+        const h2oContam = h.h2o_contamination_rate||0.003;
+        st.food = Math.max(0, st.food * (1 - foodDecay));
+        st.o2 = Math.max(0, st.o2 * (1 - o2Leak));
+        st.h2o = Math.max(0, st.h2o * (1 - h2oContam));
+      }
+      
+      if(h.type==='maintenance_avalanche'){
+        // Module upkeep scales as N^1.5 — punishes module spam
+        const safeCount = h.safe_module_count||7;
+        if(totalModules > safeCount){
+          const excess = totalModules - safeCount;
+          const powerCost = (h.power_cost_per_module_squared||0.5) * excess * excess;
+          st.power = Math.max(0, st.power - powerCost);
+          // Crew hours consumed by maintenance reduce effective crew productivity
+          const hoursNeeded = (h.crew_hours_per_module||1.0) * Math.pow(totalModules, 1.5) / 10;
+          st.se = Math.max(0.1, st.se - hoursNeeded * 0.01);
+          // Random module failure
+          if(R() < (h.failure_prob_per_excess_module||0.02) * excess){
+            st.ie = Math.max(0.1, st.ie * 0.9);
+          }
+        }
+      }
+      
+      if(h.type==='crew_isolation_syndrome'){
+        // Low crew = psychological collapse
+        const minStable = h.min_crew_for_stability||4;
+        if(aliveCrew < minStable){
+          const missing = minStable - aliveCrew;
+          st.morale = Math.max(0, st.morale - (h.morale_decay_per_missing_crew||5) * missing);
+          // Productivity loss from depression/anxiety
+          const prodLoss = (h.productivity_loss||0.08) * missing;
+          st.se = Math.max(0.1, st.se - prodLoss);
+          st.ie = Math.max(0.1, st.ie - prodLoss);
+        }
+      }
+      
+      if(h.type==='solar_degradation'){
+        // Cumulative solar panel degradation — irreversible
+        const lossRate = h.cumulative_loss_per_100_sols||0.02;
+        st.se = Math.max(0.2, st.se - lossRate * (sol / 100) * 0.01);
+      }
+      
+      if(h.type==='habitat_entropy'){
+        // Second law: all systems degrade without active maintenance
+        const deg = h.system_degradation||0.004;
+        st.se = Math.max(0.1, st.se - deg);
+        st.ie = Math.max(0.1, st.ie - deg);
+        st.power = Math.max(0, st.power - (h.repair_power_cost||10));
+      }
+      
+      // v5 events
+      if(h.type==='crew_conflict'){
+        st.morale = Math.max(0, st.morale + (h.morale_impact||-15));
+      }
+      if(h.type==='supply_cache_contamination'){
+        st.food = Math.max(0, st.food * (1 - (h.food_loss_pct||0.15)));
+      }
     }
   }
+  // Track previous allocation for complacency detection
+  st._prevAlloc = {h:a.h, i:a.i, g:a.g};
   st.ev=st.ev.filter(e=>{e.r--;return e.r>0});
 
   // Random equipment events (CRI-weighted)
