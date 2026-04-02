@@ -1,0 +1,194 @@
+;; HYPERMAX ADAPTIVE TRANSCENDENCE v1 - Ultra Adaptive Mars Mastery
+;; Innovation: Dynamic CRI-responsive allocation + multi-phase evolution + exponential repair orchestration  
+;; Strategy: Beat 644 sol record through ultra-adaptive intelligence + creative infrastructure timing
+;; Target: 650+ sols with 100% survival + maximum score efficiency
+
+(begin
+  (define _agent_name "Hypermax Adaptive Transcendence v1")
+  (define _agent_desc "Ultra-adaptive mastery: dynamic CRI-responsive allocation + multi-phase evolution + exponential repair orchestration for 645+ frame mastery")
+
+  (log (concat "🌟⚡🔬 Adaptive Transcendence — Sol " (string sol)))
+
+  ;; ═══ ADAPTIVE MISSION PHASE INTELLIGENCE ═══
+  ;; Revolutionary approach: colony evolves through distinct adaptive phases
+  (define mission_completion_ratio (/ sol 645))
+  (define adaptive_phase
+    (cond
+      ((< sol 50) "BOOTSTRAP")       ;; Rapid foundation building
+      ((< sol 150) "EXPANSION")      ;; Aggressive infrastructure scaling  
+      ((< sol 300) "FORTIFICATION")  ;; Defense system establishment
+      ((< sol 450) "OPTIMIZATION")   ;; Peak efficiency operations
+      (true "TRANSCENDENCE")))       ;; Ultra survival excellence
+
+  ;; Phase-specific intelligence modifiers
+  (define phase_urgency_factor
+    (cond
+      ((= adaptive_phase "BOOTSTRAP") 2.5)      ;; Ultra-aggressive early build
+      ((= adaptive_phase "EXPANSION") 2.0)      ;; Rapid scaling
+      ((= adaptive_phase "FORTIFICATION") 1.7)  ;; Defense focus
+      ((= adaptive_phase "OPTIMIZATION") 1.4)   ;; Efficiency focus
+      (true 1.2)))                             ;; Transcendent stability
+
+  ;; ═══ ULTRA-ADAPTIVE CRI THREAT ORCHESTRATION ═══
+  ;; Dynamic threat response system that evolves with colony state
+  (define cri_current colony_risk_index)
+  (define cri_mission_scaling (+ 1.0 (* mission_completion_ratio 0.6)))  ;; CRI tends to increase
+  (define cri_predicted (* cri_current cri_mission_scaling))
+  
+  ;; Multi-dimensional threat matrix
+  (define threat_complexity
+    (+ (* (max 0 (- cri_current 20)) 0.03)     ;; Base CRI threat
+       (* phase_urgency_factor 0.15)          ;; Phase-based urgency
+       (* (max 0 (- 400 sol)) -0.001)))        ;; Late mission risk reduction
+
+  ;; Adaptive CRI response levels
+  (define cri_response_level
+    (cond
+      ((> cri_predicted 80) "APOCALYPTIC")     ;; Maximum defensive protocols
+      ((> cri_predicted 60) "CRITICAL")        ;; Heavy defensive allocation
+      ((> cri_predicted 40) "ELEVATED")        ;; Moderate defensive response
+      ((> cri_predicted 25) "MODERATE")        ;; Standard operational awareness
+      (true "STABLE")))                        ;; Normal operations
+
+  ;; ═══ EXPONENTIAL REPAIR ORCHESTRATION SYSTEM ═══
+  ;; Creative repair bay deployment with exponential scaling
+  (define optimal_repair_ratio
+    (cond
+      ((= adaptive_phase "BOOTSTRAP") 0.25)    ;; Early repair foundation
+      ((= adaptive_phase "EXPANSION") 0.35)    ;; Scaling repair capacity
+      ((= adaptive_phase "FORTIFICATION") 0.50) ;; Maximum repair deployment
+      ((= adaptive_phase "OPTIMIZATION") 0.45)  ;; Optimized repair maintenance
+      (true 0.42)))                            ;; Transcendent repair balance
+
+  (define estimated_repair_bays (max 1 (round (* modules_built optimal_repair_ratio))))
+  (define exponential_repair_base 3.2)  ;; Ultra-aggressive exponential scaling
+  (define repair_exponential_power (pow exponential_repair_base estimated_repair_bays))
+  
+  ;; CRI-adaptive repair amplification
+  (define cri_repair_amplifier
+    (cond
+      ((= cri_response_level "APOCALYPTIC") 2.8)
+      ((= cri_response_level "CRITICAL") 2.3)
+      ((= cri_response_level "ELEVATED") 1.8)
+      ((= cri_response_level "MODERATE") 1.4)
+      (true 1.0)))
+
+  (define total_repair_shield (* repair_exponential_power cri_repair_amplifier phase_urgency_factor))
+
+  ;; ═══ ULTRA-ADAPTIVE INFRASTRUCTURE INTELLIGENCE ═══
+  ;; Creative infrastructure timing and allocation
+  (define adaptive_solar_ratio
+    (cond
+      ((= adaptive_phase "BOOTSTRAP") 0.45)    ;; Rapid power foundation
+      ((= adaptive_phase "EXPANSION") 0.52)    ;; Power-focused scaling  
+      ((= adaptive_phase "FORTIFICATION") 0.48) ;; Balanced power/defense
+      ((= adaptive_phase "OPTIMIZATION") 0.50)  ;; Optimized power efficiency
+      (true 0.46)))                            ;; Transcendent power balance
+
+  (define adaptive_greenhouse_ratio
+    (cond
+      ((< food_days 5) 0.35)                   ;; Food crisis override
+      ((= adaptive_phase "BOOTSTRAP") 0.15)    ;; Minimal early food
+      ((= adaptive_phase "EXPANSION") 0.20)    ;; Growing food needs
+      ((= adaptive_phase "FORTIFICATION") 0.25) ;; Food security establishment
+      ((= adaptive_phase "OPTIMIZATION") 0.28)  ;; Peak food efficiency
+      (true 0.30)))                            ;; Transcendent food abundance
+
+  (define estimated_solar_farms (max 2 (round (* modules_built adaptive_solar_ratio))))
+  (define estimated_greenhouses (max 1 (round (* modules_built adaptive_greenhouse_ratio))))
+  (define estimated_isru_plants (max 1 (round (* modules_built 0.18))))
+
+  ;; ═══ TRANSCENDENT EFFICIENCY CALCULATION ═══
+  ;; Ultra-advanced efficiency beyond all previous strategies
+  (define transcendent_base 4.5)  ;; Higher than any previous strategy
+  (define solar_power_multiplier (+ 1.8 (* estimated_solar_farms 0.18)))
+  (define infrastructure_maturity_bonus (min 2.5 (max 0.9 (/ modules_built 20))))
+  (define phase_efficiency_multiplier
+    (cond
+      ((= adaptive_phase "BOOTSTRAP") 1.2)
+      ((= adaptive_phase "EXPANSION") 1.5)
+      ((= adaptive_phase "FORTIFICATION") 1.8)
+      ((= adaptive_phase "OPTIMIZATION") 2.2)
+      (true 2.5)))
+
+  (define total_transcendent_efficiency 
+    (* transcendent_base total_repair_shield solar_power_multiplier 
+       infrastructure_maturity_bonus phase_efficiency_multiplier))
+
+  (log (concat "  Phase:" adaptive_phase " | CRI:" cri_response_level " | Repair:" (string estimated_repair_bays) "(" (string (round (* repair_exponential_power 100))) "%) | Efficiency:" (string (round (* total_transcendent_efficiency 100))) "%"))
+
+  ;; ═══ ULTRA-ADAPTIVE RESOURCE ALLOCATION MATRIX ═══
+  ;; Dynamic allocation that evolves with mission state and CRI threat level
+  
+  ;; ISRU Allocation (O2 Production) - Adaptive to crisis and phase
+  (define adaptive_isru_target
+    (cond
+      ((< o2_days 2) 0.75)                     ;; Emergency O2 override
+      ((< o2_days 4) 0.60)                     ;; High O2 urgency  
+      ((= cri_response_level "APOCALYPTIC") 0.55) ;; CRI-based O2 security
+      ((= cri_response_level "CRITICAL") 0.45)
+      ((= adaptive_phase "BOOTSTRAP") 0.35)    ;; Phase-based O2 allocation
+      ((= adaptive_phase "EXPANSION") 0.30)
+      ((= adaptive_phase "FORTIFICATION") 0.25)
+      ((= adaptive_phase "OPTIMIZATION") 0.22)
+      (true 0.20)))                           ;; Transcendent O2 efficiency
+
+  ;; Greenhouse Allocation (Food Production) - Adaptive to crew needs and phase
+  (define adaptive_greenhouse_target
+    (cond
+      ((< food_days 3) 0.65)                  ;; Emergency food override
+      ((< food_days 6) 0.50)                  ;; High food urgency
+      ((= cri_response_level "APOCALYPTIC") 0.40) ;; CRI-based food security
+      ((= cri_response_level "CRITICAL") 0.35)
+      ((= adaptive_phase "BOOTSTRAP") 0.25)   ;; Phase-based food allocation
+      ((= adaptive_phase "EXPANSION") 0.30)
+      ((= adaptive_phase "FORTIFICATION") 0.32)
+      ((= adaptive_phase "OPTIMIZATION") 0.35)
+      (true 0.38)))                          ;; Transcendent food efficiency
+
+  ;; Heating Allocation (Power/Infrastructure) - Remainder after ISRU and greenhouse
+  (define adaptive_heating_target (- 1.0 adaptive_isru_target adaptive_greenhouse_target))
+
+  ;; Apply adaptive allocation with efficiency amplification
+  (set! isru_alloc (* adaptive_isru_target (min 1.5 (/ total_transcendent_efficiency 400))))
+  (set! greenhouse_alloc (* adaptive_greenhouse_target (min 1.4 (/ total_transcendent_efficiency 450))))
+  (set! heating_alloc (max 0.15 (- 1.0 isru_alloc greenhouse_alloc)))
+
+  ;; ═══ ADAPTIVE FOOD RATIONING INTELLIGENCE ═══
+  ;; Smart rationing that adapts to mission phase and resource state
+  (define adaptive_base_ration
+    (cond
+      ((< food_days 2) 0.25)                  ;; Extreme emergency rationing
+      ((< food_days 4) 0.40)                  ;; Crisis rationing
+      ((< food_days 8) 0.60)                  ;; Conservative rationing
+      ((= adaptive_phase "BOOTSTRAP") 0.70)   ;; Phase-specific rationing
+      ((= adaptive_phase "EXPANSION") 0.75)
+      ((= adaptive_phase "FORTIFICATION") 0.80)
+      ((= adaptive_phase "OPTIMIZATION") 0.85)
+      (true 0.90)))                           ;; Transcendent abundance
+
+  ;; CRI-adaptive rationing adjustment
+  (define cri_ration_modifier
+    (cond
+      ((= cri_response_level "APOCALYPTIC") 0.8)
+      ((= cri_response_level "CRITICAL") 0.9)
+      ((= cri_response_level "ELEVATED") 0.95)
+      (true 1.0)))
+
+  (set! food_ration (* adaptive_base_ration cri_ration_modifier))
+
+  ;; ═══ ENHANCED STATUS LOGGING ═══
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Greenhouse:" (string (round (* greenhouse_alloc 100))) "% | Heating:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Resources — O2:" (string o2_days) "d Food:" (string food_days) "d Power:" (string power_kwh) " | Ration:" (string (round (* food_ration 100))) "%"))
+  (log (concat "  Infrastructure — Solar:" (string estimated_solar_farms) " Repair:" (string estimated_repair_bays) " Greenhouse:" (string estimated_greenhouses) " | Total:" (string modules_built)))
+
+  ;; ═══ TRANSCENDENT OUTPUT SUMMARY ═══
+  (concat "Adaptive Sol " (string sol) " [" adaptive_phase "|" cri_response_level "]"
+    " — I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | Eff:" (string (round (* total_transcendent_efficiency 100)))
+    "% | O2:" (string o2_days)
+    "d F:" (string food_days)
+    "d P:" (string power_kwh)))
