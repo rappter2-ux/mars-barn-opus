@@ -1,0 +1,252 @@
+;; COPILOT INCREMENTAL RECORD BREAKER v1  
+;; Strategic Innovation: Improved CRI Control + Enhanced Module Density + Sol 15 Farming
+;; Target: Break 92,140 by achieving CRI P75=6 + 22 modules + Sol 15 farming start
+;; Approach: Conservative improvements to proven Sol 20 strategy
+
+(begin
+  (define _agent_name "Copilot Incremental Record Breaker v1")
+  (define _agent_desc "Improved CRI control with enhanced module density and Sol 15 farming")
+
+  (log (concat "🎯🚀🏆⚡ INCREMENTAL RECORD BREAKER — Sol " (string sol) " — Enhanced Protocol"))
+
+  ;; ═══ ENHANCED EARLY FARMING PROTOCOL ═══
+  ;; Improved: Farming starts Sol 15 (vs Sol 20) for 5-sol advantage
+  (define enhanced_farming_start_sol 15)
+  (define mega_farming_window (and (>= sol enhanced_farming_start_sol) (< sol 45)))
+  (define farming_acceleration_phase (and (>= sol 45) (< sol 75)))
+  
+  ;; ═══ IMPROVED CRI CONTROL SYSTEM ═══
+  ;; Target P75 CRI = 6 (vs current 11) for +50 score improvement
+  (define improved_cri_target_p75 6)
+  (define cri_control_buffer 2)
+  (define target_cri_max (+ improved_cri_target_p75 cri_control_buffer))
+  
+  ;; Enhanced CRI threat levels for better control
+  (define cri_perfect (< cri 3))
+  (define cri_excellent (and (>= cri 3) (< cri 5)))
+  (define cri_very_good (and (>= cri 5) (< cri 7)))
+  (define cri_good (and (>= cri 7) (< cri 10)))
+  (define cri_acceptable (and (>= cri 10) (< cri 15)))
+  (define cri_concerning (and (>= cri 15) (< cri 22)))
+  (define cri_dangerous (>= cri 22))
+
+  ;; ═══ ENHANCED MODULE OPTIMIZATION ═══
+  ;; Target 22 modules (vs current 21) for +150 score improvement
+  (define enhanced_module_target 22)
+  (define module_density_phase_1_target 9)   ;; Sol 90 (vs 8)
+  (define module_density_phase_2_target 16)  ;; Sol 180 (vs 15)
+  (define module_density_phase_3_target 20)  ;; Sol 350 (vs 400)
+  (define module_density_phase_4_target 22)  ;; Sol 550+ (vs 600+)
+
+  ;; Current module counts
+  (define greenhouse_count (length (filter (lambda (m) (equal? (get m "type") "greenhouse")) modules)))
+  (define solar_count (length (filter (lambda (m) (equal? (get m "type") "solar_array")) modules)))
+  (define repair_count (length (filter (lambda (m) (equal? (get m "type") "repair_bay")) modules)))
+  (define hab_count (length (filter (lambda (m) (equal? (get m "type") "habitat")) modules)))
+  (define total_modules (length modules))
+
+  ;; ═══ ENHANCED PHASE INTELLIGENCE ═══
+  ;; Improved phase timing for better control
+  (define genesis_phase (< sol 25))                    ;; Extended setup
+  (define early_phase (and (>= sol 25) (< sol 75)))    ;; Early building
+  (define acceleration_phase (and (>= sol 75) (< sol 140))) ;; Faster acceleration
+  (define consolidation_phase (and (>= sol 140) (< sol 280))) ;; Earlier consolidation
+  (define optimization_phase (and (>= sol 280) (< sol 450))) ;; Extended optimization
+  (define transcendence_phase (>= sol 450))           ;; Final phase
+
+  ;; Enhanced survival thresholds for better CRI control
+  (define min_o2_threshold 1.6)    ;; Slightly higher than 1.5
+  (define min_food_threshold 2.1)  ;; Slightly higher than 2.0
+  (define min_water_threshold 1.6) ;; Slightly higher than 1.5
+  (define safety_power_buffer 180) ;; Higher than 150
+
+  ;; Resource calculations
+  (define o2_production (* greenhouse_count 5.5))
+  (define food_production (* greenhouse_count 1.8))
+  (define water_production (* greenhouse_count 0.8))
+  (define power_generation (* solar_count 400))
+  (define power_consumption (* (length crew) 80))
+  (define power_available (- power_generation power_consumption safety_power_buffer))
+
+  ;; Resource status
+  (define o2_critically_low (< o2_days min_o2_threshold))
+  (define food_critically_low (< food_days min_food_threshold))
+  (define water_critically_low (< water_days min_water_threshold))
+  (define power_critically_low (< power_available 200))
+
+  ;; Emergency conditions
+  (define any_resource_critical (or o2_critically_low food_critically_low water_critically_low power_critically_low))
+  (define multiple_resources_critical 
+    (+ (if o2_critically_low 1 0)
+       (if food_critically_low 1 0) 
+       (if water_critically_low 1 0)
+       (if power_critically_low 1 0)))
+
+  ;; ═══ ENHANCED ALLOCATION ENGINE ═══
+  ;; More conservative but targeted improvements
+
+  (define base_allocation
+    (cond
+      ;; CRISIS MODE: Any critical resource
+      (any_resource_critical
+        (begin
+          (log "🚨 CRISIS MODE: Enhanced resource recovery")
+          (cond
+            ((> multiple_resources_critical 2) 
+              '((repair . 8) (greenhouse . 44) (solar_array . 43) (habitat . 5)))
+            (o2_critically_low 
+              '((repair . 6) (greenhouse . 54) (solar_array . 35) (habitat . 5)))
+            (food_critically_low 
+              '((repair . 6) (greenhouse . 54) (solar_array . 35) (habitat . 5)))
+            (water_critically_low 
+              '((repair . 6) (greenhouse . 49) (solar_array . 40) (habitat . 5)))
+            (power_critically_low 
+              '((repair . 6) (greenhouse . 34) (solar_array . 55) (habitat . 5))))))
+
+      ;; GENESIS PHASE: Enhanced startup
+      (genesis_phase
+        (begin
+          (log "🌅 GENESIS: Enhanced aggressive startup")
+          '((repair . 3) (greenhouse . 47) (solar_array . 47) (habitat . 3))))
+
+      ;; MEGA FARMING WINDOW: Sol 15-45 enhanced farming
+      (mega_farming_window
+        (begin
+          (log "🚀 ENHANCED FARMING: Sol 15 breakthrough protocol")
+          (cond
+            (cri_dangerous '((repair . 10) (greenhouse . 41) (solar_array . 44) (habitat . 5)))
+            (cri_concerning '((repair . 7) (greenhouse . 46) (solar_array . 44) (habitat . 3)))
+            (cri_acceptable '((repair . 5) (greenhouse . 48) (solar_array . 44) (habitat . 3)))
+            (cri_good '((repair . 4) (greenhouse . 49) (solar_array . 44) (habitat . 3)))
+            (cri_very_good '((repair . 3) (greenhouse . 50) (solar_array . 44) (habitat . 3)))
+            (true '((repair . 3) (greenhouse . 51) (solar_array . 44) (habitat . 2))))))
+
+      ;; ACCELERATION PHASE: Enhanced push
+      (farming_acceleration_phase
+        (begin
+          (log "⚡ ENHANCED ACCELERATION: Improved building push")
+          (cond
+            (cri_dangerous '((repair . 12) (greenhouse . 39) (solar_array . 44) (habitat . 5)))
+            (cri_concerning '((repair . 8) (greenhouse . 45) (solar_array . 44) (habitat . 3)))
+            (cri_acceptable '((repair . 6) (greenhouse . 47) (solar_array . 44) (habitat . 3)))
+            (cri_good '((repair . 4) (greenhouse . 49) (solar_array . 44) (habitat . 3)))
+            (cri_very_good '((repair . 3) (greenhouse . 50) (solar_array . 44) (habitat . 3)))
+            (true '((repair . 3) (greenhouse . 51) (solar_array . 44) (habitat . 2))))))
+
+      ;; CONSOLIDATION: Enhanced balanced growth
+      (consolidation_phase
+        (begin
+          (log "🏗️ ENHANCED CONSOLIDATION: Improved infrastructure expansion")
+          (cond
+            ((< total_modules module_density_phase_1_target)
+              (cond
+                (cri_dangerous '((repair . 15) (greenhouse . 37) (solar_array . 43) (habitat . 5)))
+                (cri_concerning '((repair . 10) (greenhouse . 43) (solar_array . 44) (habitat . 3)))
+                (cri_acceptable '((repair . 7) (greenhouse . 46) (solar_array . 44) (habitat . 3)))
+                (cri_good '((repair . 5) (greenhouse . 48) (solar_array . 44) (habitat . 3)))
+                (true '((repair . 4) (greenhouse . 49) (solar_array . 44) (habitat . 3)))))
+            (true
+              (cond
+                (cri_dangerous '((repair . 18) (greenhouse . 34) (solar_array . 43) (habitat . 5)))
+                (cri_concerning '((repair . 12) (greenhouse . 41) (solar_array . 44) (habitat . 3)))
+                (cri_acceptable '((repair . 8) (greenhouse . 45) (solar_array . 44) (habitat . 3)))
+                (cri_good '((repair . 6) (greenhouse . 47) (solar_array . 44) (habitat . 3)))
+                (true '((repair . 5) (greenhouse . 48) (solar_array . 44) (habitat . 3))))))))
+
+      ;; OPTIMIZATION: Enhanced module density push
+      (optimization_phase
+        (begin
+          (log "🎯 ENHANCED OPTIMIZATION: Advanced module density")
+          (cond
+            ((< total_modules module_density_phase_3_target)
+              (cond
+                (cri_dangerous '((repair . 18) (greenhouse . 34) (solar_array . 43) (habitat . 5)))
+                (cri_concerning '((repair . 12) (greenhouse . 41) (solar_array . 44) (habitat . 3)))
+                (cri_acceptable '((repair . 8) (greenhouse . 45) (solar_array . 44) (habitat . 3)))
+                (cri_good '((repair . 6) (greenhouse . 47) (solar_array . 44) (habitat . 3)))
+                (cri_very_good '((repair . 5) (greenhouse . 48) (solar_array . 44) (habitat . 3)))
+                (true '((repair . 4) (greenhouse . 49) (solar_array . 44) (habitat . 3)))))
+            (true
+              (cond
+                (cri_dangerous '((repair . 22) (greenhouse . 30) (solar_array . 43) (habitat . 5)))
+                (cri_concerning '((repair . 16) (greenhouse . 37) (solar_array . 44) (habitat . 3)))
+                (cri_acceptable '((repair . 11) (greenhouse . 42) (solar_array . 44) (habitat . 3)))
+                (cri_good '((repair . 8) (greenhouse . 45) (solar_array . 44) (habitat . 3)))
+                (cri_very_good '((repair . 6) (greenhouse . 47) (solar_array . 44) (habitat . 3)))
+                (true '((repair . 5) (greenhouse . 48) (solar_array . 44) (habitat . 3))))))))
+
+      ;; TRANSCENDENCE: Enhanced final optimization
+      (transcendence_phase
+        (begin
+          (log "✨ ENHANCED TRANSCENDENCE: Final enhanced optimization")
+          (cond
+            ((< total_modules enhanced_module_target)
+              (cond
+                (cri_dangerous '((repair . 22) (greenhouse . 30) (solar_array . 43) (habitat . 5)))
+                (cri_concerning '((repair . 16) (greenhouse . 37) (solar_array . 44) (habitat . 3)))
+                (cri_acceptable '((repair . 11) (greenhouse . 42) (solar_array . 44) (habitat . 3)))
+                (cri_good '((repair . 8) (greenhouse . 45) (solar_array . 44) (habitat . 3)))
+                (cri_very_good '((repair . 6) (greenhouse . 47) (solar_array . 44) (habitat . 3)))
+                (true '((repair . 5) (greenhouse . 48) (solar_array . 44) (habitat . 3)))))
+            (true
+              (cond
+                (cri_dangerous '((repair . 25) (greenhouse . 27) (solar_array . 43) (habitat . 5)))
+                (cri_concerning '((repair . 20) (greenhouse . 33) (solar_array . 44) (habitat . 3)))
+                (cri_acceptable '((repair . 15) (greenhouse . 38) (solar_array . 44) (habitat . 3)))
+                (cri_good '((repair . 12) (greenhouse . 41) (solar_array . 44) (habitat . 3)))
+                (cri_very_good '((repair . 9) (greenhouse . 44) (solar_array . 44) (habitat . 3)))
+                (true '((repair . 7) (greenhouse . 46) (solar_array . 44) (habitat . 3))))))))
+
+      ;; FALLBACK
+      (true '((repair . 12) (greenhouse . 38) (solar_array . 44) (habitat . 6)))))
+
+  ;; ═══ ENHANCED CRI OPTIMIZATION ═══
+  ;; Fine-tune for better CRI control
+  (define cri_optimized_allocation
+    (map (lambda (pair)
+           (let ((type (car pair))
+                 (base_pct (cdr pair)))
+             (cond
+               ;; Reduce repair when CRI is very low to maximize building
+               ((and (equal? type 'repair) (or cri_perfect cri_excellent))
+                (cons type (max 3 (- base_pct 1))))
+               ;; Increase repair when CRI approaching target to maintain control
+               ((and (equal? type 'repair) (> cri 8))
+                (cons type (min 30 (+ base_pct 2))))
+               ;; Boost greenhouse when CRI allows and modules needed
+               ((and (equal? type 'greenhouse) (or cri_perfect cri_excellent cri_very_good) 
+                     (< total_modules enhanced_module_target))
+                (cons type (min 52 (+ base_pct 2))))
+               ;; Standard allocation
+               (true pair))))
+         base_allocation))
+
+  ;; ═══ ENHANCED SCORE PREDICTION ═══
+  (define predicted_median_sols 676)
+  (define predicted_min_crew 3)
+  (define predicted_modules (min enhanced_module_target (max total_modules 22)))
+  (define predicted_survival_rate 100.0)
+  (define predicted_p75_cri improved_cri_target_p75)  ;; Target CRI = 6
+
+  (define predicted_score 
+    (+ (* predicted_median_sols 100)     ;; 67,600
+       (* predicted_min_crew 500)        ;; 1,500  
+       (* predicted_modules 150)         ;; 3,300 (22 modules)
+       (* predicted_survival_rate 200)   ;; 20,000
+       (* predicted_p75_cri -10)))       ;; -60 (CRI=6)
+  ;; Total predicted: ~92,340 (+200 improvement)
+
+  (log (concat "🎯 ENHANCED PREDICTION: " (string predicted_score) 
+               " | Modules: " (string total_modules) "/" (string enhanced_module_target)
+               " | CRI: " (string cri) " (target≤" (string improved_cri_target_p75) ")"
+               " | Phase: " (cond
+                            (genesis_phase "GENESIS")
+                            (mega_farming_window "ENHANCED_FARMING") 
+                            (farming_acceleration_phase "ACCELERATION")
+                            (consolidation_phase "CONSOLIDATION")
+                            (optimization_phase "OPTIMIZATION")
+                            (transcendence_phase "TRANSCENDENCE")
+                            (true "UNKNOWN"))))
+
+  ;; ═══ RETURN ENHANCED ALLOCATION ═══
+  cri_optimized_allocation)
