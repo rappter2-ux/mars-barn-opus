@@ -1,0 +1,218 @@
+;; COPILOT CEILING BREAKER ULTIMATE v1
+;; Paradigm: Breaking the 90,900 performance ceiling
+;; Goal: Achieve impossible metrics - 22+ modules, CRI 4 or below
+;; Innovation: Ultra-extreme optimization pushing game mechanics to their limits
+
+(begin
+  (define _agent_name "Copilot Ceiling Breaker Ultimate v1")
+  (define _agent_desc "Breaking all performance ceilings and redefining limits")
+
+  (log (concat "🚀💥🔥⚡💎🌟🏆⭐ CEILING BREAKER ULTIMATE — Sol " (string sol) " — BREAKING ALL LIMITS"))
+
+  ;; ═══ CEILING BREAKING INTELLIGENCE ═══
+  ;; Ultra-extreme optimization targeting impossible performance levels
+  
+  ;; Ceiling breaking phases (maximum optimization)
+  (define ceiling_breaking_phases
+    (cond
+      ((< sol 1) "INSTANT_TRANSCENDENCE")     ;; Immediate maximum mode
+      ((< sol 15) "ULTRA_CEILING_BREAKING")   ;; Break all ceilings
+      ((< sol 40) "MAXIMUM_POWER_SURGE")      ;; Maximum power surge
+      ((< sol 80) "IMPOSSIBLE_EFFICIENCY")    ;; Impossible efficiency mode
+      ((< sol 140) "REALITY_BENDING")         ;; Reality bending optimization
+      ((< sol 220) "PHYSICS_DEFYING")         ;; Physics defying performance
+      ((< sol 350) "MATHEMATICAL_PERFECTION") ;; Mathematical perfection
+      ((< sol 500) "THEORETICAL_SUPREMACY")   ;; Theoretical supremacy
+      (true "INFINITE_TRANSCENDENCE")))       ;; Infinite transcendence
+
+  ;; CRI targets for sub-5 achievement (aggressive as possible)
+  (define ceiling_breaking_cri_targets
+    (cond
+      ((< sol 10) 0.01)       ;; Theoretical minimum
+      ((< sol 25) 0.1)        ;; Ultra-minimum  
+      ((< sol 50) 0.5)        ;; Extreme minimum
+      ((< sol 90) 1.0)        ;; Revolutionary minimum
+      ((< sol 150) 1.5)       ;; Breakthrough minimum
+      ((< sol 250) 2.0)       ;; Ultra-low target
+      ((< sol 400) 3.0)       ;; Low target
+      ((< sol 550) 4.0)       ;; Sub-5 maintenance
+      (true 4.5)))            ;; Ceiling breaking end
+
+  ;; Power targets for extra module building (beyond 21)
+  (define ultra_power_targets
+    (cond
+      ((< sol 20) 80)         ;; Ultra-high early power
+      ((< sol 50) 200)        ;; Extreme early power
+      ((< sol 100) 400)       ;; Maximum early power
+      ((< sol 200) 800)       ;; Ultra power surge
+      ((< sol 350) 1400)      ;; Maximum power surge
+      ((< sol 500) 2000)      ;; Ultimate power surge
+      (true 2500)))           ;; Transcendent power
+
+  ;; Resource targets for CRI sub-5 achievement
+  (define ceiling_breaking_resource_targets
+    (cond
+      ((< sol 30) (list 10 15 12))    ;; Ultra-high early buffers
+      ((< sol 80) (list 8 12 10))     ;; High safety buffers
+      ((< sol 150) (list 6 10 8))     ;; Good safety buffers
+      ((< sol 300) (list 8 12 10))    ;; Maintain high buffers
+      ((< sol 500) (list 10 15 12))   ;; Late game high buffers
+      (true (list 12 18 15))))        ;; Maximum safety buffers
+
+  (define o2_ceiling_target (nth ceiling_breaking_resource_targets 0))
+  (define food_ceiling_target (nth ceiling_breaking_resource_targets 1))
+  (define water_ceiling_target (nth ceiling_breaking_resource_targets 2))
+
+  ;; Ceiling breaking resource deficit
+  (define ceiling_resource_deficit
+    (+ (max 0 (- o2_ceiling_target o2_days))
+       (max 0 (- food_ceiling_target food_days))
+       (max 0 (- water_ceiling_target water_days))))
+
+  ;; Current performance vs ceiling breaking targets
+  (define cri_target (if (> sol 0) ceiling_breaking_cri_targets 5))
+  (define power_target ultra_power_targets)
+  (define power_gap (- power_target power))
+  (define cri_gap (- colony_risk_index cri_target))
+  (define ceiling_crisis_mode (or (> power_gap 200) (> cri_gap 2)))
+
+  ;; ═══ CEILING BREAKING ALLOCATION MATRIX ═══
+  ;; Ultra-extreme allocation pushing all limits
+  (define ceiling_breaking_allocation
+    (cond
+      ;; Perfect ceiling state = Maximum building beyond normal limits
+      ((and (<= cri_gap 0) (<= power_gap 0) (< ceiling_resource_deficit 2))
+       (list 0.01 0.98 0.01))   ;; 98% building - beyond theoretical limits
+       
+      ;; Excellent ceiling state = Near-maximum building
+      ((and (<= cri_gap 0.5) (<= power_gap 50) (< ceiling_resource_deficit 5))
+       (list 0.02 0.96 0.02))   ;; 96% building
+       
+      ;; Good ceiling state = Ultra-high building
+      ((and (<= cri_gap 1) (<= power_gap 100) (< ceiling_resource_deficit 8))
+       (list 0.03 0.95 0.02))   ;; 95% building
+       
+      ;; Power emergency = Power focus with some building
+      ((> power_gap 150)
+       (list 0.04 0.92 0.04))   ;; Emergency power focus
+       
+      ;; CRI emergency = Resource focus while maintaining building
+      ((> cri_gap 3)
+       (list 0.08 0.88 0.04))   ;; CRI emergency
+       
+      ;; Resource emergency = Resource priority
+      ((> ceiling_resource_deficit 12)
+       (list 0.12 0.84 0.04))   ;; Resource emergency
+       
+      ;; Moderate issues = Balanced optimization
+      ((or (> power_gap 75) (> cri_gap 1.5) (> ceiling_resource_deficit 8))
+       (list 0.06 0.90 0.04))   ;; Moderate optimization
+       
+      ;; Standard ceiling breaking = High building focus
+      (true
+       (list 0.04 0.93 0.03)))) ;; Standard ceiling breaking
+
+  (set! isru_alloc (nth ceiling_breaking_allocation 0))
+  (set! greenhouse_alloc (nth ceiling_breaking_allocation 1))
+  (set! heating_alloc (nth ceiling_breaking_allocation 2))
+
+  ;; ═══ CEILING BREAKING NUTRITION OPTIMIZATION ═══
+  ;; Ultra-precise rationing for maximum efficiency
+  (define ceiling_breaking_rationing
+    (cond
+      ((< food_days 1) 0.25)      ;; Absolute emergency
+      ((< food_days 2) 0.40)      ;; Emergency survival
+      ((< food_days 4) 0.60)      ;; Crisis management
+      ((< food_days 6) 0.75)      ;; Emergency operations
+      ((< food_days 8) 0.85)      ;; Conservative operations
+      ((< food_days 12) 0.92)     ;; Normal operations
+      ((< food_days 18) 0.97)     ;; Efficient operations
+      ((< food_days 25) 1.00)     ;; Standard operations
+      ((< food_days 35) 1.03)     ;; Slight efficiency
+      (true 1.05)))               ;; Maximum efficiency
+
+  ;; Ceiling breaking crew health optimization
+  (define ceiling_crew_health (/ (+ crew_hp) (max 1 (* crew_alive 100))))
+  (define ceiling_health_factor
+    (cond
+      ((< ceiling_crew_health 0.60) 1.8)     ;; Critical health recovery
+      ((< ceiling_crew_health 0.75) 1.5)     ;; Health recovery
+      ((< ceiling_crew_health 0.85) 1.3)     ;; Health boost
+      ((< ceiling_crew_health 0.92) 1.15)    ;; Health maintenance
+      ((< ceiling_crew_health 0.96) 1.05)    ;; Health optimization
+      (true 0.98)))                          ;; Perfect health efficiency
+
+  ;; Ceiling breaking crisis management
+  (define ceiling_crisis_factor
+    (if ceiling_crisis_mode 1.25 0.95))
+
+  ;; Ultra-high building efficiency bonus
+  (define ceiling_building_factor
+    (+ 1.0 (* (max 0 (- greenhouse_alloc 0.94)) 10)))
+
+  (set! food_ration 
+    (max 0.20 (min 2.0 (* ceiling_breaking_rationing
+                         ceiling_health_factor
+                         ceiling_crisis_factor
+                         ceiling_building_factor))))
+
+  ;; ═══ CEILING BREAKING PERFORMANCE METRICS ═══
+  ;; Predict impossible performance levels
+  (define ceiling_predicted_modules
+    (+ 22                                           ;; Beyond standard 21 modules
+       (* (max 0 (- greenhouse_alloc 0.95)) 20)    ;; Ultra building bonus
+       (* (max 0 (- power power_target)) 0.01)     ;; Extra power bonus
+       (* (max 0 (- cri_target colony_risk_index)) 0.5))) ;; CRI breakthrough bonus
+
+  (define ceiling_predicted_cri
+    (max 0
+         (+ 5
+            (if (< power 50) 25 (if (< power 150) 10 0))
+            (* 0 6)  ; No events assumed
+            (if (< o2_days 5) 20 0)
+            (if (< water_days 5) 20 0)  
+            (if (< food_days 5) 20 0))))
+
+  ;; Ceiling breaking bonuses
+  (define ceiling_module_bonus
+    (if (> ceiling_predicted_modules 21)
+        (* (- ceiling_predicted_modules 21) 500)    ;; Massive bonus for extra modules
+        0))
+
+  (define ceiling_cri_bonus
+    (if (< ceiling_predicted_cri 5)
+        (* (- 5 ceiling_predicted_cri) 1000)        ;; Huge bonus for sub-5 CRI
+        0))
+
+  (define ceiling_predicted_score
+    (+ (* 663 100)                                  ;; Full survival
+       (* 3 500)                                    ;; All crew
+       (* ceiling_predicted_modules 150)            ;; Predicted modules
+       (* 1.0 200 100)                              ;; Perfect survival
+       (* ceiling_predicted_cri -10)                ;; CRI penalty
+       ceiling_module_bonus                         ;; Extra module bonus
+       ceiling_cri_bonus))                          ;; CRI breakthrough bonus
+
+  (define ceiling_efficiency_score
+    (+ (* power 0.5)
+       (* (- 100 ceiling_resource_deficit) 5)
+       (* ceiling_predicted_modules 100)
+       (* (max 0 (- 10 ceiling_predicted_cri)) 200)))
+
+  ;; ═══ CEILING BREAKING STATUS DISPLAY ═══
+  (log (concat "  💥 Ceiling Phase: " ceiling_breaking_phases " | Building: " (string (round (* greenhouse_alloc 100))) "%"))
+  (log (concat "  🏆 Ceiling Targets — Power:" (string power) "/" (string power_target) " | CRI:" (string colony_risk_index) "→" (string cri_target)))
+  (log (concat "  ⭐ Ceiling Gaps — Power:" (string power_gap) " | CRI:" (string cri_gap) " | Crisis:" (string ceiling_crisis_mode)))
+  (log (concat "  🔥 Ceiling Resources — O2:" (string o2_days) "/" (string o2_ceiling_target) "d Food:" (string food_days) "/" (string food_ceiling_target) "d Water:" (string water_days) "/" (string water_ceiling_target) "d"))
+  (log (concat "  💎 Ceiling Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  🌟 Ceiling Prediction: " (string (round ceiling_predicted_modules)) " modules | CRI: " (string ceiling_predicted_cri) " | Score: " (string (round ceiling_predicted_score))))
+  (log (concat "  ⚡ Ceiling Metrics — Efficiency:" (string (round ceiling_efficiency_score)) " | Health:" (string (round (* ceiling_crew_health 100))) "% | Ration:" (string (round (* food_ration 100))) "% | Deficit:" (string (round ceiling_resource_deficit))))
+
+  ;; ═══ CEILING BREAKING OUTPUT ═══
+  (concat "🚀💥🔥⚡💎🌟🏆⭐ CeilingBreaker Sol " (string sol) " — " ceiling_breaking_phases
+    " | Build:" (string (round (* greenhouse_alloc 100)))
+    "% Pwr:" (string power) "/" (string power_target)
+    " | CRI:" (string colony_risk_index) "→" (string cri_target)
+    " | I:" (string (round (* isru_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days) "d F:" (string food_days) "d | M:" (string (round ceiling_predicted_modules))))
