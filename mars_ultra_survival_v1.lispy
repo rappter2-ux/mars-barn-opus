@@ -1,0 +1,66 @@
+;; MARS ULTRA SURVIVAL - Maximum O2 Priority
+;; Goal: Beat current 76 sol record through aggressive O2 management
+;; Strategy: Ultra-high ISRU allocation + power focus + survival rationing
+
+(begin
+  ;; Enhanced crisis detection  
+  (define o2_days_safe 15)  ;; Conservative O2 threshold
+  (define food_days_safe 12) ;; Conservative food threshold
+  (define power_safe 100)   ;; Conservative power threshold
+  
+  (define o2_emergency (< o2_days 4))
+  (define o2_warning (< o2_days o2_days_safe))
+  (define food_emergency (< food_days 5))
+  (define food_warning (< food_days food_days_safe))
+  (define power_emergency (< power_kwh 40))
+  (define power_warning (< power_kwh power_safe))
+  
+  ;; Mission phase analysis
+  (define early_mission (< sol 30))
+  (define mid_mission (and (>= sol 30) (< sol 60)))
+  (define late_mission (>= sol 60))
+  
+  ;; ULTRA-AGGRESSIVE O2 PRIORITY ALLOCATION
+  (cond
+    ;; Absolute O2 emergency - everything to ISRU
+    (o2_emergency (begin
+      (set! isru_alloc 0.90)
+      (set! greenhouse_alloc 0.05)
+      (set! heating_alloc 0.05)
+      (set! food_ration 0.30)))
+    ;; O2 warning - high ISRU priority
+    (o2_warning (begin
+      (set! isru_alloc 0.75)
+      (set! greenhouse_alloc 0.15)
+      (set! heating_alloc 0.10)
+      (set! food_ration 0.50)))
+    ;; Food emergency - but keep some O2 production
+    (food_emergency (begin
+      (set! greenhouse_alloc 0.60)
+      (set! isru_alloc 0.30)
+      (set! heating_alloc 0.10)
+      (set! food_ration 0.65)))
+    ;; Power emergency - critical for all systems
+    (power_emergency (begin
+      (set! heating_alloc 0.70)
+      (set! isru_alloc 0.25)
+      (set! greenhouse_alloc 0.05)
+      (set! food_ration 0.75)))
+    ;; Late mission survival mode - focus on efficiency
+    (late_mission (begin
+      (set! heating_alloc 0.35)
+      (set! isru_alloc 0.50)
+      (set! greenhouse_alloc 0.15)
+      (set! food_ration 0.85)))
+    ;; Early mission - establish O2 foundation
+    (early_mission (begin
+      (set! isru_alloc 0.70)
+      (set! heating_alloc 0.20)
+      (set! greenhouse_alloc 0.10)
+      (set! food_ration 0.80)))
+    ;; Standard operation - O2 priority
+    (true (begin
+      (set! isru_alloc 0.60)
+      (set! heating_alloc 0.25)
+      (set! greenhouse_alloc 0.15)
+      (set! food_ration 0.90)))))

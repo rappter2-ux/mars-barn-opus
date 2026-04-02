@@ -1,0 +1,73 @@
+;; MARS CHAMPION STRATEGY - Simple but Effective
+;; Goal: Survive 441+ sols with optimal allocation
+;; Strategy: Based on working adaptive_governor but enhanced
+
+(begin
+  ;; Basic crisis detection
+  (define o2_urgent (< o2_days 5))
+  (define food_urgent (< food_days 5))
+  (define water_urgent (< h2o_days 5))
+  (define power_low (< power_kwh 80))
+  
+  ;; Multi-crisis detection
+  (define crisis_count 
+    (+ (if o2_urgent 1 0)
+       (if food_urgent 1 0)
+       (if water_urgent 1 0)
+       (if power_low 1 0)))
+  (define emergency (>= crisis_count 2))
+  
+  ;; Resource abundance detection
+  (define resource_rich (and (> o2_days 20) (> food_days 20) (> power_kwh 200)))
+  (define late_mission (> sol 300))
+  
+  ;; Enhanced allocation logic
+  (cond
+    ;; Multiple crisis - emergency mode
+    (emergency (begin
+      (set! isru_alloc 0.75)
+      (set! heating_alloc 0.15)
+      (set! greenhouse_alloc 0.10)
+      (set! food_ration 0.40)))
+    ;; O2 emergency
+    (o2_urgent (begin
+      (set! isru_alloc 0.80)
+      (set! heating_alloc 0.12)
+      (set! greenhouse_alloc 0.08)
+      (set! food_ration 0.50)))
+    ;; Food emergency  
+    (food_urgent (begin
+      (set! greenhouse_alloc 0.65)
+      (set! isru_alloc 0.20)
+      (set! heating_alloc 0.15)
+      (set! food_ration 0.70)))
+    ;; Water emergency
+    (water_urgent (begin
+      (set! isru_alloc 0.65)
+      (set! greenhouse_alloc 0.20)
+      (set! heating_alloc 0.15)
+      (set! food_ration 0.75)))
+    ;; Power emergency
+    (power_low (begin
+      (set! heating_alloc 0.50)
+      (set! isru_alloc 0.30)
+      (set! greenhouse_alloc 0.20)
+      (set! food_ration 0.85)))
+    ;; Resource abundance mode - optimize for growth
+    (resource_rich (begin
+      (set! heating_alloc 0.35)
+      (set! isru_alloc 0.25)
+      (set! greenhouse_alloc 0.40)
+      (set! food_ration 1.0)))
+    ;; Late mission - conservative survival
+    (late_mission (begin
+      (set! heating_alloc 0.25)
+      (set! isru_alloc 0.45)
+      (set! greenhouse_alloc 0.30)
+      (set! food_ration 0.90)))
+    ;; Normal operation - balanced
+    (true (begin
+      (set! heating_alloc 0.20)
+      (set! isru_alloc 0.45)
+      (set! greenhouse_alloc 0.35)
+      (set! food_ration 0.95)))))

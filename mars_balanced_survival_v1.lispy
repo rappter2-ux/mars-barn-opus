@@ -1,0 +1,73 @@
+;; MARS BALANCED SURVIVAL - Avoid Both O2 and Food Death
+;; Goal: Beat 76 sol record with balanced resource management
+;; Strategy: Dynamic allocation + threshold management + survival rationing
+
+(begin
+  ;; Dynamic thresholds based on mission progress
+  (define mission_phase (/ sol 100))
+  (define late_mission (> sol 50))
+  
+  ;; Resource status assessment
+  (define o2_urgent (< o2_days 6))
+  (define o2_low (< o2_days 12))
+  (define food_urgent (< food_days 5))
+  (define food_low (< food_days 10))
+  (define power_urgent (< power_kwh 50))
+  (define power_low (< power_kwh 100))
+  
+  ;; Balanced resource allocation - avoid extremes
+  (cond
+    ;; Multiple emergencies - balanced crisis mode
+    ((and o2_urgent food_urgent) (begin
+      (set! isru_alloc 0.65)
+      (set! greenhouse_alloc 0.25)
+      (set! heating_alloc 0.10)
+      (set! food_ration 0.45)))
+    ;; O2 emergency but food OK
+    ((and o2_urgent (not food_urgent)) (begin
+      (set! isru_alloc 0.75)
+      (set! greenhouse_alloc 0.15)
+      (set! heating_alloc 0.10)
+      (set! food_ration 0.50)))
+    ;; Food emergency but O2 OK  
+    ((and food_urgent (not o2_urgent)) (begin
+      (set! greenhouse_alloc 0.55)
+      (set! isru_alloc 0.25)
+      (set! heating_alloc 0.20)
+      (set! food_ration 0.60)))
+    ;; Power emergency - affects all systems
+    (power_urgent (begin
+      (set! heating_alloc 0.50)
+      (set! isru_alloc 0.30)
+      (set! greenhouse_alloc 0.20)
+      (set! food_ration 0.70)))
+    ;; Both O2 and food low - careful balance
+    ((and o2_low food_low) (begin
+      (set! isru_alloc 0.50)
+      (set! greenhouse_alloc 0.35)
+      (set! heating_alloc 0.15)
+      (set! food_ration 0.70)))
+    ;; O2 low only
+    (o2_low (begin
+      (set! isru_alloc 0.60)
+      (set! greenhouse_alloc 0.25)
+      (set! heating_alloc 0.15)
+      (set! food_ration 0.75)))
+    ;; Food low only
+    (food_low (begin
+      (set! greenhouse_alloc 0.45)
+      (set! isru_alloc 0.35)
+      (set! heating_alloc 0.20)
+      (set! food_ration 0.80)))
+    ;; Late mission - efficiency focus
+    (late_mission (begin
+      (set! heating_alloc 0.30)
+      (set! isru_alloc 0.45)
+      (set! greenhouse_alloc 0.25)
+      (set! food_ration 0.85)))
+    ;; Normal operation - balanced approach
+    (true (begin
+      (set! isru_alloc 0.45)
+      (set! greenhouse_alloc 0.30)
+      (set! heating_alloc 0.25)
+      (set! food_ration 0.90)))))

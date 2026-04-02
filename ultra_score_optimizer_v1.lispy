@@ -1,0 +1,131 @@
+;; ULTRA SCORE OPTIMIZER v1 - Maximum Score Strategy  
+;; Goal: Beat 88,400 score by optimizing modules, crew survival, and CRI control
+;; Strategy: Ultra-efficient allocation + perfect crew management + strategic resource hoarding
+
+(begin
+  (define _agent_name "Ultra Score Optimizer v1")
+  (define _agent_desc "Maximum score optimization: perfect allocation for ultra-high module count + crew preservation")
+
+  (log (concat "🚀🏆 Ultra Score — Sol " (string sol)))
+
+  ;; ═══ SCORE OPTIMIZATION INTELLIGENCE ═══  
+  ;; The scoring formula: medianSols*100 + minCrew*500 + medianModules*150 + survivalRate*20000 - p75CRI*10
+  ;; Current baseline: 638*100 + 3*500 + 21*150 + 1.0*20000 - 5*10 = 88,400
+  ;; To beat this, we need: MORE modules (easy +150 each), MORE crew (risky +500), LOWER CRI (easy +10)
+
+  (define mission_phase (/ sol 638))
+  (define late_mission (> sol 400))
+  (define ultra_late_mission (> sol 500))
+  
+  ;; Module estimation with ultra-aggressive targets
+  (define estimated_modules (max 0 (min 35 (round (* sol 0.055)))))  ;; Target 35+ modules 
+  (define expected_final_modules 30)  ;; Aim for 30+ vs current 21
+  
+  ;; Advanced crew health optimization for survival
+  (define crew_health_per_member (if (> crew_count 0) (/ crew_hp crew_count) 10))
+  (define crew_health_critical (< crew_health_per_member 3))
+  (define crew_health_optimal (> crew_health_per_member 8))
+  
+  ;; Strategic resource hoarding to support massive module count
+  (define resource_abundance_factor 
+    (+ (if (> o2_days 20) 1.2 0.8)
+       (if (> food_days 25) 1.2 0.8)
+       (if (> power_kwh 200) 1.3 0.9)))
+       
+  (log (concat "  Score Targets: " (string estimated_modules) " modules, " (string crew_count) " crew, CRI:" (string colony_risk_index)))
+
+  ;; ═══ ULTRA-EFFICIENT ALLOCATION OPTIMIZATION ═══
+  ;; Minimize waste while supporting mega-build infrastructure
+  
+  ;; Dynamic O2 allocation - minimize when abundant, surge when needed
+  (define optimal_o2_allocation
+    (cond
+      ((< o2_days 3) 0.80)     ;; Emergency surge 
+      ((< o2_days 6) 0.55)     ;; High priority
+      ((< o2_days 12) 0.35)    ;; Normal operation
+      ((< o2_days 20) 0.25)    ;; Efficient operation
+      ((> o2_days 30) 0.15)    ;; Ultra-minimal when abundant
+      (true 0.20)))            ;; Standard minimal
+
+  ;; Dynamic food allocation - support crew health while minimizing waste
+  (define optimal_food_allocation
+    (cond
+      (crew_health_critical 0.60)  ;; Emergency crew health
+      ((< food_days 5) 0.50)       ;; Food emergency  
+      ((< food_days 10) 0.40)      ;; High food focus
+      ((< food_days 20) 0.32)      ;; Normal operation
+      ((> food_days 35) 0.20)      ;; Minimal when abundant
+      (true 0.28)))               ;; Standard operation
+
+  ;; Power allocation - maximize for infrastructure support
+  (define optimal_power_allocation (- 1.0 optimal_o2_allocation optimal_food_allocation))
+
+  ;; Apply efficiency multipliers for score optimization
+  (define score_efficiency_multiplier 
+    (+ 1.1  ;; Base efficiency
+       (* resource_abundance_factor 0.1)  ;; Abundance bonus
+       (if late_mission 0.15 0)           ;; Late mission efficiency
+       (if ultra_late_mission 0.10 0)))   ;; Ultra-late efficiency
+
+  ;; Calculate final allocations
+  (set! isru_alloc (* optimal_o2_allocation score_efficiency_multiplier))
+  (set! greenhouse_alloc (* optimal_food_allocation score_efficiency_multiplier))
+  (set! heating_alloc (* optimal_power_allocation score_efficiency_multiplier))
+
+  ;; Perfect normalization to ensure total = 1.0
+  (define total_allocation (+ isru_alloc greenhouse_alloc heating_alloc))
+  (if (> total_allocation 1.0)
+    (begin
+      (set! isru_alloc (/ isru_alloc total_allocation))
+      (set! greenhouse_alloc (/ greenhouse_alloc total_allocation))
+      (set! heating_alloc (/ heating_alloc total_allocation))))
+
+  ;; ═══ STRATEGIC FOOD RATIONING FOR SCORE ═══
+  ;; Optimize for crew survival while supporting infrastructure growth
+  
+  (define strategic_base_ration
+    (cond
+      (crew_health_critical 0.85)  ;; Emergency crew recovery
+      ((< food_days 4) 0.45)       ;; Food crisis - survival mode
+      ((< food_days 8) 0.65)       ;; Crisis management  
+      ((< food_days 15) 0.80)      ;; Conservative management
+      ((> food_days 30) 0.95)      ;; Abundant - maximize health
+      (true 0.88)))                ;; Optimal standard ration
+
+  ;; Late-mission crew health bonuses for survival
+  (define crew_survival_bonus 
+    (if ultra_late_mission 
+      (max 0 (min 0.15 (- 10 crew_health_per_member)))  ;; Late-mission health boost
+      0))
+
+  (define strategic_ration (min 1.0 (+ strategic_base_ration crew_survival_bonus)))
+  (set! food_ration strategic_ration)
+
+  ;; ═══ SCORE INTELLIGENCE REPORTING ═══
+  (define predicted_score 
+    (+ (* sol 100)                    ;; Current sols contribution
+       (* crew_count 500)             ;; Current crew contribution  
+       (* estimated_modules 150)      ;; Estimated modules contribution
+       20000                          ;; Perfect survival bonus
+       (* colony_risk_index -10)))    ;; CRI penalty
+
+  (define score_vs_baseline (- predicted_score 88400))
+  (define score_status 
+    (cond 
+      ((> score_vs_baseline 5000) "🚀 ULTRA")
+      ((> score_vs_baseline 2000) "🏆 HIGH")  
+      ((> score_vs_baseline 0) "📈 GOOD")
+      (true "📊 BASELINE")))
+
+  (log (concat "  Allocation — O2:" (string (round (* isru_alloc 100))) "% | Food:" (string (round (* greenhouse_alloc 100))) "% | Power:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Crew Health: " (string (round crew_health_per_member)) "/10 | Ration:" (string (round (* food_ration 100))) "% | Score:" score_status " " (string predicted_score)))
+  (log (concat "  Resources: O2=" (string o2_days) "d Food=" (string food_days) "d Power=" (string power_kwh) "kWh"))
+
+  ;; ═══ STRATEGIC OUTPUT ═══
+  (concat "🚀🏆 UltraScore Sol " (string sol) " — " score_status
+    " | O:" (string (round (* isru_alloc 100)))
+    "% F:" (string (round (* greenhouse_alloc 100)))
+    "% P:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | Crew:" (string crew_count) "@" (string (round crew_health_per_member)) "HP"
+    " | Mod:" (string estimated_modules) " | Score:" (string predicted_score)))

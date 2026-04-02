@@ -1,0 +1,97 @@
+;; HYPERMAX MARS BARN CHAMPION - Optimized for Real Survival
+;; Goal: Survive 441+ sols against real Mars simulation with proper scoring
+;; Strategy: Adaptive resource management + crisis detection + optimal allocation
+
+(begin
+  ;; Core mission parameters
+  (define mission_progress (/ sol 441))  ;; Track progress to beat 441 sol record
+  (define late_mission (> sol 300))
+  (define ultra_late (> sol 400))
+  
+  ;; Advanced resource intelligence
+  (define resource_days_remaining (+ o2_days h2o_days food_days))
+  (define resource_abundance (> resource_days_remaining 60))
+  (define resource_scarcity (< resource_days_remaining 30))
+  
+  ;; Multi-factor crisis detection
+  (define o2_crisis (< o2_days 4))
+  (define food_crisis (< food_days 6))
+  (define power_crisis (< power_kwh 50))
+  (define multiple_crisis_count 
+    (+ (if o2_crisis 1 0)
+       (if food_crisis 1 0) 
+       (if power_crisis 1 0)))
+  (define emergency_state (> multiple_crisis_count 1))
+  
+  ;; Advanced health monitoring
+  (define crew_health_per_member (/ crew_hp crew_count))
+  (define crew_health_critical (< crew_health_per_member 4))
+  (define crew_health_good (> crew_health_per_member 7))
+  
+  ;; Adaptive efficiency calculation
+  (define system_efficiency_avg (/ (+ solar_efficiency isru_efficiency greenhouse_efficiency) 3))
+  (define efficiency_penalty (if (< system_efficiency_avg 0.7) 0.85 1.0))
+  
+  ;; CHAMPION ALLOCATION STRATEGY
+  ;; Dynamic O2 allocation - critical for Mars survival  
+  (define champion_o2_alloc
+    (cond
+      (emergency_state 0.75)    ;; Emergency - maximum O2
+      (o2_crisis 0.65)          ;; O2 crisis
+      ((< o2_days 8) 0.50)      ;; High O2 focus
+      ((< o2_days 15) 0.35)     ;; Normal O2 operation
+      ((> o2_days 25) 0.20)     ;; Efficient when abundant
+      (true 0.30)))             ;; Standard operation
+      
+  ;; Dynamic food allocation - crew survival critical
+  (define champion_food_alloc
+    (cond
+      (crew_health_critical 0.55)   ;; Emergency crew health
+      (food_crisis 0.50)            ;; Food emergency
+      ((< food_days 10) 0.40)       ;; High food focus  
+      ((< food_days 18) 0.32)       ;; Normal operation
+      ((> food_days 30) 0.22)       ;; Efficient when abundant
+      (true 0.28)))                 ;; Standard operation
+      
+  ;; Power allocation - infrastructure foundation
+  (define champion_power_alloc (- 1.0 champion_o2_alloc champion_food_alloc))
+  
+  ;; Apply late-mission optimizations
+  (define late_mission_multiplier (if late_mission 1.1 1.0))
+  (define ultra_late_multiplier (if ultra_late 1.05 1.0))
+  (define total_efficiency_multiplier (* efficiency_penalty late_mission_multiplier ultra_late_multiplier))
+  
+  ;; Calculate final allocations with efficiency multipliers
+  (set! isru_alloc (* champion_o2_alloc total_efficiency_multiplier))
+  (set! greenhouse_alloc (* champion_food_alloc total_efficiency_multiplier)) 
+  (set! heating_alloc (* champion_power_alloc total_efficiency_multiplier))
+  
+  ;; Normalize to ensure total = 1.0
+  (define total_alloc (+ isru_alloc greenhouse_alloc heating_alloc))
+  (if (> total_alloc 1.0)
+    (begin
+      (set! isru_alloc (/ isru_alloc total_alloc))
+      (set! greenhouse_alloc (/ greenhouse_alloc total_alloc))
+      (set! heating_alloc (/ heating_alloc total_alloc))))
+      
+  ;; CHAMPION FOOD RATIONING STRATEGY
+  (define champion_base_ration
+    (cond
+      (crew_health_critical 0.90)   ;; Emergency crew recovery
+      (emergency_state 0.40)        ;; Multi-crisis survival mode
+      (food_crisis 0.50)            ;; Food emergency  
+      ((< food_days 8) 0.65)        ;; Crisis management
+      ((< food_days 15) 0.80)       ;; Conservative
+      ((> food_days 25) 0.95)       ;; Abundant - maximize health
+      (true 0.85)))                 ;; Optimal standard
+      
+  ;; Late-mission crew health bonus for record attempts
+  (define health_bonus 
+    (if (and late_mission (< crew_health_per_member 6))
+      0.10  ;; Late-mission health boost
+      0))
+      
+  (set! food_ration (max 0.25 (min 1.0 (+ champion_base_ration health_bonus))))
+  
+  ;; Strategic output for debugging (return final allocation status)
+  (+ (* isru_alloc 100) (* greenhouse_alloc 10) (* heating_alloc 1)))

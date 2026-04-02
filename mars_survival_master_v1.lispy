@@ -1,0 +1,48 @@
+;; MARS SURVIVAL MASTER - Optimized for Real Python Simulation
+;; Goal: Survive as long as possible against real Mars physics
+;; Strategy: O2 priority + aggressive maintenance + survival rationing
+
+(begin
+  ;; Core survival priorities
+  (define o2_critical (< o2_days 7))
+  (define food_critical (< food_days 7))
+  (define power_critical (< power_kwh 60))
+  
+  ;; Resource abundance (late mission optimization)
+  (define resource_secure (> (+ o2_days food_days) 30))
+  
+  ;; Late mission survival mode  
+  (define late_mission (> sol 50))
+  
+  ;; SURVIVAL ALLOCATION LOGIC
+  (cond
+    ;; O2 emergency - absolutely critical
+    (o2_critical (begin
+      (set! isru_alloc 0.85)
+      (set! greenhouse_alloc 0.10)
+      (set! heating_alloc 0.05)
+      (set! food_ration 0.40)))
+    ;; Food emergency
+    (food_critical (begin
+      (set! greenhouse_alloc 0.70)
+      (set! isru_alloc 0.20)
+      (set! heating_alloc 0.10)
+      (set! food_ration 0.60)))
+    ;; Power emergency - need solar efficiency
+    (power_critical (begin
+      (set! heating_alloc 0.60)
+      (set! isru_alloc 0.25)
+      (set! greenhouse_alloc 0.15)
+      (set! food_ration 0.80)))
+    ;; Late mission with resources - careful optimization
+    ((and resource_secure late_mission) (begin
+      (set! heating_alloc 0.30)
+      (set! isru_alloc 0.40)
+      (set! greenhouse_alloc 0.30)
+      (set! food_ration 0.95)))
+    ;; Early game standard operation - O2 focus
+    (true (begin
+      (set! heating_alloc 0.20)
+      (set! isru_alloc 0.55)
+      (set! greenhouse_alloc 0.25)
+      (set! food_ration 0.90)))))

@@ -1,0 +1,93 @@
+;; MARS RECORD BREAKER - Optimized for 441+ Sol Survival
+;; Goal: Beat the 441 sol record with adaptive resource management
+;; Strategy: Intelligent crisis detection + optimal allocation + survival rationing
+
+(begin
+  ;; Mission intelligence  
+  (define mission_progress (/ sol 441))
+  (define late_mission (> sol 300))
+  (define record_attempt (> sol 400))
+  
+  ;; Advanced resource monitoring
+  (define total_resource_days (+ o2_days h2o_days food_days))
+  (define resource_abundance (> total_resource_days 60))
+  (define resource_scarcity (< total_resource_days 30))
+  
+  ;; Multi-factor crisis detection
+  (define o2_crisis (< o2_days 4))
+  (define water_crisis (< h2o_days 5))
+  (define food_crisis (< food_days 6))
+  (define power_crisis (< power_kwh 50))
+  (define crisis_count 
+    (+ (if o2_crisis 1 0)
+       (if water_crisis 1 0)
+       (if food_crisis 1 0) 
+       (if power_crisis 1 0)))
+  (define emergency_state (>= crisis_count 2))
+  
+  ;; Cascade failure detection
+  (define system_instability (> cascade 1))
+  (define event_overload (> events_active 3))
+  (define morale_critical (< morale 0.3))
+  
+  ;; Advanced allocation strategy
+  ;; O2 allocation - most critical for survival
+  (define optimal_o2_alloc
+    (cond
+      (emergency_state 0.70)        ;; Emergency maximum
+      (o2_crisis 0.60)              ;; O2 emergency 
+      ((< o2_days 8) 0.45)          ;; High O2 priority
+      ((< o2_days 15) 0.35)         ;; Normal operation
+      ((> o2_days 25) 0.25)         ;; Efficient when abundant
+      (true 0.32)))                 ;; Standard operation
+      
+  ;; Food allocation - crew sustainability  
+  (define optimal_food_alloc
+    (cond
+      (food_crisis 0.45)            ;; Food emergency
+      ((< food_days 10) 0.38)       ;; High food focus
+      ((< food_days 18) 0.32)       ;; Normal operation  
+      ((> food_days 30) 0.22)       ;; Efficient when abundant
+      (resource_abundance 0.25)     ;; Abundance mode
+      (true 0.28)))                 ;; Standard operation
+      
+  ;; Power allocation - infrastructure foundation
+  (define optimal_power_alloc (- 1.0 optimal_o2_alloc optimal_food_alloc))
+  
+  ;; Late-mission efficiency bonuses
+  (define late_efficiency (if late_mission 1.08 1.0))
+  (define record_efficiency (if record_attempt 1.05 1.0))
+  (define total_efficiency (* late_efficiency record_efficiency))
+  
+  ;; Apply efficiency and ensure valid range
+  (set! isru_alloc (max 0.1 (min 0.9 (* optimal_o2_alloc total_efficiency))))
+  (set! greenhouse_alloc (max 0.1 (min 0.9 (* optimal_food_alloc total_efficiency))))
+  (set! heating_alloc (max 0.1 (min 0.9 (* optimal_power_alloc total_efficiency))))
+  
+  ;; Normalize to ensure total = 1.0 exactly
+  (define total_alloc (+ isru_alloc greenhouse_alloc heating_alloc))
+  (set! isru_alloc (/ isru_alloc total_alloc))
+  (set! greenhouse_alloc (/ greenhouse_alloc total_alloc))
+  (set! heating_alloc (/ heating_alloc total_alloc))
+  
+  ;; Advanced food rationing strategy
+  (define base_ration
+    (cond
+      (emergency_state 0.45)        ;; Multi-crisis survival  
+      (morale_critical 0.85)        ;; Morale emergency
+      (food_crisis 0.55)            ;; Food emergency
+      ((< food_days 8) 0.70)        ;; Crisis management
+      ((< food_days 15) 0.82)       ;; Conservative rationing
+      ((> food_days 25) 0.95)       ;; Abundant - maximize health
+      (true 0.88)))                 ;; Optimal standard
+      
+  ;; Record attempt bonuses
+  (define record_ration_bonus 
+    (if (and record_attempt (< food_days 12))
+      0.08  ;; Late-mission health boost for record attempts
+      0))
+      
+  (set! food_ration (max 0.30 (min 1.0 (+ base_ration record_ration_bonus))))
+  
+  ;; Return status indicator for debugging
+  (round (* total_efficiency 100)))
