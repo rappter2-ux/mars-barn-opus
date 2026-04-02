@@ -1,0 +1,89 @@
+;; MARS CHAMPION EVOLUTION v2 - Optimized for 100+ Sol Survival
+;; Goal: Beat 84 sol record through enhanced O2 management + efficiency focus
+;; Strategy: Early O2 priority + power preservation + adaptive thresholds
+
+(begin
+  ;; Mission intelligence - adaptive thresholds based on performance
+  (define early_phase (< sol 25))
+  (define mid_phase (and (>= sol 25) (< sol 60)))
+  (define late_phase (>= sol 60))
+  (define critical_phase (>= sol 80))  ;; Beyond current record
+  
+  ;; Enhanced resource monitoring with dynamic thresholds
+  (define o2_critical_threshold (if early_phase 5 (if late_phase 8 6)))
+  (define food_critical_threshold (if early_phase 4 6))
+  (define power_critical_threshold (if early_phase 40 (if late_phase 80 60)))
+  
+  (define o2_emergency (< o2_days o2_critical_threshold))
+  (define o2_warning (< o2_days (+ o2_critical_threshold 6)))
+  (define food_emergency (< food_days food_critical_threshold))
+  (define food_warning (< food_days (+ food_critical_threshold 5)))
+  (define power_emergency (< power_kwh power_critical_threshold))
+  (define power_warning (< power_kwh (+ power_critical_threshold 40)))
+  
+  ;; System degradation awareness
+  (define solar_degraded (< sol 30))  ;; Assume early degradation
+  (define systems_failing (and late_phase power_warning))
+  
+  ;; ENHANCED O2-PRIORITY ALLOCATION
+  (cond
+    ;; Critical phase - record attempt mode
+    (critical_phase (begin
+      (set! isru_alloc 0.70)
+      (set! heating_alloc 0.20)
+      (set! greenhouse_alloc 0.10)
+      (set! food_ration 0.85)))
+    ;; Multiple emergencies in late phase
+    ((and late_phase o2_emergency food_emergency) (begin
+      (set! isru_alloc 0.75)
+      (set! greenhouse_alloc 0.20)
+      (set! heating_alloc 0.05)
+      (set! food_ration 0.40)))
+    ;; O2 emergency - maximum priority
+    (o2_emergency (begin
+      (set! isru_alloc 0.80)
+      (set! greenhouse_alloc 0.12)
+      (set! heating_alloc 0.08)
+      (set! food_ration 0.45)))
+    ;; Systems failing - power focus
+    (systems_failing (begin
+      (set! heating_alloc 0.45)
+      (set! isru_alloc 0.45)
+      (set! greenhouse_alloc 0.10)
+      (set! food_ration 0.75)))
+    ;; Power emergency
+    (power_emergency (begin
+      (set! heating_alloc 0.60)
+      (set! isru_alloc 0.30)
+      (set! greenhouse_alloc 0.10)
+      (set! food_ration 0.70)))
+    ;; Food emergency but O2 OK
+    ((and food_emergency (not o2_warning)) (begin
+      (set! greenhouse_alloc 0.50)
+      (set! isru_alloc 0.35)
+      (set! heating_alloc 0.15)
+      (set! food_ration 0.65)))
+    ;; Late phase standard - efficiency focus
+    (late_phase (begin
+      (set! heating_alloc 0.25)
+      (set! isru_alloc 0.60)
+      (set! greenhouse_alloc 0.15)
+      (set! food_ration 0.80)))
+    ;; Mid phase - balanced growth
+    (mid_phase (begin
+      (set! isru_alloc 0.65)
+      (set! heating_alloc 0.25)
+      (set! greenhouse_alloc 0.10)
+      (set! food_ration 0.85)))
+    ;; Early phase - aggressive O2 foundation
+    (early_phase (begin
+      (set! isru_alloc 0.75)
+      (set! heating_alloc 0.20)
+      (set! greenhouse_alloc 0.05)
+      (set! food_ration 0.80)))
+    ;; Default balanced operation
+    (true (begin
+      (set! isru_alloc 0.55)
+      (set! heating_alloc 0.30)
+      (set! greenhouse_alloc 0.15)
+      (set! food_ration 0.90)))))

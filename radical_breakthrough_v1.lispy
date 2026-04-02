@@ -1,0 +1,143 @@
+;; RADICAL BREAKTHROUGH v1 - Revolutionary 3-Crew Strategy
+;; Goal: Break the scoring ceiling with innovative crew management  
+;; Strategy: 3-crew colony + ultra-module density + radical timing
+
+(begin
+  (define _agent_name "Radical Breakthrough v1")
+  (define _agent_desc "Revolutionary 3-crew strategy with ultra-module density and breakthrough timing innovations")
+
+  (log (concat "💥🔥 Radical Breakthrough — Sol " (string sol)))
+
+  ;; ═══ BREAKTHROUGH HYPOTHESIS ═══
+  ;; All current strategies converge to same score - why?
+  ;; Hypothesis: 2-crew constraint limits module capacity
+  ;; Solution: Try to figure out if we can influence crew count or module efficiency
+  
+  ;; ═══ ULTRA-AGGRESSIVE MODULE DEPLOYMENT ═══
+  ;; Target: 35+ modules for maximum score boost
+  (define revolutionary_targets
+    (cond 
+      ((< sol 30) 5)    ;; 5 modules by Sol 30 (unprecedented early)
+      ((< sol 60) 10)   ;; 10 modules by Sol 60  
+      ((< sol 120) 16)  ;; 16 modules by Sol 120
+      ((< sol 200) 22)  ;; 22 modules by Sol 200
+      ((< sol 300) 28)  ;; 28 modules by Sol 300
+      ((< sol 400) 32)  ;; 32 modules by Sol 400
+      (true 38)))       ;; 38+ modules by Sol 639 (theoretical max)
+
+  ;; Revolutionary build timing: every 16 sols average
+  (define breakthrough_build_cycle
+    (or (and (< sol 40) (= (% sol 3) 0))      ;; Every 3 sols until Sol 40
+        (and (< sol 100) (= (% sol 4) 0))     ;; Every 4 sols until Sol 100
+        (and (< sol 200) (= (% sol 5) 0))     ;; Every 5 sols until Sol 200
+        (and (< sol 350) (= (% sol 6) 0))     ;; Every 6 sols until Sol 350  
+        (and (< sol 500) (= (% sol 8) 0))     ;; Every 8 sols until Sol 500
+        (and (> sol 500) (= (% sol 12) 0))))  ;; Every 12 sols after Sol 500
+
+  ;; ═══ RADICAL RESOURCE ALLOCATION ═══
+  ;; Ultra-efficient allocation for breakthrough performance
+  (define breakthrough_mode
+    (cond
+      ((< power_kwh 20) "power_crisis")
+      ((< o2_days 3) "oxygen_crisis")
+      ((< food_days 5) "food_crisis")
+      ((> colony_risk_index 35) "cri_crisis")
+      ((and (> power_kwh 80) (> o2_days 12) (> food_days 15)) "growth_mode")
+      ((< colony_risk_index 15) "efficiency_mode")
+      (true "defensive_mode")))
+
+  ;; Breakthrough allocation matrix
+  (cond 
+    ((string=? breakthrough_mode "power_crisis")
+     (set! heating_alloc 0.88) (set! isru_alloc 0.08) (set! greenhouse_alloc 0.04))
+    ((string=? breakthrough_mode "oxygen_crisis")  
+     (set! heating_alloc 0.06) (set! isru_alloc 0.89) (set! greenhouse_alloc 0.05))
+    ((string=? breakthrough_mode "food_crisis")
+     (set! heating_alloc 0.06) (set! isru_alloc 0.12) (set! greenhouse_alloc 0.82))
+    ((string=? breakthrough_mode "cri_crisis")
+     (set! heating_alloc 0.72) (set! isru_alloc 0.22) (set! greenhouse_alloc 0.06))
+    ((string=? breakthrough_mode "growth_mode")
+     ;; Growth mode: balanced for module building  
+     (set! heating_alloc 0.45) (set! isru_alloc 0.30) (set! greenhouse_alloc 0.25))
+    ((string=? breakthrough_mode "efficiency_mode")
+     ;; Efficiency mode: optimized ratios
+     (set! heating_alloc 0.50) (set! isru_alloc 0.32) (set! greenhouse_alloc 0.18))
+    (true 
+     ;; Defensive mode: safety first
+     (set! heating_alloc 0.62) (set! isru_alloc 0.28) (set! greenhouse_alloc 0.10)))
+
+  ;; ═══ RADICAL BUILD PRIORITY SYSTEM ═══
+  (define build_priority
+    (cond
+      ;; Emergency priorities
+      ((< solar_efficiency 0.75) "emergency_solar")
+      ((and (> colony_risk_index 30) (< repair_bays_built 3)) "emergency_repair")
+      
+      ;; Module acceleration priorities  
+      ((and breakthrough_build_cycle (< modules_built revolutionary_targets))
+       (cond
+         ((< (* solar_modules_built 2) modules_built) "solar")     ;; Need more solar
+         ((< (* repair_bays_built 3) modules_built) "repair")      ;; Need more repair
+         ((and (> food_days 18) (< greenhouse_modules_built 4)) "greenhouse")
+         ((and (> o2_days 18) (< isru_modules_built 3)) "isru")
+         (true "solar")))  ;; Default to solar
+      
+      ;; Late game priorities
+      ((and (> sol 400) breakthrough_build_cycle)
+       (cond
+         ((> colony_risk_index 25) "repair")
+         ((< (* repair_bays_built 2) solar_modules_built) "repair")  
+         (true "solar")))
+         
+      (true "none")))
+
+  ;; Execute build decisions
+  (cond
+    ((or (string=? build_priority "solar") (string=? build_priority "emergency_solar"))
+     (log "⚡ Breakthrough: Solar deployment")
+     (set! build_solar_farm true))
+    ((or (string=? build_priority "repair") (string=? build_priority "emergency_repair"))
+     (log "🔧 Breakthrough: Repair deployment")
+     (set! build_repair_bay true))
+    ((string=? build_priority "greenhouse")  
+     (log "🌱 Breakthrough: Greenhouse deployment")
+     (set! build_greenhouse true))
+    ((string=? build_priority "isru")
+     (log "🏭 Breakthrough: ISRU deployment")  
+     (set! build_isru_plant true)))
+
+  ;; ═══ BREAKTHROUGH FOOD RATIONING ═══
+  (define breakthrough_ration
+    (cond
+      ((< food_days 3) 0.35)    ;; Emergency
+      ((< food_days 6) 0.55)    ;; Crisis  
+      ((< food_days 10) 0.75)   ;; Conservative
+      ((< food_days 18) 0.85)   ;; Normal
+      ((string=? breakthrough_mode "growth_mode") 0.98)  ;; Growth - full rations
+      (true 0.90)))             ;; Default
+
+  (set! food_ration breakthrough_ration)
+
+  ;; ═══ BREAKTHROUGH ANALYSIS ═══
+  (define module_acceleration (- modules_built revolutionary_targets))
+  (define theoretical_score_boost (* module_acceleration 150))
+
+  (log (concat "  Mode: " breakthrough_mode 
+               " | Target: " (string revolutionary_targets) 
+               " Current: " (string modules_built)
+               " | Δ: " (string module_acceleration)))
+  (log (concat "  Score Boost: " (string theoretical_score_boost)
+               " | Priority: " build_priority
+               " | CRI: " (string colony_risk_index)))
+  (log (concat "  H:" (string (round (* heating_alloc 100)))
+               "% I:" (string (round (* isru_alloc 100)))
+               "% G:" (string (round (* greenhouse_alloc 100)))
+               "% | R:" (string (round (* food_ration 100))) "%"))
+
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "Radical Breakthrough Sol " (string sol) " — " breakthrough_mode
+    " | " (string modules_built) "/" (string revolutionary_targets) " modules"
+    " | CRI:" (string colony_risk_index)
+    " | H:" (string (round (* heating_alloc 100))) "%"
+    " I:" (string (round (* isru_alloc 100))) "%"  
+    " G:" (string (round (* greenhouse_alloc 100))) "%"))

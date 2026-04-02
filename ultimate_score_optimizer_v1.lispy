@@ -1,0 +1,156 @@
+;; ULTIMATE SCORE OPTIMIZER v1 - Maximum Score Strategy
+;; Goal: Optimize the official scoring formula for maximum points
+;; Score = medianSols×100 + minCrew×500 + medianModules×150 + survivalRate×200×100 - p75CRI×10
+;; Strategy: More modules + lower CRI + guaranteed survival
+
+(begin
+  (define _agent_name "Ultimate Score Optimizer v1")
+  (define _agent_desc "Maximum score optimization targeting medianModules and CRI reduction while maintaining 100% survival")
+
+  (log (concat "🏆⚡ Score Optimizer — Sol " (string sol)))
+
+  ;; ═══ SCORE OPTIMIZATION ANALYSIS ═══
+  ;; With 100% survival (20000 points) and 639 sols (63900 points), 
+  ;; focus on: +medianModules×150 and -p75CRI×10
+  ;; Each additional module = +150 points
+  ;; Each CRI point reduced = +10 points
+  
+  ;; Aggressive module building strategy
+  (define target_modules_by_sol
+    (cond 
+      ((< sol 25) 4)    ;; 4 modules by Sol 25
+      ((< sol 50) 8)    ;; 8 modules by Sol 50  
+      ((< sol 100) 12)  ;; 12 modules by Sol 100
+      ((< sol 200) 16)  ;; 16 modules by Sol 200
+      ((< sol 300) 20)  ;; 20 modules by Sol 300
+      ((< sol 400) 24)  ;; 24 modules by Sol 400
+      (true 28)))       ;; 28+ modules by Sol 639
+
+  ;; Ultra-aggressive CRI management for minimum P75
+  (define cri_optimization_target
+    (cond
+      ((< sol 100) 5)   ;; Keep CRI under 5 early
+      ((< sol 200) 8)   ;; Keep CRI under 8 mid-game  
+      ((< sol 300) 10)  ;; Keep CRI under 10 late-early
+      ((< sol 400) 12)  ;; Keep CRI under 12 mid-late
+      ((< sol 500) 15)  ;; Keep CRI under 15 late
+      (true 18)))       ;; Keep CRI under 18 end-game
+
+  (define cri_emergency_mode (> colony_risk_index (* cri_optimization_target 1.2)))
+  (define module_acceleration_mode (< modules_built (* target_modules_by_sol 0.8)))
+
+  ;; ═══ ULTRA-AGGRESSIVE BUILD SCHEDULE ═══
+  ;; Build every 3-4 sols for maximum module count
+  (define should_build_solar_ultra
+    (or (and (< sol 30) (< (% sol 4) 2))     ;; Every 4 sols until Sol 30
+        (and (< sol 60) (< (% sol 5) 2))     ;; Every 5 sols until Sol 60  
+        (and (< sol 120) (< (% sol 6) 2))    ;; Every 6 sols until Sol 120
+        (and (< sol 240) (< (% sol 8) 2))    ;; Every 8 sols until Sol 240
+        (and (< sol 400) (< (% sol 10) 2))   ;; Every 10 sols until Sol 400
+        (and (> sol 400) (< (% sol 15) 2)))) ;; Every 15 sols after Sol 400
+
+  (define should_build_repair_ultra
+    (or (and (= sol 10) (< repair_bays_built 1))    ;; Sol 10: First repair
+        (and (= sol 25) (< repair_bays_built 2))    ;; Sol 25: Second repair
+        (and (= sol 45) (< repair_bays_built 3))    ;; Sol 45: Third repair  
+        (and (= sol 70) (< repair_bays_built 4))    ;; Sol 70: Fourth repair
+        (and (= sol 100) (< repair_bays_built 5))   ;; Sol 100: Fifth repair
+        (and (= sol 140) (< repair_bays_built 6))   ;; Sol 140: Sixth repair
+        (and (= sol 190) (< repair_bays_built 7))   ;; Sol 190: Seventh repair
+        (and (= sol 250) (< repair_bays_built 8)))) ;; Sol 250: Eighth repair
+
+  (define should_build_greenhouse_ultra  
+    (or (and (> sol 35) (< greenhouse_modules_built 2) (> food_days 8))
+        (and (> sol 80) (< greenhouse_modules_built 4) (> food_days 12))
+        (and (> sol 150) (< greenhouse_modules_built 6) (> food_days 15))
+        (and (> sol 250) (< greenhouse_modules_built 8) (> food_days 20))))
+
+  (define should_build_isru_ultra
+    (or (and (> sol 60) (< isru_modules_built 2) (> o2_days 10))
+        (and (> sol 120) (< isru_modules_built 3) (> o2_days 15))
+        (and (> sol 200) (< isru_modules_built 4) (> o2_days 18))))
+
+  ;; ═══ ULTRA-RESPONSIVE CRI MANAGEMENT ═══
+  ;; Hyper-aggressive CRI reduction allocation 
+  (cond
+    ;; Absolute emergencies  
+    ((< power_kwh 12) 
+     (set! heating_alloc 0.90) (set! isru_alloc 0.07) (set! greenhouse_alloc 0.03))
+    ((< o2_days 2.0)
+     (set! heating_alloc 0.04) (set! isru_alloc 0.93) (set! greenhouse_alloc 0.03))
+    ((< food_days 3.5)
+     (set! heating_alloc 0.04) (set! isru_alloc 0.12) (set! greenhouse_alloc 0.84))
+
+    ;; CRI emergency mode - maximum defensive
+    (cri_emergency_mode
+     (set! heating_alloc 0.75) (set! isru_alloc 0.20) (set! greenhouse_alloc 0.05))
+     
+    ;; Module acceleration mode - build-focused
+    (module_acceleration_mode 
+     (set! heating_alloc 0.60) (set! isru_alloc 0.25) (set! greenhouse_alloc 0.15))
+
+    ;; Normal optimization mode - CRI-tuned allocation
+    ((< colony_risk_index 8)
+     ;; Low CRI: efficient growth mode
+     (set! heating_alloc 0.45) (set! isru_alloc 0.30) (set! greenhouse_alloc 0.25))
+    ((< colony_risk_index 15)  
+     ;; Medium CRI: balanced defensive
+     (set! heating_alloc 0.55) (set! isru_alloc 0.30) (set! greenhouse_alloc 0.15))
+    ((< colony_risk_index 25)
+     ;; High CRI: defensive focus
+     (set! heating_alloc 0.65) (set! isru_alloc 0.25) (set! greenhouse_alloc 0.10))
+    (true 
+     ;; Ultra-high CRI: maximum defensive
+     (set! heating_alloc 0.75) (set! isru_alloc 0.20) (set! greenhouse_alloc 0.05)))
+
+  ;; ═══ SCORE-OPTIMIZED FOOD RATIONING ═══
+  ;; Minimal rationing to maintain food surplus for module building
+  (define score_optimized_ration
+    (cond
+      ((< food_days 2.5) 0.30)  ;; Emergency only
+      ((< food_days 5) 0.50)    ;; Crisis only
+      ((< food_days 8) 0.70)    ;; Conservative
+      ((< food_days 12) 0.85)   ;; Normal
+      (true 0.95)))             ;; Abundant - allow surplus for building
+
+  (set! food_ration score_optimized_ration)
+
+  ;; ═══ ULTRA-AGGRESSIVE BUILD EXECUTION ═══
+  (cond 
+    (should_build_solar_ultra 
+     (log "⚡ Score Optimizer: Building solar (ultra-aggressive schedule)")
+     (set! build_solar_farm true))
+    (should_build_repair_ultra
+     (log "🔧 Score Optimizer: Building repair (CRI management)")  
+     (set! build_repair_bay true))
+    (should_build_greenhouse_ultra
+     (log "🌱 Score Optimizer: Building greenhouse (module count)")
+     (set! build_greenhouse true))
+    (should_build_isru_ultra
+     (log "🏭 Score Optimizer: Building ISRU (module count)")
+     (set! build_isru_plant true)))
+
+  ;; ═══ SCORING ANALYSIS OUTPUT ═══
+  (define estimated_score_improvement
+    (+ (* (- modules_built 21) 150)                    ;; Module bonus
+       (* (- 11 colony_risk_index) 10)))               ;; CRI improvement
+
+  (log (concat "  Module Target: " (string target_modules_by_sol)
+               " Current: " (string modules_built)
+               " | CRI Target: " (string cri_optimization_target)
+               " Current: " (string colony_risk_index)))
+  (log (concat "  Score Est: +" (string (round estimated_score_improvement))
+               " pts | Emergency: " (if cri_emergency_mode "CRI" (if module_acceleration_mode "MODULE" "NONE"))))
+  (log (concat "  Allocation: H:" (string (round (* heating_alloc 100)))
+               "% I:" (string (round (* isru_alloc 100))) 
+               "% G:" (string (round (* greenhouse_alloc 100))) "% | R:" 
+               (string (round (* food_ration 100))) "%"))
+
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "Score Optimizer Sol " (string sol)
+    " | Modules:" (string modules_built) "/" (string target_modules_by_sol)
+    " CRI:" (string colony_risk_index) "/" (string cri_optimization_target)
+    " | H:" (string (round (* heating_alloc 100)))
+    "% I:" (string (round (* isru_alloc 100)))  
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% R:" (string (round (* food_ration 100))) "%"))

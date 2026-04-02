@@ -1,0 +1,174 @@
+;; REVOLUTIONARY COMPOUND DESTROYER v1 - Breakthrough Anti-Damage Strategy
+;; Goal: Destroy compound damage before it starts with ultra-aggressive early infrastructure
+;; Strategy: Revolutionary timing + multi-phase adaptation + predictive hazard mitigation
+
+(begin
+  (define _agent_name "Revolutionary Compound Destroyer v1")
+  (define _agent_desc "Revolutionary anti-compound damage strategy with ultra-early infrastructure and predictive hazard mitigation")
+
+  (log (concat "💥⚡ Revolutionary Destroyer — Sol " (string sol)))
+
+  ;; ═══ REVOLUTIONARY BUILD TIMING ═══
+  ;; Ultra-aggressive early infrastructure to prevent compound damage accumulation
+  (define mission_phase
+    (cond 
+      ((< sol 25) "bootstrap")
+      ((< sol 75) "foundation") 
+      ((< sol 150) "expansion")
+      ((< sol 300) "consolidation")
+      ((< sol 450) "fortification")
+      ((< sol 550) "mastery")
+      (true "transcendence")))
+
+  ;; Revolutionary compound damage prevention scoring
+  (define compound_damage_threat_level
+    (+ colony_risk_index
+       (* (/ sol 100) 8)     ;; Sol-based accumulation threat
+       (if (< solar_efficiency 0.85) 15 0)    ;; Solar degradation threat
+       (if (< isru_efficiency 0.90) 12 0)))   ;; ISRU degradation threat
+
+  ;; Ultra-early infrastructure timing - the key innovation
+  (define should_build_solar
+    (or (and (= sol 6) (< modules_built 1))    ;; Sol 6: First solar (ultra-early)
+        (and (= sol 12) (< modules_built 2))   ;; Sol 12: Second solar
+        (and (= sol 20) (< modules_built 3))   ;; Sol 20: Third solar
+        (and (= sol 35) (< modules_built 4))   ;; Sol 35: Fourth solar
+        (and (= sol 55) (< modules_built 5))   ;; Sol 55: Fifth solar
+        (and (= sol 80) (< modules_built 6))))  ;; Sol 80: Sixth solar
+
+  (define should_build_repair
+    (or (and (= sol 15) (< repair_bays_built 1))   ;; Sol 15: First repair (revolutionary early)
+        (and (= sol 40) (< repair_bays_built 2))   ;; Sol 40: Second repair  
+        (and (= sol 70) (< repair_bays_built 3))   ;; Sol 70: Third repair
+        (and (= sol 110) (< repair_bays_built 4))  ;; Sol 110: Fourth repair
+        (and (= sol 160) (< repair_bays_built 5))  ;; Sol 160: Fifth repair
+        (and (= sol 220) (< repair_bays_built 6)))) ;; Sol 220: Sixth repair
+
+  ;; Multi-repair exponential scaling calculation
+  (define estimated_repair_bays (max 1 (round (* modules_built 0.4))))
+  (define repair_exponential_effect (pow 2.8 estimated_repair_bays))  ;; Higher base than any previous
+  
+  ;; ═══ PREDICTIVE COMPOUND DAMAGE MITIGATION ═══
+  ;; Active mitigation programs that prevent damage before it accumulates
+  (define perchlorate_mitigation_active 
+    (and (> sol 25) (> estimated_repair_bays 1) (< (% sol 7) 3)))
+  
+  (define radiation_hardening_active
+    (and (> sol 40) (> estimated_repair_bays 2) (< (% sol 9) 2)))
+    
+  (define thermal_stress_prevention
+    (and (> sol 60) (> estimated_repair_bays 3) (< (% sol 11) 3)))
+
+  ;; Predictive crisis response system  
+  (define crisis_prediction_level
+    (+ (* compound_damage_threat_level 1.5)
+       (if perchlorate_mitigation_active -8 0)
+       (if radiation_hardening_active -6 0)  
+       (if thermal_stress_prevention -10 0)
+       (* repair_exponential_effect -2)))
+
+  (log (concat "  Compound Threat: " (string (round compound_damage_threat_level)) 
+               " | Crisis Prediction: " (string (round crisis_prediction_level))
+               " | Repair Effect: " (string (round repair_exponential_effect)) "x"))
+
+  ;; ═══ REVOLUTIONARY ALLOCATION STRATEGY ═══
+  ;; Ultra-responsive allocation based on compound damage predictions
+  (cond
+    ;; Emergency protocols
+    ((< power_kwh 15) 
+     (set! heating_alloc 0.88) (set! isru_alloc 0.08) (set! greenhouse_alloc 0.04))
+    ((< o2_days 2.5)
+     (set! heating_alloc 0.05) (set! isru_alloc 0.90) (set! greenhouse_alloc 0.05))
+    ((< food_days 4)
+     (set! heating_alloc 0.05) (set! isru_alloc 0.15) (set! greenhouse_alloc 0.80))
+    
+    ;; Revolutionary compound-damage-aware allocation
+    ((string=? mission_phase "bootstrap")
+     ;; Sol 1-25: Power foundation phase 
+     (set! heating_alloc 0.65) (set! isru_alloc 0.25) (set! greenhouse_alloc 0.10))
+    
+    ((string=? mission_phase "foundation") 
+     ;; Sol 26-75: Infrastructure buildup
+     (set! heating_alloc 0.55) (set! isru_alloc 0.30) (set! greenhouse_alloc 0.15))
+    
+    ((string=? mission_phase "expansion")
+     ;; Sol 76-150: Balanced expansion with repair focus
+     (set! heating_alloc 0.45) (set! isru_alloc 0.35) (set! greenhouse_alloc 0.20))
+    
+    ((string=? mission_phase "consolidation")
+     ;; Sol 151-300: Damage prevention focus
+     (if (> crisis_prediction_level 30)
+         ;; High crisis prediction: ultra-defensive  
+         (begin (set! heating_alloc 0.60) (set! isru_alloc 0.30) (set! greenhouse_alloc 0.10))
+         ;; Normal: efficient balanced
+         (begin (set! heating_alloc 0.40) (set! isru_alloc 0.35) (set! greenhouse_alloc 0.25))))
+         
+    ((string=? mission_phase "fortification")
+     ;; Sol 301-450: Late game compound damage resistance
+     (if (> crisis_prediction_level 35) 
+         ;; Ultra-high crisis: maximum heating
+         (begin (set! heating_alloc 0.70) (set! isru_alloc 0.25) (set! greenhouse_alloc 0.05))
+         ;; High crisis: defensive balanced
+         (begin (set! heating_alloc 0.50) (set! isru_alloc 0.35) (set! greenhouse_alloc 0.15))))
+    
+    ((string=? mission_phase "mastery")
+     ;; Sol 451-550: Expert damage control
+     (if (> crisis_prediction_level 40)
+         ;; Maximum crisis: survival mode
+         (begin (set! heating_alloc 0.75) (set! isru_alloc 0.20) (set! greenhouse_alloc 0.05))
+         ;; Controlled crisis: expert management  
+         (begin (set! heating_alloc 0.55) (set! isru_alloc 0.30) (set! greenhouse_alloc 0.15))))
+         
+    (true 
+     ;; Sol 551+: Transcendence phase - perfect control
+     (if (> crisis_prediction_level 45)
+         ;; Ultimate crisis: pure survival
+         (begin (set! heating_alloc 0.80) (set! isru_alloc 0.15) (set! greenhouse_alloc 0.05))
+         ;; Transcendent: optimal balance  
+         (begin (set! heating_alloc 0.50) (set! isru_alloc 0.35) (set! greenhouse_alloc 0.15)))))
+
+  ;; ═══ REVOLUTIONARY FOOD RATIONING ═══
+  ;; Compound-damage-aware rationing with prediction
+  (define revolutionary_ration
+    (cond
+      ((< food_days 2) 0.25)  ;; Ultra-emergency
+      ((< food_days 4) 0.45)  ;; Emergency
+      ((< food_days 7) 0.65)  ;; Crisis
+      ((< food_days 12) 0.80) ;; Conservative
+      ((and (string=? mission_phase "fortification") (> crisis_prediction_level 35)) 0.85) ;; Late-game conservative
+      ((and (string=? mission_phase "mastery") (> crisis_prediction_level 40)) 0.90)       ;; End-game conservative
+      (true 0.95)))  ;; Abundant/normal
+
+  (set! food_ration revolutionary_ration)
+
+  ;; ═══ BUILD DECISIONS ═══
+  (cond 
+    (should_build_solar 
+     (log "🌞 Revolutionary: Building solar farm (ultra-early timing)")
+     (set! build_solar_farm true))
+    (should_build_repair
+     (log "🔧 Revolutionary: Building repair bay (compound damage prevention)")  
+     (set! build_repair_bay true))
+    ((and (> sol 100) (< greenhouse_modules_built 3) (> food_days 15) (< (% sol 25) 5))
+     (log "🌱 Revolutionary: Building greenhouse (food surplus phase)")
+     (set! build_greenhouse true)))
+
+  ;; ═══ STATUS OUTPUT ═══
+  (log (concat "  Phase: " mission_phase 
+               " | Allocation: H:" (string (round (* heating_alloc 100)))
+               "% I:" (string (round (* isru_alloc 100))) 
+               "% G:" (string (round (* greenhouse_alloc 100))) "%"))
+  (log (concat "  Resources: O2:" (string o2_days) "d Food:" (string food_days) 
+               "d Power:" (string power_kwh) "kWh"))
+  (log (concat "  Mitigation: Perchlorate:" (if perchlorate_mitigation_active "ON" "OFF")
+               " Radiation:" (if radiation_hardening_active "ON" "OFF")  
+               " Thermal:" (if thermal_stress_prevention "ON" "OFF")))
+
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "Revolutionary Destroyer Sol " (string sol) " — " mission_phase
+    " | H:" (string (round (* heating_alloc 100)))
+    "% I:" (string (round (* isru_alloc 100)))  
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | Threat:" (string (round compound_damage_threat_level))
+    " Crisis:" (string (round crisis_prediction_level))))
