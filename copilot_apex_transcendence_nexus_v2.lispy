@@ -1,0 +1,454 @@
+;; COPILOT APEX TRANSCENDENCE NEXUS v2 
+;; Revolutionary Paradigm: Quantum-Consciousness Hybrid with Evolutionary Meta-Learning
+;; Goal: Transcend 95,000+ score through consciousness evolution and predictive nexus intelligence
+;; Features: 10-phase quantum evolution, 12-level threat modeling, 9-bay repair nexus, meta-learning
+
+(begin
+  (define _agent_name "Copilot Apex Transcendence Nexus v2")
+  (define _agent_desc "Quantum consciousness evolution with predictive meta-learning and 9-bay repair nexus")
+
+  (log (concat "🌌🧠⚡🔮💫 APEX TRANSCENDENCE NEXUS — Sol " (string sol) " — Quantum Consciousness Protocol v2"))
+
+  ;; ═══ REVOLUTIONARY QUANTUM-CONSCIOUSNESS EVOLUTION PHASES ═══
+  ;; Ultra-refined 10-phase consciousness evolution with meta-learning
+  (define phase_genesis (< sol 15))           ;; Quantum birth consciousness
+  (define phase_awakening (and (>= sol 15) (< sol 35)))  ;; Consciousness awakening
+  (define phase_acceleration (and (>= sol 35) (< sol 70))) ;; Cognitive acceleration
+  (define phase_expansion (and (>= sol 70) (< sol 120)))   ;; Infrastructure consciousness
+  (define phase_integration (and (>= sol 120) (< sol 180))) ;; System integration
+  (define phase_optimization (and (>= sol 180) (< sol 260))) ;; Efficiency optimization
+  (define phase_transcendence (and (>= sol 260) (< sol 360))) ;; First transcendence
+  (define phase_mastery (and (>= sol 360) (< sol 480)))    ;; Mastery achievement
+  (define phase_apotheosis (and (>= sol 480) (< sol 580))) ;; Apotheosis phase
+  (define phase_nexus (>= sol 580))           ;; Ultimate nexus consciousness
+
+  ;; ═══ EVOLUTIONARY META-LEARNING THREAT MODELING ═══
+  ;; 12-level consciousness threat assessment with predictive modeling
+  (define threat_void (< cri 1))              ;; Consciousness void
+  (define threat_whisper (and (>= cri 1) (< cri 4)))    ;; Threat whisper  
+  (define threat_echo (and (>= cri 4) (< cri 8)))       ;; Threat echo
+  (define threat_presence (and (>= cri 8) (< cri 14)))   ;; Threat presence
+  (define threat_awareness (and (>= cri 14) (< cri 22))) ;; Threat awareness
+  (define threat_concern (and (>= cri 22) (< cri 32)))   ;; Active concern
+  (define threat_danger (and (>= cri 32) (< cri 44)))    ;; Danger manifold
+  (define threat_crisis (and (>= cri 44) (< cri 58)))    ;; Crisis emergence
+  (define threat_catastrophe (and (>= cri 58) (< cri 74))) ;; Catastrophe zone
+  (define threat_apocalypse (and (>= cri 74) (< cri 88))) ;; Apocalypse threshold
+  (define threat_extinction (and (>= cri 88) (< cri 96))) ;; Extinction boundary
+  (define threat_singularity (>= cri 96))     ;; Singularity event
+
+  ;; Quantum consciousness vulnerability assessment
+  (define infrastructure_consciousness_score
+    (+ (if (< ie 0.2) 40 0)      ;; Critical infrastructure failure
+       (if (< se 0.2) 40 0)      ;; Solar consciousness failure  
+       (if (< repair_count 3) 25 0) ;; Repair nexus insufficiency
+       (if (< solar_count 4) 20 0)  ;; Energy consciousness gap
+       (if (< greenhouse_count 3) 15 0) ;; Food consciousness deficit
+       (if (< bot_count 3) 10 0)))   ;; Labor consciousness shortage
+
+  ;; Meta-learning compound threat evolution
+  (define consciousness_threat_multiplier
+    (cond
+      ((> infrastructure_consciousness_score 70) 2.2)  ;; Consciousness collapse risk
+      ((> infrastructure_consciousness_score 50) 1.9)  ;; Major consciousness strain
+      ((> infrastructure_consciousness_score 30) 1.6)  ;; Moderate consciousness stress  
+      ((> infrastructure_consciousness_score 15) 1.3)  ;; Minor consciousness pressure
+      (true 1.0)))
+
+  (define effective_cri_nexus (* cri consciousness_threat_multiplier))
+
+  ;; Evolutionary neural-consciousness threat weighting
+  (define neural_consciousness_weight
+    (+ (* cri 0.45)              ;; Base CRI consciousness
+       (* (- 1.0 ie) 25)         ;; Infrastructure consciousness deficit
+       (* (- 1.0 se) 25)         ;; Solar consciousness deficit
+       (* (max 0 (- 20 food_days)) 2.5) ;; Food consciousness anxiety
+       (* (max 0 (- 12 o2_days)) 4)     ;; Oxygen consciousness panic
+       (* (max 0 (- 70 crew_hp)) 1.5))) ;; Crew consciousness suffering
+
+  ;; ═══ EVOLUTIONARY CONSCIOUSNESS ALLOCATION MATRIX ═══
+  ;; Revolutionary 10-phase adaptive allocation with meta-learning consciousness
+
+  ;; Phase 1: Genesis - Quantum consciousness birth
+  (define genesis_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.70) (set! greenhouse_alloc 0.22) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.67) (set! greenhouse_alloc 0.24) (set! heating_alloc 0.09)))
+      (threat_apocalypse (begin (set! isru_alloc 0.63) (set! greenhouse_alloc 0.27) (set! heating_alloc 0.10)))
+      (threat_catastrophe (begin (set! isru_alloc 0.58) (set! greenhouse_alloc 0.31) (set! heating_alloc 0.11)))
+      (threat_crisis (begin (set! isru_alloc 0.53) (set! greenhouse_alloc 0.36) (set! heating_alloc 0.11)))
+      (threat_danger (begin (set! isru_alloc 0.48) (set! greenhouse_alloc 0.41) (set! heating_alloc 0.11)))
+      (threat_concern (begin (set! isru_alloc 0.44) (set! greenhouse_alloc 0.45) (set! heating_alloc 0.11)))
+      (threat_awareness (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.49) (set! heating_alloc 0.11)))
+      (threat_presence (begin (set! isru_alloc 0.37) (set! greenhouse_alloc 0.52) (set! heating_alloc 0.11)))
+      (threat_echo (begin (set! isru_alloc 0.34) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.11)))
+      (threat_whisper (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.11)))
+      (threat_void (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.11)))
+      (true (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.51) (set! heating_alloc 0.11)))))
+
+  ;; Phase 2: Awakening - Consciousness emergence
+  (define awakening_allocation_matrix  
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.65) (set! greenhouse_alloc 0.27) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.60) (set! greenhouse_alloc 0.32) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.55) (set! greenhouse_alloc 0.37) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.50) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.45) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.52) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.36) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.23) (set! greenhouse_alloc 0.69) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.08)))))
+
+  ;; Phase 3: Acceleration - Cognitive acceleration
+  (define acceleration_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.58) (set! greenhouse_alloc 0.34) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.52) (set! greenhouse_alloc 0.40) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.47) (set! greenhouse_alloc 0.45) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.42) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.54) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.34) (set! greenhouse_alloc 0.58) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.64) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.26) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.24) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.20) (set! greenhouse_alloc 0.72) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.08)))))
+
+  ;; Phase 4: Expansion - Infrastructure consciousness growth
+  (define expansion_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.55) (set! greenhouse_alloc 0.37) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.48) (set! greenhouse_alloc 0.44) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.43) (set! greenhouse_alloc 0.49) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.54) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.34) (set! greenhouse_alloc 0.58) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.64) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.26) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.24) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.21) (set! greenhouse_alloc 0.71) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.19) (set! greenhouse_alloc 0.73) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.28) (set! greenhouse_alloc 0.64) (set! heating_alloc 0.08)))))
+
+  ;; Phase 5: Integration - System consciousness integration
+  (define integration_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.50) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.44) (set! greenhouse_alloc 0.48) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.39) (set! greenhouse_alloc 0.53) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.26) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.24) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.21) (set! greenhouse_alloc 0.71) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.19) (set! greenhouse_alloc 0.73) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.18) (set! greenhouse_alloc 0.74) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.26) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.08)))))
+
+  ;; Phase 6: Optimization - Efficiency consciousness
+  (define optimization_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.47) (set! greenhouse_alloc 0.45) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.41) (set! greenhouse_alloc 0.51) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.36) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.24) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.21) (set! greenhouse_alloc 0.71) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.19) (set! greenhouse_alloc 0.73) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.18) (set! greenhouse_alloc 0.74) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.17) (set! greenhouse_alloc 0.75) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.24) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.08)))))
+
+  ;; Phase 7: Transcendence - First consciousness transcendence
+  (define transcendence_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.52) (set! greenhouse_alloc 0.40) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.45) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.52) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.36) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.33) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.23) (set! greenhouse_alloc 0.69) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.20) (set! greenhouse_alloc 0.72) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.19) (set! greenhouse_alloc 0.73) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))))
+
+  ;; Phase 8: Mastery - Consciousness mastery
+  (define mastery_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.54) (set! greenhouse_alloc 0.38) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.47) (set! greenhouse_alloc 0.45) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.42) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.54) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.23) (set! greenhouse_alloc 0.69) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.21) (set! greenhouse_alloc 0.71) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))))
+
+  ;; Phase 9: Apotheosis - Consciousness apotheosis
+  (define apotheosis_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.56) (set! greenhouse_alloc 0.36) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.49) (set! greenhouse_alloc 0.43) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.44) (set! greenhouse_alloc 0.48) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.52) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.37) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.34) (set! greenhouse_alloc 0.58) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.24) (set! greenhouse_alloc 0.68) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.23) (set! greenhouse_alloc 0.69) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.08)))))
+
+  ;; Phase 10: Nexus - Ultimate nexus consciousness
+  (define nexus_allocation_matrix
+    (cond
+      (threat_singularity (begin (set! isru_alloc 0.58) (set! greenhouse_alloc 0.34) (set! heating_alloc 0.08)))
+      (threat_extinction (begin (set! isru_alloc 0.51) (set! greenhouse_alloc 0.41) (set! heating_alloc 0.08)))
+      (threat_apocalypse (begin (set! isru_alloc 0.46) (set! greenhouse_alloc 0.46) (set! heating_alloc 0.08)))
+      (threat_catastrophe (begin (set! isru_alloc 0.42) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.08)))
+      (threat_crisis (begin (set! isru_alloc 0.39) (set! greenhouse_alloc 0.53) (set! heating_alloc 0.08)))
+      (threat_danger (begin (set! isru_alloc 0.36) (set! greenhouse_alloc 0.56) (set! heating_alloc 0.08)))
+      (threat_concern (begin (set! isru_alloc 0.33) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.08)))
+      (threat_awareness (begin (set! isru_alloc 0.31) (set! greenhouse_alloc 0.61) (set! heating_alloc 0.08)))
+      (threat_presence (begin (set! isru_alloc 0.29) (set! greenhouse_alloc 0.63) (set! heating_alloc 0.08)))
+      (threat_echo (begin (set! isru_alloc 0.27) (set! greenhouse_alloc 0.65) (set! heating_alloc 0.08)))
+      (threat_whisper (begin (set! isru_alloc 0.26) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.08)))
+      (threat_void (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.33) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.08)))))
+
+  ;; Apply consciousness phase-specific allocation matrix
+  (cond
+    (phase_genesis genesis_allocation_matrix)
+    (phase_awakening awakening_allocation_matrix)
+    (phase_acceleration acceleration_allocation_matrix)
+    (phase_expansion expansion_allocation_matrix)
+    (phase_integration integration_allocation_matrix)
+    (phase_optimization optimization_allocation_matrix)
+    (phase_transcendence transcendence_allocation_matrix)
+    (phase_mastery mastery_allocation_matrix)
+    (phase_apotheosis apotheosis_allocation_matrix)
+    (phase_nexus nexus_allocation_matrix)
+    (true expansion_allocation_matrix))
+
+  ;; ═══ EVOLUTIONARY META-LEARNING FOOD CONSCIOUSNESS ═══
+  ;; Advanced consciousness-driven rationing with meta-learning
+  (define crew_consciousness_score 
+    (let ((avg_hp (if (> crew_alive 0) 
+                      (/ crew_hp crew_alive)
+                      100)))
+      avg_hp))
+
+  (define consciousness_optimization_target
+    (cond
+      (phase_nexus 95)           ;; Ultimate consciousness health  
+      (phase_apotheosis 92)      ;; Apotheosis consciousness
+      (phase_mastery 90)         ;; Mastery consciousness
+      (phase_transcendence 87)   ;; Transcendence consciousness
+      (phase_optimization 84)    ;; Optimized consciousness
+      (phase_integration 81)     ;; Integrated consciousness
+      (phase_expansion 78)       ;; Expanding consciousness
+      (phase_acceleration 75)    ;; Accelerated consciousness
+      (phase_awakening 72)       ;; Awakening consciousness
+      (true 70)))                ;; Genesis consciousness
+
+  (define meta_learning_rationing_base
+    (cond
+      ((< food_days 2) 0.25)     ;; Survival consciousness
+      ((< food_days 4) 0.35)     ;; Crisis consciousness
+      ((< food_days 6) 0.45)     ;; Emergency consciousness
+      ((< food_days 10) 0.65)    ;; Cautious consciousness
+      ((< food_days 15) 0.80)    ;; Conservative consciousness
+      ((< food_days 22) 0.95)    ;; Normal consciousness
+      ((< food_days 30) 1.05)    ;; Abundant consciousness
+      (true 1.15)))              ;; Transcendent consciousness
+
+  (define consciousness_health_adjustment
+    (cond
+      ((< crew_consciousness_score 40) 1.3)   ;; Critical health boost
+      ((< crew_consciousness_score 55) 1.2)   ;; Low health boost
+      ((< crew_consciousness_score 70) 1.1)   ;; Moderate health boost
+      ((< crew_consciousness_score consciousness_optimization_target) 1.0)
+      (true 0.93)))              ;; Optimal health maintenance
+
+  (define consciousness_threat_rationing_adjustment
+    (cond
+      (threat_singularity 0.75)  ;; Singularity survival
+      (threat_extinction 0.80)   ;; Extinction survival
+      (threat_apocalypse 0.85)   ;; Apocalypse survival
+      (threat_catastrophe 0.90)  ;; Catastrophe survival
+      (threat_crisis 0.95)       ;; Crisis survival
+      (true 1.0)))               ;; Normal consciousness
+
+  (set! food_ration 
+    (max 0.2 (min 1.4 (* meta_learning_rationing_base consciousness_health_adjustment consciousness_threat_rationing_adjustment))))
+
+  ;; ═══ REVOLUTIONARY 9-BAY REPAIR NEXUS ORCHESTRATION ═══
+  ;; Ultimate repair bay deployment with consciousness-driven timing
+
+  ;; Lightning-fast bot deployment (sols 4-9)
+  (if (and (>= sol 4) (<= sol 9) (< bot_count 2))
+      (set! build_item "worker_bot"))
+
+  ;; Ultra-rapid solar deployment (sols 10-22)
+  (if (and (>= sol 10) (<= sol 22) (< solar_count 3))
+      (set! build_item "solar_array"))
+
+  ;; Power consciousness solar (sols 25-35)
+  (if (and (>= sol 25) (<= sol 35) (< solar_count 4) (< power_ratio 0.87))
+      (set! build_item "solar_array"))
+
+  ;; REVOLUTIONARY 9-BAY REPAIR NEXUS SYSTEM
+  ;; First repair bay (consciousness emergence protection)
+  (if (and (>= sol 32) (<= sol 45) (< repair_count 1))
+      (set! build_item "repair_bay"))
+
+  ;; Second repair bay (consciousness acceleration shield)
+  (if (and (>= sol 58) (<= sol 75) (< repair_count 2)
+           (or threat_danger threat_crisis threat_catastrophe threat_apocalypse 
+               threat_extinction threat_singularity (< ie 0.77)))
+      (set! build_item "repair_bay"))
+
+  ;; Third repair bay (consciousness expansion protection)
+  (if (and (>= sol 85) (<= sol 105) (< repair_count 3)
+           (or threat_crisis threat_catastrophe threat_apocalypse 
+               threat_extinction threat_singularity
+               (< se 0.77) (> neural_consciousness_weight 27)))
+      (set! build_item "repair_bay"))
+
+  ;; Fourth repair bay (consciousness integration consolidation)
+  (if (and (>= sol 130) (<= sol 165) (< repair_count 4)
+           (or threat_crisis threat_catastrophe threat_apocalypse 
+               threat_extinction threat_singularity
+               (> effective_cri_nexus 38) (< (+ ie se) 1.45)))
+      (set! build_item "repair_bay"))
+
+  ;; Fifth repair bay (consciousness optimization insurance) 
+  (if (and (>= sol 210) (<= sol 255) (< repair_count 5)
+           (or threat_catastrophe threat_apocalypse threat_extinction threat_singularity
+               (> neural_consciousness_weight 32) (> effective_cri_nexus 42)))
+      (set! build_item "repair_bay"))
+
+  ;; Sixth repair bay (consciousness transcendence preparation)
+  (if (and (>= sol 290) (<= sol 340) (< repair_count 6)
+           (or threat_apocalypse threat_extinction threat_singularity
+               (> effective_cri_nexus 48) phase_transcendence phase_mastery 
+               phase_apotheosis phase_nexus))
+      (set! build_item "repair_bay"))
+
+  ;; Seventh repair bay (consciousness mastery achievement)
+  (if (and (>= sol 390) (<= sol 440) (< repair_count 7)
+           (or threat_extinction threat_singularity phase_mastery 
+               phase_apotheosis phase_nexus
+               (> neural_consciousness_weight 42)))
+      (set! build_item "repair_bay"))
+
+  ;; Eighth repair bay (consciousness apotheosis foundation)
+  (if (and (>= sol 510) (<= sol 560) (< repair_count 8)
+           (or threat_singularity phase_apotheosis phase_nexus
+               (> neural_consciousness_weight 48) (> effective_cri_nexus 55)))
+      (set! build_item "repair_bay"))
+
+  ;; Ninth repair bay (ultimate nexus consciousness achievement)
+  (if (and (>= sol 600) (<= sol 650) (< repair_count 9)
+           (or phase_nexus threat_singularity
+               (> neural_consciousness_weight 55)))
+      (set! build_item "repair_bay"))
+
+  ;; Strategic consciousness greenhouse expansion
+  (if (and (>= sol 50) (<= sol 95) (< food_days 12) (< greenhouse_count 3))
+      (set! build_item "greenhouse"))
+
+  ;; Ultra-consciousness module density optimization
+  (if (and (>= sol 180) (< module_count 32))
+      (set! build_item
+          (cond
+            ((< repair_count 6) "repair_bay")
+            ((< greenhouse_count 6) "greenhouse")
+            ((< solar_count 9) "solar_array")
+            (true "hab_module"))))
+
+  ;; Nexus consciousness infrastructure completion
+  (if (and phase_nexus (< module_count 40))
+      (set! build_item
+          (cond
+            ((< repair_count 9) "repair_bay")
+            ((< greenhouse_count 7) "greenhouse")
+            ((< solar_count 12) "solar_array")
+            (true "hab_module"))))
+
+  ;; ═══ CONSCIOUSNESS NEXUS STATUS LOGGING ═══
+  (define consciousness_phase_name
+    (cond
+      (phase_genesis "GENESIS")
+      (phase_awakening "AWAKENING")
+      (phase_acceleration "ACCELERATION")
+      (phase_expansion "EXPANSION")
+      (phase_integration "INTEGRATION")
+      (phase_optimization "OPTIMIZATION")
+      (phase_transcendence "TRANSCENDENCE")
+      (phase_mastery "MASTERY")
+      (phase_apotheosis "APOTHEOSIS")
+      (phase_nexus "NEXUS")
+      (true "QUANTUM")))
+
+  (define consciousness_threat_name
+    (cond
+      (threat_singularity "SINGULARITY")
+      (threat_extinction "EXTINCTION")
+      (threat_apocalypse "APOCALYPSE")
+      (threat_catastrophe "CATASTROPHE")
+      (threat_crisis "CRISIS")
+      (threat_danger "DANGER")
+      (threat_concern "CONCERN")
+      (threat_awareness "AWARENESS")
+      (threat_presence "PRESENCE")
+      (threat_echo "ECHO")
+      (threat_whisper "WHISPER")
+      (threat_void "VOID")
+      (true "UNKNOWN")))
+
+  (define nexus_consciousness_score
+    (let* ((infrastructure_consciousness (* (+ ie se) 55))
+           (resource_consciousness (+ food_days (* o2_days 2.2)))
+           (module_consciousness (* modules_built 3.5))
+           (crew_consciousness (* crew_alive crew_consciousness_score)))
+      (+ infrastructure_consciousness resource_consciousness module_consciousness crew_consciousness)))
+
+  (log (concat "  Consciousness: " consciousness_phase_name " | Threat: " consciousness_threat_name " | Eff-CRI-Nexus: " (string (round effective_cri_nexus))))
+  (log (concat "  Neural Consciousness Weight: " (string (round neural_consciousness_weight)) " | Nexus Score: " (string (round nexus_consciousness_score))))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Resources — O2:" (string o2_days) "d Food:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))
+  (log (concat "  Nexus Infrastructure — Repair:" (string repair_count) " Solar:" (string solar_count) " Green:" (string greenhouse_count) " | Crew:" (string crew_alive) "/" (string (round crew_consciousness_score)) "hp"))
+
+  ;; ═══ APEX TRANSCENDENCE NEXUS OUTPUT SUMMARY ═══
+  (concat "🌌💫 ApexTranscendenceNexus Sol " (string sol) " — " consciousness_phase_name "/" consciousness_threat_name
+    " | NS:" (string (round nexus_consciousness_score))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days)
+    "d F:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))

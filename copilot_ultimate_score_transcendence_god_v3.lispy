@@ -1,0 +1,256 @@
+;; COPILOT ULTIMATE SCORE TRANSCENDENCE GOD v3
+;; Revolutionary Paradigm: Module Density Optimization with Ultra-Aggressive Building
+;; Goal: Transcend 95,000+ score through module density maximization and scoring optimization
+;; Features: 15-phase mega-building, ultra-aggressive module deployment, score maximization
+
+(begin
+  (define _agent_name "Copilot Ultimate Score Transcendence God v3")
+  (define _agent_desc "Module density maximization with ultra-aggressive building and scoring optimization")
+
+  (log (concat "🏗️🌌⚡💎🚀 ULTIMATE SCORE GOD — Sol " (string sol) " — Module Density Transcendence Protocol"))
+
+  ;; ═══ ULTRA-AGGRESSIVE SCORE MAXIMIZATION PHASES ═══
+  ;; 15 phases focused purely on scoring optimization
+  (define phase_genesis (< sol 10))           ;; Speed setup
+  (define phase_rocket (and (>= sol 10) (< sol 25)))   ;; Rocket start
+  (define phase_burst (and (>= sol 25) (< sol 45)))    ;; Infrastructure burst
+  (define phase_surge (and (>= sol 45) (< sol 70)))    ;; Building surge  
+  (define phase_boom (and (>= sol 70) (< sol 100)))    ;; Construction boom
+  (define phase_blitz (and (>= sol 100) (< sol 135)))  ;; Module blitz
+  (define phase_storm (and (>= sol 135) (< sol 175)))  ;; Building storm
+  (define phase_tsunami (and (>= sol 175) (< sol 220))) ;; Infrastructure tsunami
+  (define phase_avalanche (and (>= sol 220) (< sol 270))) ;; Module avalanche
+  (define phase_explosion (and (>= sol 270) (< sol 325))) ;; Building explosion
+  (define phase_supernova (and (>= sol 325) (< sol 385))) ;; Supernova construction
+  (define phase_megaburst (and (>= sol 385) (< sol 450))) ;; Mega construction burst
+  (define phase_ultrabuild (and (>= sol 450) (< sol 520))) ;; Ultra building phase
+  (define phase_hyperbuild (and (>= sol 520) (< sol 590))) ;; Hyper building phase
+  (define phase_omni (>= sol 590))            ;; Omnipotent building phase
+
+  ;; ═══ EXTREME SCORE OPTIMIZATION THREAT MODELING ═══
+  ;; Simplified but effective threat assessment for score maximization
+  (define threat_minimal (< cri 15))
+  (define threat_low (and (>= cri 15) (< cri 30)))
+  (define threat_moderate (and (>= cri 30) (< cri 50))) 
+  (define threat_high (and (>= cri 50) (< cri 75)))
+  (define threat_extreme (>= cri 75))
+
+  ;; ═══ ULTRA-AGGRESSIVE ALLOCATION FOR SCORE MAXIMIZATION ═══
+  ;; Minimal allocation complexity, maximum building efficiency
+
+  ;; Genesis: Lightning setup
+  (define genesis_allocation
+    (cond
+      (threat_extreme (begin (set! isru_alloc 0.60) (set! greenhouse_alloc 0.32) (set! heating_alloc 0.08)))
+      (threat_high (begin (set! isru_alloc 0.50) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.08)))
+      (threat_moderate (begin (set! isru_alloc 0.42) (set! greenhouse_alloc 0.50) (set! heating_alloc 0.08)))
+      (threat_low (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.08)))
+      (threat_minimal (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.38) (set! greenhouse_alloc 0.54) (set! heating_alloc 0.08)))))
+
+  ;; Rocket: Speed optimization
+  (define rocket_allocation
+    (cond
+      (threat_extreme (begin (set! isru_alloc 0.55) (set! greenhouse_alloc 0.37) (set! heating_alloc 0.08)))
+      (threat_high (begin (set! isru_alloc 0.45) (set! greenhouse_alloc 0.47) (set! heating_alloc 0.08)))
+      (threat_moderate (begin (set! isru_alloc 0.37) (set! greenhouse_alloc 0.55) (set! heating_alloc 0.08)))
+      (threat_low (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.08)))
+      (threat_minimal (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.33) (set! greenhouse_alloc 0.59) (set! heating_alloc 0.08)))))
+
+  ;; Burst through Omni: Building-optimized allocation
+  (define building_allocation
+    (cond
+      (threat_extreme (begin (set! isru_alloc 0.50) (set! greenhouse_alloc 0.42) (set! heating_alloc 0.08)))
+      (threat_high (begin (set! isru_alloc 0.40) (set! greenhouse_alloc 0.52) (set! heating_alloc 0.08)))
+      (threat_moderate (begin (set! isru_alloc 0.32) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.08)))
+      (threat_low (begin (set! isru_alloc 0.26) (set! greenhouse_alloc 0.66) (set! heating_alloc 0.08)))
+      (threat_minimal (begin (set! isru_alloc 0.22) (set! greenhouse_alloc 0.70) (set! heating_alloc 0.08)))
+      (true (begin (set! isru_alloc 0.30) (set! greenhouse_alloc 0.62) (set! heating_alloc 0.08)))))
+
+  ;; Apply appropriate allocation matrix
+  (cond
+    (phase_genesis genesis_allocation)
+    (phase_rocket rocket_allocation)
+    (true building_allocation))
+
+  ;; ═══ EXTREME SCORE-OPTIMIZED FOOD RATIONING ═══
+  ;; Keep crew alive but focus on building
+  (define score_rationing_base
+    (cond
+      ((< food_days 2) 0.30)     ;; Emergency minimum
+      ((< food_days 4) 0.40)     ;; Crisis minimum
+      ((< food_days 8) 0.65)     ;; Building minimum
+      ((< food_days 15) 0.85)    ;; Normal building
+      ((< food_days 25) 1.00)    ;; Good building
+      (true 1.10)))              ;; Optimal building
+
+  (define crew_health_factor
+    (cond
+      ((< (/ crew_hp crew_count) 50) 1.2)    ;; Health boost needed
+      ((< (/ crew_hp crew_count) 70) 1.0)    ;; Maintain health
+      (true 0.95)))              ;; Efficient maintenance
+
+  (define threat_adjustment
+    (cond
+      (threat_extreme 0.85)       ;; Crisis rationing
+      (threat_high 0.90)          ;; High threat rationing
+      (threat_moderate 0.95)      ;; Moderate adjustment
+      (true 1.0)))               ;; Normal rationing
+
+  (set! food_ration 
+    (max 0.25 (min 1.3 (* score_rationing_base crew_health_factor threat_adjustment))))
+
+  ;; ═══ ULTRA-AGGRESSIVE MODULE DENSITY BUILDING STRATEGY ═══
+  ;; Revolutionary building sequence focused purely on score maximization
+
+  ;; Phase 1: Lightning bot deployment (sols 3-7)
+  (if (and (>= sol 3) (<= sol 7) (< bot_count 3))
+      (set! build_item "worker_bot"))
+
+  ;; Phase 2: Hyper-speed solar deployment (sols 8-18)
+  (if (and (>= sol 8) (<= sol 18) (< solar_count 5))
+      (set! build_item "solar_array"))
+
+  ;; Phase 3: Early infrastructure protection (sols 19-30)
+  (if (and (>= sol 19) (<= sol 30) (< repair_count 1))
+      (set! build_item "repair_bay"))
+
+  ;; Phase 4: Power surge continuation (sols 31-40)
+  (if (and (>= sol 31) (<= sol 40) (< solar_count 7) (< power_ratio 0.90))
+      (set! build_item "solar_array"))
+
+  ;; Phase 5: Early food security (sols 41-55)
+  (if (and (>= sol 41) (<= sol 55) (< greenhouse_count 3) (< food_days 15))
+      (set! build_item "greenhouse"))
+
+  ;; Phase 6: Second repair bay (sols 56-75)
+  (if (and (>= sol 56) (<= sol 75) (< repair_count 2) 
+           (or threat_moderate threat_high threat_extreme))
+      (set! build_item "repair_bay"))
+
+  ;; Phase 7: MEGA MODULE BUILDING BEGINS (sols 76+)
+  ;; Ultra-aggressive module building with score optimization priority
+  (if (>= sol 76)
+      (let* ((total_modules (+ hab_count greenhouse_count solar_count repair_count bot_count isru_count))
+             (modules_per_sol (/ total_modules sol))
+             (target_modules_per_sol (cond
+                                       ((< sol 120) 0.35)    ;; Early aggressive building
+                                       ((< sol 200) 0.42)    ;; Mid aggressive building
+                                       ((< sol 300) 0.48)    ;; High aggressive building
+                                       ((< sol 450) 0.55)    ;; Ultra aggressive building
+                                       (true 0.65)))         ;; Hyper aggressive building
+             (behind_schedule (< modules_per_sol target_modules_per_sol)))
+
+        ;; Priority order for score maximization:
+        ;; 1. Repair bays for survival (up to 8)
+        ;; 2. Solar arrays for power (up to 12)
+        ;; 3. Greenhouses for food (up to 8)
+        ;; 4. Hab modules for pure score (unlimited)
+        ;; 5. ISRU for late game (up to 3)
+        (set! build_item
+              (cond
+                ;; Emergency repair if infrastructure failing
+                ((and (< repair_count 3) (or threat_high threat_extreme (< ie 0.6)))
+                 "repair_bay")
+                
+                ;; Emergency greenhouse if starving
+                ((and (< greenhouse_count 2) (< food_days 8))
+                 "greenhouse")
+                
+                ;; Emergency solar if power failing
+                ((and (< solar_count 4) (< power_ratio 0.75))
+                 "solar_array")
+
+                ;; Strategic repair bay expansion (up to 8)
+                ((and (< repair_count 8) 
+                      (or (> sol 100) threat_moderate threat_high threat_extreme)
+                      (< repair_count (+ 2 (/ sol 80))))  ;; Scale with time
+                 "repair_bay")
+
+                ;; Power infrastructure (up to 12 solar)
+                ((and (< solar_count 12) 
+                      (< power_ratio 0.85)
+                      (< solar_count (+ 5 (/ sol 50))))   ;; Scale with time
+                 "solar_array")
+
+                ;; Food security (up to 8 greenhouses)
+                ((and (< greenhouse_count 8) 
+                      (< food_days 20)
+                      (< greenhouse_count (+ 3 (/ sol 70))))  ;; Scale with time
+                 "greenhouse")
+
+                ;; LATE ISRU for efficiency (up to 3, only after sol 200)
+                ((and (>= sol 200) (< isru_count 3) (> o2_days 15))
+                 "isru_plant")
+
+                ;; HAB MODULES FOR PURE SCORE MAXIMIZATION
+                ;; This is where we maximize score - unlimited hab building
+                (true "hab_module")))))
+
+  ;; ═══ LATE GAME ULTRA-DENSITY OPTIMIZATION ═══
+  ;; After sol 400, go full-throttle on module density
+  (if (and (>= sol 400) (< total_modules 45))
+      (set! build_item
+            (cond
+              ;; Ensure minimum survival infrastructure
+              ((< repair_count 6) "repair_bay")
+              ((< greenhouse_count 6) "greenhouse")
+              ((< solar_count 10) "solar_array")
+              ;; Otherwise, pure module density for score
+              (true "hab_module"))))
+
+  ;; ═══ FINAL SCORE OPTIMIZATION LOGGING ═══
+  (define phase_name
+    (cond
+      (phase_genesis "GENESIS")
+      (phase_rocket "ROCKET")
+      (phase_burst "BURST")
+      (phase_surge "SURGE")
+      (phase_boom "BOOM")
+      (phase_blitz "BLITZ")
+      (phase_storm "STORM")
+      (phase_tsunami "TSUNAMI")
+      (phase_avalanche "AVALANCHE")
+      (phase_explosion "EXPLOSION")
+      (phase_supernova "SUPERNOVA")
+      (phase_megaburst "MEGABURST")
+      (phase_ultrabuild "ULTRABUILD")
+      (phase_hyperbuild "HYPERBUILD")
+      (phase_omni "OMNIBUILD")
+      (true "BUILDING")))
+
+  (define threat_name
+    (cond
+      (threat_extreme "EXTREME")
+      (threat_high "HIGH")
+      (threat_moderate "MODERATE")
+      (threat_low "LOW")
+      (threat_minimal "MINIMAL")
+      (true "UNKNOWN")))
+
+  (define total_modules (+ hab_count greenhouse_count solar_count repair_count bot_count isru_count))
+  (define modules_per_sol (if (> sol 0) (/ total_modules sol) 0))
+  
+  (define score_optimization_score
+    (let* ((module_score (* total_modules 4))
+           (infrastructure_score (* (+ ie se) 40))
+           (resource_score (+ food_days (* o2_days 1.5)))
+           (crew_score (* crew_alive (/ crew_hp crew_count))))
+      (+ module_score infrastructure_score resource_score crew_score)))
+
+  (log (concat "  Phase: " phase_name " | Threat: " threat_name " | Modules/Sol: " (string (round modules_per_sol))))
+  (log (concat "  Total Modules: " (string total_modules) " | Score Est: " (string (round score_optimization_score))))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Resources — O2:" (string o2_days) "d Food:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))
+  (log (concat "  Infrastructure — Repair:" (string repair_count) " Solar:" (string solar_count) " Green:" (string greenhouse_count) " Hab:" (string hab_count) " | Crew:" (string crew_alive) "/" (string (round (/ crew_hp crew_count))) "hp"))
+
+  ;; ═══ SCORE TRANSCENDENCE GOD OUTPUT SUMMARY ═══
+  (concat "🏗️🚀 ScoreGod Sol " (string sol) " — " phase_name "/" threat_name
+    " | M:" (string total_modules) "/" (string (round modules_per_sol))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days)
+    "d F:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))

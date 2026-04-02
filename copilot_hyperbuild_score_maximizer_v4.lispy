@@ -1,0 +1,126 @@
+;; COPILOT HYPERBUILD SCORE MAXIMIZER v4
+;; Revolutionary Paradigm: Extreme Early Building with Minimal Infrastructure
+;; Goal: Push module density to 30+ through ultra-early and aggressive building
+;; Strategy: Build constantly from sol 1, minimal survival infrastructure
+
+(begin
+  (define _agent_name "Copilot Hyperbuild Score Maximizer v4")
+  (define _agent_desc "Extreme early building with minimal survival infrastructure for maximum module density")
+
+  (log (concat "🚀🔥⚡🏗️💥 HYPERBUILD MAXIMIZER — Sol " (string sol) " — Extreme Building Protocol"))
+
+  ;; ═══ SIMPLIFIED THREAT ASSESSMENT ═══
+  ;; Focus only on survival threats that would stop building
+  (define threat_survival_critical (> cri 60))
+  (define threat_building_risk (> cri 35))
+  (define threat_normal (true))
+
+  ;; ═══ MINIMAL ALLOCATION FOR MAXIMUM BUILDING ═══
+  ;; Just enough to survive, everything else for building efficiency
+  (cond
+    (threat_survival_critical
+      (begin (set! isru_alloc 0.55) (set! greenhouse_alloc 0.37) (set! heating_alloc 0.08)))
+    (threat_building_risk
+      (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.57) (set! heating_alloc 0.08)))
+    (threat_normal
+      (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.67) (set! heating_alloc 0.08))))
+
+  ;; ═══ SURVIVAL MINIMUM FOOD RATIONING ═══
+  ;; Keep crew barely alive to maximize building
+  (define survival_rationing
+    (cond
+      ((< food_days 2) 0.35)     ;; Emergency survival
+      ((< food_days 5) 0.50)     ;; Crisis survival
+      ((< food_days 10) 0.75)    ;; Low survival
+      ((< food_days 20) 0.90)    ;; Normal survival
+      (true 1.0)))               ;; Good survival
+
+  (define crew_survival_factor
+    (if (< (/ crew_hp crew_count) 60) 1.15 0.95))  ;; Only boost if critically low
+
+  (set! food_ration (max 0.30 (min 1.1 (* survival_rationing crew_survival_factor))))
+
+  ;; ═══ EXTREME BUILDING STRATEGY ═══
+  ;; Absolute minimal infrastructure, maximum building
+
+  ;; Start building immediately - even before bots!
+  (if (= sol 1) (set! build_item "hab_module"))
+  (if (= sol 2) (set! build_item "hab_module"))  
+  (if (= sol 3) (set! build_item "worker_bot"))  ;; First bot
+  (if (= sol 4) (set! build_item "hab_module"))
+  (if (= sol 5) (set! build_item "hab_module"))
+  (if (= sol 6) (set! build_item "worker_bot"))  ;; Second bot
+  (if (= sol 7) (set! build_item "solar_array")) ;; First solar
+  (if (= sol 8) (set! build_item "hab_module"))
+  (if (= sol 9) (set! build_item "solar_array")) ;; Second solar
+  (if (= sol 10) (set! build_item "hab_module"))
+  (if (= sol 11) (set! build_item "greenhouse")) ;; First greenhouse
+  (if (= sol 12) (set! build_item "hab_module"))
+  (if (= sol 13) (set! build_item "solar_array")) ;; Third solar
+  (if (= sol 14) (set! build_item "hab_module"))
+  (if (= sol 15) (set! build_item "repair_bay")) ;; First repair
+  (if (= sol 16) (set! build_item "hab_module"))
+  (if (= sol 17) (set! build_item "greenhouse")) ;; Second greenhouse
+  (if (= sol 18) (set! build_item "hab_module"))
+  (if (= sol 19) (set! build_item "solar_array")) ;; Fourth solar
+  (if (= sol 20) (set! build_item "hab_module"))
+
+  ;; Continuing the pattern after sol 20
+  (if (and (>= sol 21) (<= sol 656))
+      (let* ((cycle_position (modulo (- sol 21) 10))  ;; 10-sol cycles
+             (total_modules (+ hab_count greenhouse_count solar_count repair_count bot_count isru_count))
+             (modules_per_sol (if (> sol 0) (/ total_modules sol) 0)))
+        
+        (set! build_item
+              (cond
+                ;; Emergency infrastructure only when absolutely necessary
+                ((and (< repair_count 1) threat_survival_critical) "repair_bay")
+                ((and (< greenhouse_count 1) (< food_days 5)) "greenhouse")
+                ((and (< solar_count 2) (< power_ratio 0.60)) "solar_array")
+                ((and (< bot_count 2) (< sol 50)) "worker_bot")
+
+                ;; Cycle-based minimal infrastructure
+                ((and (= cycle_position 0) (< repair_count 4) (> sol 50)) "repair_bay")
+                ((and (= cycle_position 1) (< greenhouse_count 5) (< food_days 15)) "greenhouse")
+                ((and (= cycle_position 2) (< solar_count 8) (< power_ratio 0.80)) "solar_array")
+
+                ;; Everything else: HAB MODULES for pure score
+                (true "hab_module")))))
+
+  ;; ═══ LATE GAME MODULE DENSITY SURGE ═══
+  ;; After sol 400, only critical infrastructure, rest is habs
+  (if (>= sol 400)
+      (set! build_item
+            (cond
+              ((< repair_count 3) "repair_bay")              ;; Absolute minimum repair
+              ((< greenhouse_count 3) "greenhouse")          ;; Absolute minimum food
+              ((< solar_count 5) "solar_array")              ;; Absolute minimum power
+              (true "hab_module"))))                         ;; Pure module density
+
+  ;; ═══ HYPERBUILD STATUS LOGGING ═══
+  (define total_modules (+ hab_count greenhouse_count solar_count repair_count bot_count isru_count))
+  (define modules_per_sol (if (> sol 0) (/ total_modules sol) 0))
+  (define hab_ratio (if (> total_modules 0) (/ hab_count total_modules) 0))
+  
+  (define building_efficiency_score
+    (let* ((density_score (* total_modules 5))
+           (hab_bonus (* hab_count 3))
+           (efficiency_bonus (* modules_per_sol 100))
+           (survival_penalty (if threat_survival_critical -50 0)))
+      (+ density_score hab_bonus efficiency_bonus survival_penalty)))
+
+  (log (concat "  HYPERBUILD — Modules: " (string total_modules) " | Habs: " (string hab_count) " | Rate: " (string (round modules_per_sol)) "/sol"))
+  (log (concat "  Building Efficiency: " (string (round building_efficiency_score)) " | Hab %: " (string (round (* hab_ratio 100))) "%"))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Resources — O2:" (string o2_days) "d Food:" (string food_days) "d | IE:" (string (round (* ie 100))) "% SE:" (string (round (* se 100))) "%"))
+  (log (concat "  Infrastructure — R:" (string repair_count) " S:" (string solar_count) " G:" (string greenhouse_count) " H:" (string hab_count) " | Crew:" (string crew_alive) "/" (string (round (/ crew_hp crew_count))) "hp"))
+
+  ;; ═══ HYPERBUILD OUTPUT SUMMARY ═══
+  (concat "🚀🏗️ HyperBuild Sol " (string sol) 
+    " | TM:" (string total_modules) "/" (string (round modules_per_sol))
+    " | H:" (string hab_count) "(" (string (round (* hab_ratio 100))) "%)"
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days)
+    "d F:" (string food_days) "d | Crew:" (string crew_alive) "/" (string (round (/ crew_hp crew_count))) "hp"))
