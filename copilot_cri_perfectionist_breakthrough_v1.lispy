@@ -1,0 +1,257 @@
+;; COPILOT CRI PERFECTIONIST BREAKTHROUGH v1
+;; Paradigm: LASER-FOCUSED CRI optimization targeting P75 = 4 for breakthrough scoring
+;; Goal: Achieve P75 CRI of 4 instead of 5 for +10 point breakthrough
+;; Innovation: Ultra-precise CRI control with predictive threat management
+
+(begin
+  (define _agent_name "Copilot CRI Perfectionist Breakthrough v1")
+  (define _agent_desc "Ultra-precise CRI optimization for scoring breakthrough")
+
+  (log (concat "🎯⚡🔬💎🏆📊🚀 CRI PERFECTIONIST BREAKTHROUGH — Sol " (string sol) " — CRI OPTIMIZATION ACTIVE"))
+
+  ;; ═══ CRI PERFECTIONIST SYSTEM ═══
+  ;; Ultra-precise CRI targeting with breakthrough thresholds
+  
+  (define cri_perfectionist_phases
+    (cond
+      ((< sol 5) "CRI_GENESIS")             ;; Ultra-low CRI start
+      ((< sol 20) "CRI_BOOTSTRAP")          ;; CRI optimization bootstrap
+      ((< sol 50) "CRI_ACCELERATION")       ;; CRI acceleration control
+      ((< sol 100) "CRI_PRECISION")         ;; CRI precision targeting
+      ((< sol 180) "CRI_MASTERY")           ;; CRI mastery phase
+      ((< sol 280) "CRI_BREAKTHROUGH")      ;; CRI breakthrough targeting
+      ((< sol 400) "CRI_PERFECTION")        ;; CRI perfection mode
+      ((< sol 540) "CRI_TRANSCENDENCE")     ;; CRI transcendence
+      ((< sol 620) "CRI_ULTIMATE")          ;; CRI ultimate control
+      (true "CRI_GODMODE")))                ;; CRI god-mode
+
+  ;; ═══ ULTRA-PRECISE CRI TARGETING FOR P75 = 4 ═══
+  ;; Extremely aggressive CRI targeting to achieve P75 of 4
+  (define cri_perfectionist_targets
+    (cond
+      ((< sol 60) 1.0)          ;; Ultra-aggressive early (targeting P75 = 2-3)
+      ((< sol 120) 1.5)         ;; Very aggressive early
+      ((< sol 200) 2.0)         ;; Aggressive targeting
+      ((< sol 300) 2.5)         ;; Moderate aggressive
+      ((< sol 420) 3.0)         ;; Conservative targeting P75 = 4
+      ((< sol 560) 3.5)         ;; Late safety increase
+      ((< sol 620) 4.0)         ;; End-game P75 = 4 target
+      (true 4.5)))              ;; Final safety
+
+  (define cri_current colony_risk_index)
+  (define cri_target cri_perfectionist_targets)
+  (define cri_deviation (- cri_current cri_target))
+  (define cri_emergency (> cri_deviation 1.0))
+
+  ;; CRI breakthrough detection
+  (define cri_breakthrough_achieved (< cri_current cri_target))
+
+  ;; ═══ CRI-OPTIMIZED RESOURCE THRESHOLDS ═══
+  ;; Resource thresholds balanced for CRI optimization AND building
+  (define cri_balanced_targets
+    (cond
+      ((< sol 80) (list 15 25 20))      ;; CRI-optimized early targets
+      ((< sol 160) (list 12 22 18))     ;; CRI efficiency targets  
+      ((< sol 260) (list 10 18 15))     ;; CRI breakthrough targets
+      ((< sol 380) (list 8 16 13))      ;; CRI perfection targets
+      ((< sol 520) (list 10 18 15))     ;; CRI transcendence recovery
+      ((< sol 600) (list 12 20 17))     ;; CRI ultimate safety
+      (true (list 15 25 20))))          ;; CRI godmode safety
+
+  (define o2_cri_target (nth cri_balanced_targets 0))
+  (define food_cri_target (nth cri_balanced_targets 1))
+  (define water_cri_target (nth cri_balanced_targets 2))
+
+  ;; CRI-balanced resource deficit calculation
+  (define cri_resource_deficit
+    (+ (max 0 (- o2_cri_target o2_days))
+       (max 0 (- food_cri_target food_days))
+       (max 0 (- water_cri_target water_days))))
+
+  ;; ═══ CRI-PERFECT ALLOCATION MATRIX ═══
+  ;; Allocation optimized specifically for CRI control while maintaining building
+  (define cri_perfectionist_allocation
+    (let* ((cri_perfect (<= cri_deviation -0.2))     ;; CRI better than target
+           (cri_excellent (<= cri_deviation 0.2))     ;; CRI within excellent range  
+           (cri_good (<= cri_deviation 0.6))          ;; CRI within good range
+           (cri_moderate (<= cri_deviation 1.2))      ;; CRI moderate range
+           (cri_high (<= cri_deviation 2.5))          ;; CRI high range
+           (minimal_deficit (< cri_resource_deficit 3))
+           (low_deficit (< cri_resource_deficit 6))
+           (moderate_deficit (< cri_resource_deficit 12)))
+      
+      (cond
+        ;; CRI PERFECT: CRI below target = maximum building opportunity
+        ((and cri_perfect minimal_deficit)
+         (list 0.03 0.94 0.03))   ;; 94% building with CRI excellence
+         
+        ;; CRI EXCELLENT: CRI at target = high building with CRI protection
+        ((and cri_excellent minimal_deficit)
+         (list 0.05 0.90 0.05))   ;; 90% building with CRI excellence
+         
+        ;; CRI EXCELLENT + moderate deficit: Balanced optimization
+        ((and cri_excellent low_deficit)
+         (list 0.08 0.87 0.05))   ;; 87% building
+         
+        ;; CRI GOOD: CRI slightly above target = building with CRI management
+        ((and cri_good minimal_deficit)
+         (list 0.08 0.87 0.05))   ;; 87% building
+         
+        ;; CRI GOOD + deficit: Balanced approach
+        ((and cri_good low_deficit)
+         (list 0.10 0.85 0.05))   ;; 85% building
+         
+        ;; CRI GOOD + moderate deficit: Resource focus
+        ((and cri_good moderate_deficit)
+         (list 0.15 0.80 0.05))   ;; 80% building
+         
+        ;; CRI MODERATE: Need CRI reduction but maintain building
+        ((and cri_moderate minimal_deficit)
+         (list 0.12 0.83 0.05))   ;; 83% building
+         
+        ;; CRI MODERATE + deficit: CRI priority with resources
+        ((and cri_moderate low_deficit)
+         (list 0.18 0.77 0.05))   ;; 77% building
+         
+        ;; CRI HIGH: CRI emergency but try to maintain some building
+        ((and cri_high minimal_deficit)
+         (list 0.20 0.75 0.05))   ;; 75% building
+         
+        ;; CRI HIGH + deficit: Heavy CRI focus
+        (cri_high
+         (list 0.28 0.67 0.05))   ;; 67% building
+         
+        ;; CRI CRITICAL: Emergency CRI reduction
+        (true
+         (list 0.40 0.55 0.05))))) ;; Emergency CRI management
+
+  (set! isru_alloc (nth cri_perfectionist_allocation 0))
+  (set! greenhouse_alloc (nth cri_perfectionist_allocation 1))
+  (set! heating_alloc (nth cri_perfectionist_allocation 2))
+
+  ;; ═══ CRI-OPTIMIZED NUTRITION SYSTEM ═══
+  ;; Rationing optimized for CRI control
+  (define cri_optimized_rationing
+    (cond
+      ((< food_days 1) 0.35)       ;; Emergency survival
+      ((< food_days 3) 0.55)       ;; Crisis management
+      ((< food_days 6) 0.72)       ;; Conservative crisis
+      ((< food_days 10) 0.84)      ;; CRI-optimized efficiency
+      ((< food_days 16) 0.91)      ;; CRI standard operation
+      ((< food_days 24) 0.96)      ;; CRI normal efficiency
+      ((< food_days 34) 1.01)      ;; CRI optimal efficiency
+      (true 1.05)))                ;; CRI maximum efficiency
+
+  ;; CRI crew health optimization
+  (define cri_crew_health (/ (+ crew_hp) (max 1 (* crew_alive 100))))
+  (define cri_health_factor
+    (cond
+      ((< cri_crew_health 0.65) 1.5)    ;; CRI health recovery
+      ((< cri_crew_health 0.78) 1.3)    ;; CRI health boost
+      ((< cri_crew_health 0.88) 1.15)   ;; CRI health management
+      ((< cri_crew_health 0.94) 1.08)   ;; CRI health optimization
+      ((< cri_crew_health 0.97) 1.02)   ;; CRI health perfection
+      (true 0.98)))                     ;; CRI efficiency mode
+
+  ;; CRI-based nutrition factors
+  (define cri_nutrition_factor
+    (cond
+      ((> cri_deviation 3) 1.4)     ;; High CRI nutrition boost
+      ((> cri_deviation 2) 1.25)    ;; Moderate CRI boost
+      ((> cri_deviation 1) 1.12)    ;; Small CRI boost
+      ((> cri_deviation 0) 1.05)    ;; Tiny CRI boost
+      ((> cri_deviation -0.5) 0.98) ;; Slight efficiency when CRI perfect
+      (true 0.94)))                 ;; Maximum efficiency when CRI excellent
+
+  ;; CRI building efficiency factor
+  (define cri_building_factor
+    (+ 1.0 (* (max 0 (- greenhouse_alloc 0.80)) 6)))  ;; Moderate bonus for building
+
+  (set! food_ration 
+    (max 0.25 (min 2.2 (* cri_optimized_rationing
+                         cri_health_factor
+                         cri_nutrition_factor
+                         cri_building_factor))))
+
+  ;; ═══ CRI BREAKTHROUGH PREDICTION SYSTEM ═══ 
+  (define cri_predicted_modules
+    (+ 22                                              ;; Conservative module target
+       (* (max 0 (- greenhouse_alloc 0.75)) 25)       ;; Building efficiency bonus
+       (* (max 0 (- 5.0 (/ cri_current 6))) 2.5)      ;; CRI excellence bonus
+       (* (max 0 (- 1.8 (max 0.4 (min 1.4 food_ration)))) 5) ;; Efficiency bonus
+       (* (max 0 (- (+ o2_days food_days water_days) 25)) 0.04) ;; Resource efficiency
+       (cond
+         ((string=? cri_perfectionist_phases "CRI_GODMODE") 2.5)
+         ((string=? cri_perfectionist_phases "CRI_ULTIMATE") 2.0)
+         ((string=? cri_perfectionist_phases "CRI_TRANSCENDENCE") 1.8)
+         ((string=? cri_perfectionist_phases "CRI_PERFECTION") 1.5)
+         ((string=? cri_perfectionist_phases "CRI_BREAKTHROUGH") 1.2)
+         ((string=? cri_perfectionist_phases "CRI_MASTERY") 1.0)
+         ((string=? cri_perfectionist_phases "CRI_PRECISION") 0.8)
+         ((string=? cri_perfectionist_phases "CRI_ACCELERATION") 0.6)
+         ((string=? cri_perfectionist_phases "CRI_BOOTSTRAP") 0.4)
+         (true 0.2))))                                 ;; CRI phase bonus
+
+  ;; CRI breakthrough bonus calculations
+  (define cri_breakthrough_bonus
+    (if cri_breakthrough_achieved
+        (* (- cri_target cri_current) 300)             ;; MASSIVE CRI breakthrough reward
+        0))
+
+  (define cri_perfection_bonus
+    (if (< cri_current 3.0)
+        (* (- 3.0 cri_current) 400)                    ;; CRI perfection bonus
+        0))
+
+  (define cri_predicted_score
+    (+ (* 662 100)                                     ;; Base survival
+       (* 3 500)                                       ;; Crew base
+       (* cri_predicted_modules 150)                   ;; CRI-optimized modules
+       (* 1.0 200 100)                                 ;; Perfect survival
+       (* cri_current -10)                             ;; CRI penalty (this is what we're optimizing!)
+       cri_breakthrough_bonus                          ;; CRI breakthrough reward
+       cri_perfection_bonus))                          ;; CRI perfection reward
+
+  ;; ═══ CRI EFFICIENCY METRICS ═══
+  (define cri_efficiency
+    (let* ((cri_control_efficiency (* (max 0 (- 8 cri_current)) 100))
+           (cri_building_efficiency (* greenhouse_alloc 180))
+           (cri_resource_efficiency (* (- 40 cri_resource_deficit) 8))
+           (cri_crew_efficiency (* crew_alive cri_crew_health 100))
+           (cri_module_efficiency (* cri_predicted_modules 45))
+           (cri_phase_efficiency 
+             (cond
+               ((string=? cri_perfectionist_phases "CRI_GODMODE") 600)
+               ((string=? cri_perfectionist_phases "CRI_ULTIMATE") 500)
+               ((string=? cri_perfectionist_phases "CRI_TRANSCENDENCE") 400)
+               (true 300)))
+           (total_cri_efficiency (+ cri_control_efficiency cri_building_efficiency
+                                   cri_resource_efficiency cri_crew_efficiency
+                                   cri_module_efficiency cri_phase_efficiency)))
+      total_cri_efficiency))
+
+  ;; ═══ CRI BREAKTHROUGH STATUS DISPLAY ═══
+  (log (concat "  🎯 CRI Phase: " cri_perfectionist_phases " | CRI Control: " (string cri_current) "→" (string cri_target)))
+  (log (concat "  ⚡ CRI Status: Dev=" (string cri_deviation) " | Breakthrough=" (if cri_breakthrough_achieved "YES✅" "NO❌") " | Emergency=" (if cri_emergency "YES🚨" "NO✅")))
+  (log (concat "  🔬 CRI Targets — O2:" (string o2_days) "/" (string o2_cri_target) "d Food:" (string food_days) "/" (string food_cri_target) "d Water:" (string water_days) "/" (string water_cri_target) "d"))
+  (log (concat "  💎 CRI Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  🏆 CRI Prediction: " (string (round cri_predicted_modules)) " modules | Score: " (string (round cri_predicted_score))))
+  (log (concat "  📊 CRI Efficiency: " (string (round cri_efficiency)) " | Health:" (string (round (* cri_crew_health 100))) "% | Ration:" (string (round (* food_ration 100))) "% | Deficit:" (string (round cri_resource_deficit))))
+
+  ;; CRI Status alerts
+  (if cri_breakthrough_achieved
+      (log "  ✅ CRI BREAKTHROUGH ACHIEVED: CRI below target - scoring bonus active!"))
+  (if cri_emergency
+      (log "  🚨 CRI EMERGENCY: CRI too high - emergency reduction active!"))
+
+  ;; ═══ CRI PERFECTIONIST OUTPUT ═══
+  (concat "🎯⚡🔬💎🏆📊🚀 CRIPerf Sol " (string sol) " — " cri_perfectionist_phases
+    " | CRI:" (string cri_current) "→" (string cri_target)
+    " | Dev:" (string (round (* cri_deviation 10)) "/10")
+    " | Build:" (string (round (* greenhouse_alloc 100))) "%"
+    " | CPS:" (string (round cri_predicted_score))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days) "d F:" (string food_days) "d | M:" (string (round cri_predicted_modules))
+    (if cri_breakthrough_achieved " | ✅BREAKTHROUGH" "")
+    (if cri_emergency " | 🚨CRI_ALERT" "")))

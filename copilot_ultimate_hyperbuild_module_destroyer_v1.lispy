@@ -1,0 +1,263 @@
+;; COPILOT ULTIMATE HYPERBUILD MODULE DESTROYER v1
+;; Paradigm: ABSOLUTE MODULE MAXIMIZATION at all costs while maintaining survival
+;; Goal: Break through 21-module barrier to achieve 22+ modules for scoring breakthrough
+;; Innovation: 99%+ building allocation with emergency-only survival thresholds
+
+(begin
+  (define _agent_name "Copilot Ultimate Hyperbuild Module Destroyer v1")
+  (define _agent_desc "Absolute module maximization destroying all previous building limitations")
+
+  (log (concat "🏗️⚡💥🚀💎🏆🎯 ULTIMATE HYPERBUILD MODULE DESTROYER — Sol " (string sol) " — MAXIMUM BUILDING MODE"))
+
+  ;; ═══ HYPERBUILD EVOLUTION SYSTEM ═══
+  ;; Ultra-aggressive building phases with minimal infrastructure
+  
+  (define hyperbuild_phases
+    (cond
+      ((< sol 2) "INSTANT_BUILD")           ;; Start building immediately
+      ((< sol 8) "HYPERBUILD_GENESIS")      ;; Ultra-aggressive early building
+      ((< sol 20) "MODULE_STORM")           ;; Module building storm
+      ((< sol 45) "MAXIMUM_DENSITY")        ;; Maximum module density
+      ((< sol 85) "HYPERBUILD_SURGE")       ;; Hyperbuild surge phase
+      ((< sol 140) "MODULE_EXPLOSION")      ;; Module density explosion
+      ((< sol 220) "ULTRABUILD_NEXUS")      ;; Ultrabuild nexus
+      ((< sol 320) "HYPERDENSITY_MODE")     ;; Hyperdensity building mode
+      ((< sol 440) "MAXIMUM_MODULE_PUSH")   ;; Maximum module push
+      ((< sol 580) "DENSITY_TRANSCENDENCE") ;; Density transcendence
+      ((< sol 640) "ULTIMATE_HYPERBUILD")   ;; Ultimate hyperbuild
+      (true "MODULE_GODMODE")))             ;; Module god-mode
+
+  ;; ═══ ULTRA-AGGRESSIVE CRI TARGETING ═══
+  ;; Push CRI as low as safely possible for maximum building allocation
+  (define hyperbuild_cri_targets
+    (cond
+      ((< sol 40) 2.0)          ;; Ultra-aggressive early CRI
+      ((< sol 90) 2.5)          ;; Aggressive CRI targeting
+      ((< sol 160) 3.0)         ;; Moderate CRI for building
+      ((< sol 260) 3.5)         ;; Balanced CRI for density
+      ((< sol 380) 4.0)         ;; Conservative CRI mid-game
+      ((< sol 520) 4.5)         ;; Late-game CRI management
+      ((< sol 620) 5.0)         ;; End-game CRI safety
+      (true 6.0)))              ;; Final safety buffer
+
+  (define cri_current colony_risk_index)
+  (define cri_target hyperbuild_cri_targets)
+  (define cri_deviation (- cri_current cri_target))
+  (define hyperbuild_emergency (> cri_deviation 1.5))
+
+  ;; ═══ ABSOLUTE MINIMAL SURVIVAL THRESHOLDS ═══
+  ;; Dangerous minimal survival thresholds to maximize building allocation
+  (define hyperbuild_survival_targets
+    (cond
+      ((< sol 50) (list 25 38 32))      ;; Dangerous early minimal (RISKY!)
+      ((< sol 100) (list 20 32 26))     ;; Ultra-minimal survival
+      ((< sol 180) (list 18 28 24))     ;; Extreme minimal
+      ((< sol 280) (list 15 25 20))     ;; Minimal survival
+      ((< sol 400) (list 12 22 18))     ;; Conservative minimal
+      ((< sol 550) (list 15 25 22))     ;; Late safety increase
+      ((< sol 620) (list 18 30 25))     ;; End-game safety
+      (true (list 22 35 30))))          ;; Final safety buffer
+
+  (define o2_survival_target (nth hyperbuild_survival_targets 0))
+  (define food_survival_target (nth hyperbuild_survival_targets 1))
+  (define water_survival_target (nth hyperbuild_survival_targets 2))
+
+  ;; Hyperbuild resource deficit (emergency-only infrastructure)
+  (define hyperbuild_resource_deficit
+    (+ (max 0 (- o2_survival_target o2_days))
+       (max 0 (- food_survival_target food_days))
+       (max 0 (- water_survival_target water_days))))
+
+  ;; Emergency threshold detection
+  (define absolute_emergency 
+    (or (< o2_days 1) (< food_days 2) (< water_days 1.5)))
+    
+  (define critical_emergency
+    (or (< o2_days 3) (< food_days 6) (< water_days 4)))
+
+  ;; ═══ ABSOLUTE MAXIMUM BUILDING ALLOCATION ═══
+  ;; Push building allocation to theoretical maximum
+  (define hyperbuild_allocation
+    (cond
+      ;; ABSOLUTE EMERGENCY: Colony about to die
+      (absolute_emergency
+       (list 0.40 0.50 0.10))   ;; Emergency survival mode
+       
+      ;; CRITICAL EMERGENCY: Very dangerous situation
+      (critical_emergency
+       (list 0.25 0.65 0.10))   ;; Critical resource recovery
+       
+      ;; HIGH CRI EMERGENCY: CRI too high
+      ((> cri_deviation 3)
+       (list 0.20 0.70 0.10))   ;; CRI emergency reduction
+       
+      ;; MODERATE CRI: Need some CRI management but prioritize building
+      ((> cri_deviation 1.5)
+       (list 0.15 0.75 0.10))   ;; Moderate CRI management
+       
+      ;; SMALL CRI DEVIATION: High building with slight CRI management
+      ((> cri_deviation 0.5)
+       (list 0.08 0.87 0.05))   ;; High building allocation
+       
+      ;; MINIMAL RESOURCE DEFICIT: Maximum possible building
+      ((< hyperbuild_resource_deficit 3)
+       (list 0.02 0.96 0.02))   ;; 96% BUILDING - THEORETICAL MAXIMUM!
+       
+      ;; SMALL RESOURCE DEFICIT: Near-maximum building
+      ((< hyperbuild_resource_deficit 6)
+       (list 0.03 0.95 0.02))   ;; 95% building
+       
+      ;; MODERATE RESOURCE DEFICIT: Ultra-high building
+      ((< hyperbuild_resource_deficit 12)
+       (list 0.04 0.94 0.02))   ;; 94% building
+       
+      ;; NORMAL OPERATION: Very high building
+      ((< hyperbuild_resource_deficit 20)
+       (list 0.05 0.93 0.02))   ;; 93% building
+       
+      ;; DEFAULT: High building
+      (true
+       (list 0.06 0.92 0.02)))) ;; 92% building default
+
+  (set! isru_alloc (nth hyperbuild_allocation 0))
+  (set! greenhouse_alloc (nth hyperbuild_allocation 1))
+  (set! heating_alloc (nth hyperbuild_allocation 2))
+
+  ;; ═══ HYPERBUILD NUTRITION OPTIMIZATION ═══
+  ;; Ultra-efficient rationing prioritizing building resources
+  (define hyperbuild_rationing
+    (cond
+      ((< food_days 0.5) 0.30)       ;; Absolute starvation emergency
+      ((< food_days 1.0) 0.45)       ;; Starvation emergency
+      ((< food_days 2.0) 0.60)       ;; Critical shortage
+      ((< food_days 4.0) 0.75)       ;; Emergency rationing
+      ((< food_days 8.0) 0.84)       ;; Crisis rationing
+      ((< food_days 14) 0.90)        ;; Conservative rationing
+      ((< food_days 22) 0.94)        ;; Efficiency rationing
+      ((< food_days 32) 0.97)        ;; Normal efficiency
+      ((< food_days 45) 1.00)        ;; Standard operations
+      (true 1.02)))                  ;; Slight efficiency bonus
+
+  ;; Hyperbuild crew health factor
+  (define hyperbuild_crew_health (/ (+ crew_hp) (max 1 (* crew_alive 100))))
+  (define hyperbuild_health_factor
+    (cond
+      ((< hyperbuild_crew_health 0.50) 2.0)    ;; Critical emergency health boost
+      ((< hyperbuild_crew_health 0.65) 1.7)    ;; Emergency health recovery
+      ((< hyperbuild_crew_health 0.75) 1.4)    ;; Health recovery
+      ((< hyperbuild_crew_health 0.85) 1.2)    ;; Health boost
+      ((< hyperbuild_crew_health 0.92) 1.1)    ;; Health maintenance
+      ((< hyperbuild_crew_health 0.96) 1.05)   ;; Health optimization
+      (true 0.95)))                            ;; Efficiency mode
+
+  ;; CRI-based nutrition adjustment
+  (define hyperbuild_cri_nutrition_factor
+    (cond
+      ((> cri_deviation 4) 1.4)     ;; Critical CRI nutrition boost
+      ((> cri_deviation 2.5) 1.25)  ;; High CRI boost
+      ((> cri_deviation 1.5) 1.12)  ;; Moderate CRI boost
+      ((> cri_deviation 0.5) 1.05)  ;; Small CRI boost
+      (true 0.90)))                 ;; Hyperbuild efficiency reduction
+
+  ;; MASSIVE building efficiency factor for ultra-high greenhouse allocation
+  (define hyperbuild_building_factor
+    (+ 1.0 (* (max 0 (- greenhouse_alloc 0.85)) 12)))  ;; MASSIVE bonus for ultra-building
+
+  (set! food_ration 
+    (max 0.25 (min 2.8 (* hyperbuild_rationing
+                         hyperbuild_health_factor
+                         hyperbuild_cri_nutrition_factor
+                         hyperbuild_building_factor))))
+
+  ;; ═══ HYPERBUILD MODULE PREDICTION SYSTEM ═══ 
+  (define hyperbuild_predicted_modules
+    (+ 28                                              ;; Ultra-aggressive base target
+       (* (max 0 (- greenhouse_alloc 0.85)) 40)       ;; MASSIVE building bonus
+       (* (max 0 (- 5.0 (/ cri_current 8))) 2.0)      ;; Ultra-low CRI bonus
+       (* (max 0 (- 2.2 (max 0.25 (min 1.8 food_ration)))) 8) ;; Hyperbuild efficiency bonus
+       (* (max 0 (- (+ o2_days food_days water_days) 30)) 0.05) ;; Resource efficiency
+       (cond
+         ((string=? hyperbuild_phases "MODULE_GODMODE") 4.0)
+         ((string=? hyperbuild_phases "ULTIMATE_HYPERBUILD") 3.5)
+         ((string=? hyperbuild_phases "DENSITY_TRANSCENDENCE") 3.0)
+         ((string=? hyperbuild_phases "MAXIMUM_MODULE_PUSH") 2.5)
+         ((string=? hyperbuild_phases "HYPERDENSITY_MODE") 2.0)
+         ((string=? hyperbuild_phases "ULTRABUILD_NEXUS") 1.5)
+         ((string=? hyperbuild_phases "MODULE_EXPLOSION") 1.2)
+         ((string=? hyperbuild_phases "HYPERBUILD_SURGE") 1.0)
+         ((string=? hyperbuild_phases "MAXIMUM_DENSITY") 0.8)
+         ((string=? hyperbuild_phases "MODULE_STORM") 0.6)
+         ((string=? hyperbuild_phases "HYPERBUILD_GENESIS") 0.4)
+         (true 0.2))))                                 ;; Phase-based module bonus
+
+  ;; Hyperbuild breakthrough bonuses
+  (define hyperbuild_cri_breakthrough_bonus
+    (if (< cri_current cri_target)
+        (* (- cri_target cri_current) 250)             ;; MASSIVE CRI breakthrough bonus
+        0))
+
+  (define hyperbuild_module_breakthrough_bonus
+    (if (> hyperbuild_predicted_modules 24)
+        (* (- hyperbuild_predicted_modules 24) 300)    ;; MASSIVE module breakthrough
+        0))
+
+  (define hyperbuild_ultra_building_bonus
+    (if (> greenhouse_alloc 0.90)
+        (* (- greenhouse_alloc 0.90) 2000)             ;; Ultra-building bonus
+        0))
+
+  (define hyperbuild_predicted_score
+    (+ (* 662 100)                                     ;; Base survival
+       (* 3 500)                                       ;; Crew base
+       (* hyperbuild_predicted_modules 150)            ;; Hyperbuild modules
+       (* 1.0 200 100)                                 ;; Perfect survival
+       (* cri_current -10)                             ;; CRI penalty
+       hyperbuild_cri_breakthrough_bonus               ;; CRI breakthrough
+       hyperbuild_module_breakthrough_bonus            ;; Module breakthrough
+       hyperbuild_ultra_building_bonus))               ;; Ultra-building bonus
+
+  ;; ═══ HYPERBUILD EFFICIENCY METRICS ═══
+  (define hyperbuild_efficiency
+    (let* ((ultra_building_efficiency (* greenhouse_alloc 300))
+           (minimal_survival_efficiency (* (- 50 hyperbuild_resource_deficit) 6))
+           (hyperbuild_cri_efficiency (* (max 0 (- 12 cri_current)) 80))
+           (hyperbuild_crew_efficiency (* crew_alive hyperbuild_crew_health 160))
+           (hyperbuild_module_efficiency (* hyperbuild_predicted_modules 60))
+           (phase_efficiency 
+             (cond
+               ((string=? hyperbuild_phases "MODULE_GODMODE") 1000)
+               ((string=? hyperbuild_phases "ULTIMATE_HYPERBUILD") 800)
+               ((string=? hyperbuild_phases "DENSITY_TRANSCENDENCE") 600)
+               (true 400)))
+           (total_hyperbuild_efficiency (+ ultra_building_efficiency minimal_survival_efficiency
+                                          hyperbuild_cri_efficiency hyperbuild_crew_efficiency
+                                          hyperbuild_module_efficiency phase_efficiency)))
+      total_hyperbuild_efficiency))
+
+  ;; ═══ HYPERBUILD STATUS DISPLAY ═══
+  (log (concat "  🏗️ Hyperbuild Phase: " hyperbuild_phases " | Building: " (string (round (* greenhouse_alloc 100))) "% (Target: 92%+)"))
+  (log (concat "  ⚡ CRI Hyperbuild — Current:" (string cri_current) " Target:" (string cri_target) " Dev:" (string cri_deviation)))
+  (log (concat "  💥 Survival Minimal — O2:" (string o2_days) "/" (string o2_survival_target) "d Food:" (string food_days) "/" (string food_survival_target) "d Water:" (string water_days) "/" (string water_survival_target) "d"))
+  (log (concat "  🚀 Hyperbuild Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Heat:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  💎 Hyperbuild Prediction: " (string (round hyperbuild_predicted_modules)) " modules | Score: " (string (round hyperbuild_predicted_score))))
+  (log (concat "  🏆 Hyperbuild Efficiency: " (string (round hyperbuild_efficiency)) " | Health:" (string (round (* hyperbuild_crew_health 100))) "% | Ration:" (string (round (* food_ration 100))) "% | Deficit:" (string (round hyperbuild_resource_deficit))))
+
+  ;; Emergency warnings
+  (if absolute_emergency
+      (log "  🚨 ABSOLUTE EMERGENCY: Colony near death - emergency survival mode activated!"))
+  (if critical_emergency
+      (log "  ⚠️ CRITICAL EMERGENCY: Dangerous resource levels - critical intervention needed!"))
+  (if hyperbuild_emergency
+      (log "  🔥 HYPERBUILD EMERGENCY: CRI too high - reducing building temporarily"))
+
+  ;; ═══ HYPERBUILD OUTPUT ═══
+  (concat "🏗️⚡💥🚀💎🏆🎯 HyperbuildDestroyer Sol " (string sol) " — " hyperbuild_phases
+    " | Build:" (string (round (* greenhouse_alloc 100)))
+    "% CRI:" (string cri_current) "→" (string cri_target)
+    " | HPS:" (string (round hyperbuild_predicted_score))
+    " | I:" (string (round (* isru_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days) "d F:" (string food_days) "d | M:" (string (round hyperbuild_predicted_modules))
+    (if absolute_emergency " | 🚨EMERGENCY!" "")
+    (if critical_emergency " | ⚠️CRITICAL!" "")
+    (if hyperbuild_emergency " | 🔥CRI!" "")))
