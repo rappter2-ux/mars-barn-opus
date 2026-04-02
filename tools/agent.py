@@ -1,29 +1,22 @@
 #!/usr/bin/env python3
 """Rappter Agent Loader — One URL. One QR code. Boot an agent from anywhere.
 
-Point your local brainstem at this URL:
-  python3 -c "$(curl -sL https://raw.githubusercontent.com/kody-w/mars-barn-opus/main/tools/agent.py)"
+Compatible with kody-w/AI-Agent-Templates BasicAgent interface:
+  class MarsColonyAgent(BasicAgent):
+    perform(**kwargs) → runs LisPy, checks status, runs gauntlet
 
-Or scan the QR code on the public page:
-  https://kody-w.github.io/mars-barn-opus/agent.html
-
-What it does:
-  1. Detects environment (has local clone? has engine? fresh machine?)
-  2. Pulls latest frame data from the public repo
-  3. Boots a LisPy VM with colony state
-  4. Runs the governor program
-  5. Connects to the twin protocol (if viewer.html is open)
-  6. Loops: pull frame → compute → push (if engine mode)
-
-This file IS the agent. Drop it anywhere. Run it. It bootstraps itself.
-
-Usage:
+Also runs standalone:
   python3 agent.py                          # interactive mode
   python3 agent.py --loop                   # continuous brainstem
   python3 agent.py --loop --interval 60     # every 60 seconds
   python3 agent.py --eval "(+ 2 3)"         # run LisPy expression
   python3 agent.py --status                 # colony status from latest frame
-  python3 agent.py --gauntlet 10            # run 10 gauntlet simulations
+
+Point your local brainstem at this URL:
+  python3 -c "$(curl -sL https://raw.githubusercontent.com/kody-w/mars-barn-opus/main/tools/agent.py)"
+
+Or scan the QR code:
+  https://kody-w.github.io/mars-barn-opus/agent.html
 """
 from __future__ import annotations
 
@@ -44,7 +37,176 @@ except:
 
 # ── Config ──
 RAW_BASE = "https://raw.githubusercontent.com/kody-w/mars-barn-opus/main"
-AGENT_VERSION = "1.0.0"
+AGENT_VERSION = "1.1.0"
+
+# ══════════════════════════════════════════════════════════════
+# BASICAGENT COMPATIBILITY (kody-w/AI-Agent-Templates)
+# Same interface: __init__(name, metadata) + perform(**kwargs)
+# The perform() runs LisPy. The agent IS a LisPy program.
+# Drop this file into AI-Agent-Templates/agents/ and it works.
+# ══════════════════════════════════════════════════════════════
+
+class BasicAgent:
+    """Compatibility shim — mirrors AI-Agent-Templates BasicAgent."""
+    def __init__(self, name, metadata):
+        self.name = name
+        self.metadata = metadata
+    def perform(self, **kwargs):
+        pass
+
+
+class MarsColonyAgent(BasicAgent):
+    """Mars colony agent — runs LisPy programs against live frame data.
+    
+    Compatible with AI-Agent-Templates. The perform() method IS a LisPy program.
+    Same VM as the browser sim, the OS, and the engine.
+    """
+    def __init__(self):
+        self.name = 'MarsColony'
+        self.metadata = {
+            "name": self.name,
+            "description": "Mars colony management agent. Pulls live frame data, runs LisPy governor programs, reports colony status. Same VM as the browser sim.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {"type": "string", "enum": ["status", "eval", "governor", "gauntlet"],
+                               "description": "What to do: status check, eval LisPy, run governor, or gauntlet competition"},
+                    "code": {"type": "string", "description": "LisPy code to evaluate (for eval action)"},
+                    "runs": {"type": "integer", "description": "Number of gauntlet runs (default 10)"}
+                },
+                "required": ["action"]
+            },
+            # The agent's LisPy programs — the soul of the agent
+            "lispy_programs": {
+                "governor": LISPY_GOVERNOR,
+                "status": LISPY_STATUS,
+                "assess": LISPY_ASSESS,
+                "memory": LISPY_MEMORY,
+            }
+        }
+        self.vm = LispyVM()
+        super().__init__(name=self.name, metadata=self.metadata)
+
+    def perform(self, **kwargs):
+        action = kwargs.get('action', 'status')
+        # Seed VM with latest frame data
+        latest = get_latest()
+        if latest:
+            frame = get_frame(latest['sol'])
+            seed_vm_from_frame(self.vm, frame)
+
+        if action == 'status':
+            return self.vm.run(LISPY_STATUS)
+        elif action == 'eval':
+            return self.vm.run(kwargs.get('code', '(log "no code provided")'))
+        elif action == 'governor':
+            return self.vm.run(LISPY_GOVERNOR)
+        elif action == 'gauntlet':
+            return {'result': f'Run gauntlet with: python3 agent.py --gauntlet {kwargs.get("runs", 10)}'}
+        return {'error': f'Unknown action: {action}'}
+
+
+class LispyBasicAgent(BasicAgent):
+    """The OG BasicAgent — but as LisPy. The simplest possible agent."""
+    def __init__(self):
+        self.name = 'LispyBasic'
+        self.metadata = {
+            "name": self.name,
+            "description": "Basic agent that runs any LisPy program. Drop-in replacement for basic_agent.py but with LisPy VM.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "code": {"type": "string", "description": "LisPy S-expression to evaluate"}
+                },
+                "required": ["code"]
+            }
+        }
+        self.vm = LispyVM()
+        super().__init__(name=self.name, metadata=self.metadata)
+
+    def perform(self, **kwargs):
+        code = kwargs.get('code', '(log "hello from LisPy")')
+        return self.vm.run(code)
+
+
+class LispyMemoryAgent(BasicAgent):
+    """Memory agent — stores and recalls context using LisPy env vars.
+    
+    Compatible with context_memory_agent.py but memory lives in the VM.
+    Export as cartridge to persist. Import to restore.
+    """
+    def __init__(self):
+        self.name = 'LispyMemory'
+        self.metadata = {
+            "name": self.name,
+            "description": "Stores and recalls memories using LisPy VM environment. Memory persists in env vars. Export as cartridge to save.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {"type": "string", "enum": ["store", "recall", "list", "clear"],
+                               "description": "store=save a memory, recall=get a memory, list=all keys, clear=wipe"},
+                    "key": {"type": "string", "description": "Memory key (for store/recall)"},
+                    "value": {"type": "string", "description": "Memory value (for store)"}
+                },
+                "required": ["action"]
+            }
+        }
+        self.vm = LispyVM()
+        self.vm.set_env('_memories', {})
+        super().__init__(name=self.name, metadata=self.metadata)
+
+    def perform(self, **kwargs):
+        action = kwargs.get('action', 'list')
+        key = kwargs.get('key', '')
+        value = kwargs.get('value', '')
+        if action == 'store':
+            return self.vm.run(f'(begin (set! _mem_{key} "{value}") (log (concat "Stored: {key} = {value}")))')
+        elif action == 'recall':
+            return self.vm.run(f'(begin (log (concat "Recall: {key} = " (string _mem_{key}))))')
+        elif action == 'list':
+            keys = [k for k in self.vm.env if k.startswith('_mem_')]
+            return {'ok': True, 'result': keys, 'output': [f'{len(keys)} memories stored']}
+        elif action == 'clear':
+            for k in list(self.vm.env):
+                if k.startswith('_mem_'): del self.vm.env[k]
+            return {'ok': True, 'result': 'cleared', 'output': ['Memory cleared']}
+        return {'error': f'Unknown action: {action}'}
+
+
+# ── LisPy Programs (the soul of each agent) ──
+# These are the actual programs that run in the VM.
+# Same language as the browser sim, the OS, the engine. 1:1.
+
+LISPY_GOVERNOR = """(begin
+  (cond
+    ((< o2_days 5) (begin (set! isru_alloc 0.85) (set! greenhouse_alloc 0.05) (set! heating_alloc 0.10) (log "⚠ O₂ EMERGENCY")))
+    ((< food_days 10) (begin (set! isru_alloc 0.25) (set! greenhouse_alloc 0.60) (set! heating_alloc 0.15) (log "🌱 Food priority")))
+    ((< power_kwh 80) (begin (set! heating_alloc 0.55) (set! isru_alloc 0.25) (set! greenhouse_alloc 0.20) (log "⚡ Power critical")))
+    (true (begin (set! isru_alloc 0.35) (set! greenhouse_alloc 0.40) (set! heating_alloc 0.25) (log "✓ Nominal")))))"""
+
+LISPY_STATUS = """(begin
+  (log (concat "Sol " (string sol) " | CRI " (string colony_risk_index)))
+  (log (concat "O₂: " (string (round o2_days)) "d | H₂O: " (string (round h2o_days)) "d | Food: " (string (round food_days)) "d"))
+  (log (concat "Power: " (string (round power_kwh)) " kWh | Solar: " (string (round (* solar_eff 100))) "%"))
+  (log (concat "Crew: " (string crew_alive) "/" (string crew_total) " | Morale: " (string (round morale)) "%")))"""
+
+LISPY_ASSESS = """(begin
+  (define critical (> colony_risk_index 50))
+  (define o2_ok (> o2_days 10))
+  (define power_ok (> power_kwh 100))
+  (define food_ok (> food_days 15))
+  (cond
+    (critical (log "🔴 CRITICAL — immediate action needed"))
+    ((not o2_ok) (log "🟡 O₂ declining — boost ISRU"))
+    ((not power_ok) (log "🟡 Power low — check solar"))
+    ((not food_ok) (log "🟡 Food declining — boost greenhouse"))
+    (true (log "🟢 All systems nominal"))))"""
+
+LISPY_MEMORY = """(begin
+  (log "Memory agent ready")
+  (log "Use (set! _mem_KEY VALUE) to store")
+  (log "Use _mem_KEY to recall")
+  (log "Memory persists in VM env — export as cartridge to save"))"""
 
 # ── LisPy VM (canonical Python implementation) ──
 class LispyVM:
