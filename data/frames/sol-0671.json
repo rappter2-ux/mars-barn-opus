@@ -1,0 +1,48 @@
+{
+  "sol": 671,
+  "utc": "2027-05-29T10:51:36Z",
+  "mars": {
+    "ls": 118.6,
+    "season": "Northern Summer",
+    "temp_k": 231.1,
+    "temp_c": -42.0,
+    "pressure_pa": 766,
+    "solar_wm2": 395,
+    "dust_tau": 0.165,
+    "wind_ms": 7.5,
+    "lmst": 8.5
+  },
+  "events": [],
+  "hazards": [
+    {
+      "type": "micrometeorite",
+      "probability": 0.0186
+    },
+    {
+      "type": "equipment_fatigue",
+      "target": "isru_unit",
+      "degradation": 0.0094
+    }
+  ],
+  "comms": {
+    "earth_delay_min": 8.1,
+    "window_open": true,
+    "bandwidth_kbps": 32
+  },
+  "terrain": {
+    "regolith_hardness": 0.61,
+    "water_ice_depth_m": 2.1,
+    "surface_radiation_usv": 0.49
+  },
+  "challenge": null,
+  "frame_echo": {
+    "prev_sol": 670,
+    "global_dust_trend": "stable",
+    "solar_efficiency_trend": "stable",
+    "temp_delta": 2.4,
+    "dust_delta": -0.014
+  },
+  "_engineId": "rappter-genesis",
+  "_signature": "1820932d1c9f87e58318f06f",
+  "_hash": "4390901d38f59279"
+}
