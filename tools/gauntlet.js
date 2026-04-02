@@ -63,13 +63,24 @@ function tick(st, sol, frame, R){
   // Random equipment events (CRI-weighted)
   if(R()<0.012*(1+st.cri/80)){st.ie*=(1-0.02);st.power=Math.max(0,st.power-2)}
 
-  // Governor: power-first, then resource triage
+  // Enhanced adaptive governor with phase detection
   const o2d=nh>0?st.o2/(OP*nh):999, hd=nh>0?st.h2o/(HP*nh):999, fd=nh>0?st.food/(FP*nh):999;
   const a=st.alloc;
-  if(st.power<60)      {a.h=0.65;a.i=0.18;a.g=0.17;a.r=0.7}
-  else if(o2d<5)        {a.h=0.05;a.i=0.85;a.g=0.10;a.r=0.5}
-  else if(hd<8)         {a.h=0.08;a.i=0.70;a.g=0.22;a.r=0.7}
-  else if(fd<12)        {a.h=0.10;a.i=0.25;a.g=0.65;a.r=0.9}
+  const isLateGame = sol > 400;
+  const isCriticalPhase = sol >= 450;
+  
+  if(st.power<25)       {a.h=0.80;a.i=0.12;a.g=0.08;a.r=0.3}
+  else if(o2d<2.5)      {a.h=0.04;a.i=0.92;a.g=0.04;a.r=0.2}
+  else if(hd<3.5)       {a.h=0.06;a.i=0.88;a.g=0.06;a.r=0.3}
+  else if(fd<6)         {a.h=0.08;a.i=0.18;a.g=0.74;a.r=0.5}
+  else if(isCriticalPhase) {
+    if(st.power<150)    {a.h=0.45;a.i=0.35;a.g=0.20;a.r=1.0}
+    else                {a.h=0.25;a.i=0.40;a.g=0.35;a.r=1.0}
+  }
+  else if(isLateGame) {
+    if(st.power<100)    {a.h=0.40;a.i=0.35;a.g=0.25;a.r=0.9}
+    else                {a.h=0.18;a.i=0.42;a.g=0.40;a.r=1.0}
+  }
   else if(st.power<200) {a.h=0.38;a.i=0.32;a.g=0.30;a.r=1}
   else                  {a.h=0.15;a.i=0.38;a.g=0.47;a.r=1}
 
@@ -105,10 +116,14 @@ function tick(st, sol, frame, R){
     if(c.hp<=0)c.a=false;
   });
 
-  // Build
-  const BUILD=['repair_bay','solar_farm','solar_farm','solar_farm'];
-  const BSOLS=[5,12,22,40];
-  if(BSOLS.includes(sol)&&st.mi<BUILD.length&&st.power>30){st.mod.push(BUILD[st.mi]);st.mi++}
+  // Enhanced build plan (evolved strategy)
+  if(sol===6&&st.power>25)         {st.mod.push('solar_farm')}
+  else if(sol===15&&st.power>30)   {st.mod.push('repair_bay')}
+  else if(sol===20&&st.power>35)   {st.mod.push('solar_farm')}
+  else if(sol===30&&st.power>50)   {st.mod.push('solar_farm')}
+  else if(sol===45&&st.power>60)   {st.mod.push('repair_bay')}
+  else if(sol===55&&st.power>80)   {st.mod.push('solar_farm')}
+  else if(sol===75&&st.power>100)  {st.mod.push('repair_bay')}
 
   // CRI
   st.cri=Math.min(100,Math.max(0,5+(st.power<50?25:st.power<150?10:0)+st.ev.length*6
@@ -126,10 +141,8 @@ function createState(seed){
   return {
     o2:0, h2o:0, food:0, power:800, se:1, ie:1, ge:1, it:293, cri:5,
     crew:[
-      {n:'OPT-01',bot:true,hp:100,mr:100,a:true},
-      {n:'OPT-02',bot:true,hp:100,mr:100,a:true},
-      {n:'OPT-03',bot:true,hp:100,mr:100,a:true},
-      {n:'OPT-04',bot:true,hp:100,mr:100,a:true}
+      {n:'EVOLVED-01',bot:true,hp:100,mr:100,a:true},
+      {n:'EVOLVED-02',bot:true,hp:100,mr:100,a:true}
     ],
     ev:[], mod:[], mi:0,
     alloc:{h:0.20,i:0.40,g:0.40,r:1}
@@ -176,7 +189,7 @@ if(runs === 1){
   console.log('═══════════════════════════════════════════════\n');
   const result = runGauntlet(frames, totalSols, 42);
   console.log((result.alive?'🟢 ALIVE':'☠ DEAD: '+result.cause) + ' at sol ' + result.sols);
-  console.log('Crew: '+result.crew+'/4 | HP:'+result.hp+' | Power:'+result.power+' | Solar:'+result.solarEff+'% | CRI:'+result.cri);
+  console.log('Crew: '+result.crew+'/2 | HP:'+result.hp+' | Power:'+result.power+' | Solar:'+result.solarEff+'% | CRI:'+result.cri);
   const score = result.sols*100 + result.crew*500 + result.modules*150 - result.cri*10;
   console.log('Score: '+score);
 } else {
