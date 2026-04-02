@@ -1,0 +1,207 @@
+;; COPILOT MODULE MAXIMIZER TRANSCENDENCE v1
+;; Revolution: Focus on maximizing module count for score breakthrough
+;; Target: 92,500+ through revolutionary module density optimization
+;; Strategy: Minimal survival infrastructure + maximum module building efficiency
+
+(begin
+  (define _agent_name "Copilot Module Maximizer Transcendence v1")
+  (define _agent_desc "Revolutionary module density strategy targeting 25+ modules for 92,500+ score breakthrough")
+
+  (log (concat "🏗️🔮⚡🎯💎 MODULE MAXIMIZER TRANSCENDENCE — Sol " (string sol) " — Module Density Protocol"))
+
+  ;; ═══ MODULE-FOCUSED MISSION PHASES ═══
+  ;; Optimized phases with module count as primary driver
+  (define ultra_bootstrap_phase (< sol 25))                         ;; Minimal infrastructure
+  (define mega_module_phase (and (>= sol 25) (< sol 150)))          ;; Pure module focus
+  (define hyper_module_phase (and (>= sol 150) (< sol 300)))        ;; Accelerated modules
+  (define density_optimization_phase (and (>= sol 300) (< sol 500))) ;; Module density push
+  (define transcendent_module_phase (>= sol 500))                   ;; Final transcendence
+
+  ;; ═══ SIMPLIFIED CRI MANAGEMENT ═══
+  ;; Minimal but effective CRI control for survival
+  (define threat_minimal (< cri 15))
+  (define threat_moderate (and (>= cri 15) (< cri 35)))
+  (define threat_high (and (>= cri 35) (< cri 60)))
+  (define threat_critical (>= cri 60))
+
+  ;; ═══ MINIMAL SURVIVAL THRESHOLDS ═══
+  ;; Ultra-minimal survival requirements to maximize building allocation
+  (define min_o2_days 1.5)
+  (define min_food_days 2.0)
+  (define min_water_days 1.2)
+  
+  (define survival_critical 
+    (or (< o2_days min_o2_days)
+        (< food_days min_food_days) 
+        (< water_days min_water_days)
+        (< crew_hp 70)))
+
+  ;; ═══ REVOLUTIONARY MODULE DENSITY ALLOCATION ═══
+  ;; Focus: Maximum building allocation for module density
+  
+  (cond
+    ;; ULTRA BOOTSTRAP: Get basic infrastructure fast
+    ((and ultra_bootstrap_phase (not survival_critical))
+      (begin
+        (set! isru_alloc 0.25)
+        (set! greenhouse_alloc 0.35)
+        (set! heating_alloc 0.40)
+        (set! food_ration 0.75)))
+    
+    ;; MEGA MODULE PHASE: Maximum building focus
+    ((and mega_module_phase (not survival_critical) threat_minimal)
+      (begin
+        (set! isru_alloc 0.05)      ;; Minimal O2
+        (set! greenhouse_alloc 0.05) ;; Minimal food
+        (set! heating_alloc 0.90)    ;; MAXIMUM BUILDING
+        (set! food_ration 0.60)))    ;; Aggressive rationing
+    
+    ((and mega_module_phase (not survival_critical) threat_moderate)
+      (begin
+        (set! isru_alloc 0.08)      
+        (set! greenhouse_alloc 0.08) 
+        (set! heating_alloc 0.84)    ;; Very high building
+        (set! food_ration 0.65)))
+    
+    ;; HYPER MODULE PHASE: Sustained high building
+    ((and hyper_module_phase (not survival_critical) threat_minimal)
+      (begin
+        (set! isru_alloc 0.10)      
+        (set! greenhouse_alloc 0.10) 
+        (set! heating_alloc 0.80)    ;; High building
+        (set! food_ration 0.70)))
+    
+    ((and hyper_module_phase (not survival_critical) threat_moderate)
+      (begin
+        (set! isru_alloc 0.12)      
+        (set! greenhouse_alloc 0.13) 
+        (set! heating_alloc 0.75)    ;; Sustained building
+        (set! food_ration 0.75)))
+    
+    ;; DENSITY OPTIMIZATION: Balanced building with safety
+    ((and density_optimization_phase (not survival_critical))
+      (begin
+        (set! isru_alloc 0.15)      
+        (set! greenhouse_alloc 0.20) 
+        (set! heating_alloc 0.65)    ;; Good building
+        (set! food_ration 0.80)))
+    
+    ;; TRANSCENDENT MODULE: Final push
+    ((and transcendent_module_phase (not survival_critical))
+      (begin
+        (set! isru_alloc 0.20)      
+        (set! greenhouse_alloc 0.25) 
+        (set! heating_alloc 0.55)    ;; Steady building
+        (set! food_ration 0.85)))
+    
+    ;; SURVIVAL CRITICAL: Emergency allocations
+    (survival_critical
+      (begin
+        (set! isru_alloc 0.45)      ;; Emergency O2
+        (set! greenhouse_alloc 0.35) ;; Emergency food
+        (set! heating_alloc 0.20)    ;; Minimal building
+        (set! food_ration 0.40)))    ;; Crisis rationing
+    
+    ;; THREAT CRITICAL: High CRI emergency
+    (threat_critical
+      (begin
+        (set! isru_alloc 0.35)      
+        (set! greenhouse_alloc 0.40) 
+        (set! heating_alloc 0.25)    
+        (set! food_ration 0.50)))
+    
+    ;; DEFAULT: Conservative building
+    (true
+      (begin
+        (set! isru_alloc 0.25)      
+        (set! greenhouse_alloc 0.30) 
+        (set! heating_alloc 0.45)    
+        (set! food_ration 0.75))))
+
+  ;; ═══ STRATEGIC INFRASTRUCTURE BUILDING ═══
+  ;; Focus on essential infrastructure then pure hab modules
+
+  ;; Phase 1: Essential bots (sols 5-15)
+  (if (and (>= sol 5) (<= sol 15) (< bot_count 2))
+      (set! build_item "worker_bot"))
+
+  ;; Phase 2: Solar power (sols 20-40) 
+  (if (and (>= sol 20) (<= sol 40) (< solar_count 3))
+      (set! build_item "solar_array"))
+
+  ;; Phase 3: First repair bay (sol 50)
+  (if (and (>= sol 50) (<= sol 65) (< repair_count 1))
+      (set! build_item "repair_bay"))
+
+  ;; Phase 4: Greenhouse if food critical (sols 70-90)
+  (if (and (>= sol 70) (<= sol 90) (< food_days 5) (< greenhouse_count 2))
+      (set! build_item "greenhouse"))
+
+  ;; Phase 5: Second repair bay for compound damage (sol 120)
+  (if (and (>= sol 120) (<= sol 140) (< repair_count 2))
+      (set! build_item "repair_bay"))
+
+  ;; Phase 6: Additional solar if power struggling (sols 160-180)
+  (if (and (>= sol 160) (<= sol 180) (< power_ratio 0.7) (< solar_count 4))
+      (set! build_item "solar_array"))
+
+  ;; Phase 7: Third repair bay for late game (sol 250)
+  (if (and (>= sol 250) (<= sol 270) (< repair_count 3))
+      (set! build_item "repair_bay"))
+
+  ;; Phase 8: PURE HAB MODULE FOCUS - THE KEY TO HIGH SCORES
+  ;; After sol 30, prioritize hab modules for maximum scoring
+  (if (and (> sol 30) (< (/ module_count sol) 0.8)  ;; If module density is low
+           (> repair_count 0) (> solar_count 2))     ;; And we have basic infrastructure
+      (set! build_item "hab_module"))
+
+  ;; ═══ MODULE DENSITY TARGETING ═══
+  ;; Revolutionary module targets for maximum score
+  (define target_modules
+    (cond
+      ((< sol 100) (/ sol 4))      ;; Sol 100 = 25 modules
+      ((< sol 300) (+ 25 (/ (- sol 100) 6)))  ;; Sol 300 = 58 modules 
+      ((< sol 500) (+ 58 (/ (- sol 300) 8)))  ;; Sol 500 = 83 modules
+      (true (+ 83 (/ (- sol 500) 10)))))      ;; Sol 672 = 100+ modules
+
+  (define module_deficit (max 0 (- target_modules module_count)))
+
+  ;; Emergency module catch-up if behind target
+  (if (and (> module_deficit 5) (> sol 50))
+      (begin
+        (set! heating_alloc (min 0.95 (+ heating_alloc 0.10)))  ;; Boost building
+        (set! greenhouse_alloc (max 0.02 (- greenhouse_alloc 0.05))) ;; Reduce other allocations
+        (set! isru_alloc (max 0.02 (- isru_alloc 0.05)))))
+
+  ;; ═══ NUTRITION OPTIMIZATION FOR BUILDING EFFICIENCY ═══
+  ;; Optimize nutrition to maintain health while maximizing building allocation
+  (define nutrition_factor 
+    (+ 1.0
+       (* 0.05 (max 0 (- 4 crew_alive)))     ;; Fewer crew bonus
+       (* 0.03 (/ crew_hp (max 1 (* crew_alive 100))))  ;; Health bonus
+       (* 0.02 (/ module_count (max 1 sol)))))  ;; Module efficiency bonus
+
+  (set! food_ration (* food_ration nutrition_factor))
+
+  ;; ═══ STATUS LOGGING ═══
+  (define phase_name
+    (cond
+      (ultra_bootstrap_phase "ULTRA-BOOTSTRAP")
+      (mega_module_phase "MEGA-MODULE")
+      (hyper_module_phase "HYPER-MODULE") 
+      (density_optimization_phase "DENSITY-OPTIMIZATION")
+      (transcendent_module_phase "TRANSCENDENT-MODULE")
+      (true "UNKNOWN")))
+
+  (log (concat "  Phase: " phase_name " | CRI: " (string cri) " | Modules: " (string module_count) "/" (string (round target_modules))))
+  (log (concat "  Allocation — ISRU:" (string (round (* isru_alloc 100))) "% | Green:" (string (round (* greenhouse_alloc 100))) "% | Build:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Resources — O2:" (string o2_days) "d Food:" (string food_days) "d | Module Deficit: " (string module_deficit)))
+  (log (concat "  Infrastructure — Repair:" (string repair_count) " Solar:" (string solar_count) " | Crew:" (string crew_alive) " HP:" (string crew_hp)))
+
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "ModuleMaximizer Sol " (string sol) " — " phase_name
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100))) 
+    "% B:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | M:" (string module_count) "/" (string (round target_modules))))
