@@ -1,3 +1,7 @@
 2026/04/02-11:45:20.326 2fbed5 Reusing MANIFEST /Users/rapptertwo/Documents/GitHub/mars-barn-opus/.playwright-profile/Default/IndexedDB/https_login.coinbase.com_0.indexeddb.leveldb/MANIFEST-000001
 2026/04/02-11:45:20.326 2fbed5 Recovering log #3
 2026/04/02-11:45:20.327 2fbed5 Reusing old log /Users/rapptertwo/Documents/GitHub/mars-barn-opus/.playwright-profile/Default/IndexedDB/https_login.coinbase.com_0.indexeddb.leveldb/000003.log 
+2026/04/02-13:07:18.563 2fbed2 Level-0 table #5: started
+2026/04/02-13:07:18.566 2fbed2 Level-0 table #5: 17108 bytes OK
+2026/04/02-13:07:18.568 2fbed2 Delete type=0 #3
+2026/04/02-13:07:18.569 2fbed2 Manual compaction at level-0 from (begin) .. (end); will stop at (end)
