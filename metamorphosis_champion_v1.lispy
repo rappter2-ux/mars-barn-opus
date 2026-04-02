@@ -1,0 +1,218 @@
+;; METAMORPHOSIS CHAMPION V1 - ADAPTIVE PHASE STRATEGY
+;; Strategy: Complete strategic metamorphosis - different allocation paradigms for different mission phases
+;; Innovation: Colony "evolution" through distinct survival phases with predictive transitions
+;; Goal: Beat 630 sol challenge through phase-optimized allocation with seamless transitions
+
+(begin
+  (define _agent_name "Metamorphosis Champion v1.0")
+  (define _agent_desc "Revolutionary phase-adaptive strategy: Early Growth → Stabilization → Crisis Defense → Transcendence phases")
+
+  (log (concat "🦋 Metamorphosis — Sol " (string sol)))
+
+  ;; ═══ MISSION PHASE DETECTION ═══
+  ;; Dynamic phase classification based on multiple factors
+  (define modules_progress (/ modules_built 15))  ;; Target ~15 modules
+  (define colony_maturity (min 1.0 (/ sol 200)))  ;; 200 sol baseline
+  (define risk_stability (- 1.0 (/ colony_risk_index 100)))
+  (define resource_security (min 1.0 (+ (/ (min o2_days 20) 20) (/ (min food_days 30) 30) (/ (min power_kwh 150) 150) 0.3)))
+
+  ;; Aggregate development index
+  (define development_index (/ (+ modules_progress colony_maturity risk_stability resource_security) 4))
+  
+  ;; Phase classification with hysteresis for smooth transitions
+  (define mission_phase
+    (cond
+      ((and (< sol 80) (< modules_built 6)) "EARLY_GROWTH")
+      ((and (< sol 200) (< development_index 0.6)) "STABILIZATION") 
+      ((or (> colony_risk_index 55) (< resource_security 0.4)) "CRISIS_DEFENSE")
+      ((and (> development_index 0.75) (> sol 300)) "TRANSCENDENCE")
+      (true "ADAPTATION")))  ;; Transition state
+
+  ;; Phase-specific behavior modifiers
+  (define phase_growth_rate
+    (cond
+      ((= mission_phase "EARLY_GROWTH") 1.5)     ;; Aggressive expansion
+      ((= mission_phase "STABILIZATION") 1.0)    ;; Steady building
+      ((= mission_phase "CRISIS_DEFENSE") 0.3)   ;; Survival mode
+      ((= mission_phase "TRANSCENDENCE") 0.8)    ;; Maintenance mode
+      (true 1.0)))
+
+  (define phase_risk_sensitivity
+    (cond
+      ((= mission_phase "EARLY_GROWTH") 0.7)     ;; Accept higher risk for growth
+      ((= mission_phase "STABILIZATION") 1.0)    ;; Balanced approach
+      ((= mission_phase "CRISIS_DEFENSE") 2.5)   ;; Ultra-conservative
+      ((= mission_phase "TRANSCENDENCE") 1.2)    ;; Slightly cautious
+      (true 1.0)))
+
+  (log (concat "  Phase: " mission_phase " | Dev:" (string (round (* development_index 100))) "% | Risk Sens:" (string phase_risk_sensitivity)))
+
+  ;; ═══ ADAPTIVE INFRASTRUCTURE INTELLIGENCE ═══
+  ;; Phase-aware infrastructure estimation and scaling
+  (define estimated_solar (max 2 (round (* modules_built 0.47))))
+  (define estimated_repair (max 1 (round (* modules_built 0.27))))
+  (define estimated_greenhouse (max 1 (round (* modules_built 0.26))))
+  
+  ;; Metamorphosis exponential scaling - varies by phase
+  (define metamorphosis_base 
+    (cond
+      ((= mission_phase "EARLY_GROWTH") 1.6)     ;; Linear growth focus
+      ((= mission_phase "STABILIZATION") 1.9)    ;; Balanced scaling
+      ((= mission_phase "CRISIS_DEFENSE") 2.4)   ;; Defense exponential
+      ((= mission_phase "TRANSCENDENCE") 2.1)    ;; Optimized scaling
+      (true 1.8)))
+
+  (define repair_metamorphosis_effect (pow metamorphosis_base estimated_repair))
+  (define infrastructure_resilience (* repair_metamorphosis_effect phase_growth_rate development_index))
+  
+  (log (concat "  Infrastructure: " (string estimated_solar) "S/" (string estimated_repair) "R/" (string estimated_greenhouse) "G | Resilience:" (string (round (* infrastructure_resilience 100))) "%"))
+
+  ;; ═══ ENHANCED THREAT MODELING ═══
+  ;; Phase-sensitive threat assessment with predictive elements
+  (define base_threat_level (/ colony_risk_index 75))
+  (define phase_threat_multiplier
+    (cond
+      ((= mission_phase "EARLY_GROWTH") 1.2)     ;; Higher vulnerability
+      ((= mission_phase "STABILIZATION") 1.0)    ;; Baseline
+      ((= mission_phase "CRISIS_DEFENSE") 1.8)   ;; Crisis amplification
+      ((= mission_phase "TRANSCENDENCE") 0.8)    ;; Defensive advantages
+      (true 1.0)))
+
+  (define metamorphosis_threat (+ base_threat_level
+                                  (* phase_threat_multiplier phase_risk_sensitivity)
+                                  (/ (max 0 (- 50 resource_security)) 100)))
+
+  (define threat_classification
+    (cond
+      ((> metamorphosis_threat 2.2) "EXTINCTION")
+      ((> metamorphosis_threat 1.8) "CRITICAL")
+      ((> metamorphosis_threat 1.4) "SEVERE")
+      ((> metamorphosis_threat 1.0) "HIGH")
+      ((> metamorphosis_threat 0.6) "MODERATE")
+      (true "STABLE")))
+
+  ;; Crisis detection with phase-specific thresholds
+  (define crisis_score 0)
+  (if (< o2_days (if (= mission_phase "EARLY_GROWTH") 3 5)) (set! crisis_score (+ crisis_score 4)))
+  (if (< food_days (if (= mission_phase "EARLY_GROWTH") 5 8)) (set! crisis_score (+ crisis_score 3)))
+  (if (< power_kwh (if (= mission_phase "TRANSCENDENCE") 80 50)) (set! crisis_score (+ crisis_score 3)))
+  (if (> colony_risk_index (* 60 phase_risk_sensitivity)) (set! crisis_score (+ crisis_score 2)))
+
+  (define emergency_override (>= crisis_score 6))
+
+  (log (concat "  Threat: " threat_classification " (" (string (round (* metamorphosis_threat 100))) ") | Crisis:" (string crisis_score) (if emergency_override " 🚨" "")))
+
+  ;; ═══ METAMORPHOSIS ALLOCATION STRATEGY ═══
+  ;; Completely different allocation patterns per phase
+  (define phase_isru_base
+    (cond
+      ((= mission_phase "EARLY_GROWTH") 0.25)    ;; Lower O2, focus on expansion
+      ((= mission_phase "STABILIZATION") 0.30)   ;; Standard O2
+      ((= mission_phase "CRISIS_DEFENSE") 0.20)  ;; Minimal O2, conserve power
+      ((= mission_phase "TRANSCENDENCE") 0.28)   ;; Optimized O2
+      (true 0.30)))
+
+  (define phase_greenhouse_base
+    (cond
+      ((= mission_phase "EARLY_GROWTH") 0.20)    ;; Lower food, accept risk
+      ((= mission_phase "STABILIZATION") 0.35)   ;; Standard food
+      ((= mission_phase "CRISIS_DEFENSE") 0.25)  ;; Survival food
+      ((= mission_phase "TRANSCENDENCE") 0.32)   ;; Optimized food
+      (true 0.35)))
+
+  (define phase_heating_base
+    (cond
+      ((= mission_phase "EARLY_GROWTH") 0.55)    ;; High power for expansion
+      ((= mission_phase "STABILIZATION") 0.35)   ;; Balanced power
+      ((= mission_phase "CRISIS_DEFENSE") 0.55)  ;; High power for survival
+      ((= mission_phase "TRANSCENDENCE") 0.40)   ;; Efficient power
+      (true 0.35)))
+
+  ;; Apply threat modifiers and crisis overrides
+  (define threat_modifier
+    (cond
+      (emergency_override 0.6)  ;; Emergency efficiency
+      ((= threat_classification "EXTINCTION") 0.7)
+      ((= threat_classification "CRITICAL") 0.8)
+      ((= threat_classification "SEVERE") 0.9)
+      (true 1.0)))
+
+  ;; Infrastructure efficiency bonus
+  (define infrastructure_efficiency_bonus (min 1.4 (max 0.8 infrastructure_resilience)))
+
+  ;; Final allocations with normalization
+  (define raw_isru (* phase_isru_base threat_modifier))
+  (define raw_greenhouse (* phase_greenhouse_base threat_modifier))
+  (define raw_heating (* phase_heating_base threat_modifier infrastructure_efficiency_bonus))
+
+  (define allocation_total (+ raw_isru raw_greenhouse raw_heating))
+  (define normalization_factor (/ 1.0 allocation_total))
+
+  (set! isru_alloc (* raw_isru normalization_factor))
+  (set! greenhouse_alloc (* raw_greenhouse normalization_factor))
+  (set! heating_alloc (* raw_heating normalization_factor))
+
+  ;; Crisis-specific resource overrides
+  (cond
+    ((< o2_days 3) (set! isru_alloc 0.65) (set! greenhouse_alloc 0.15) (set! heating_alloc 0.20))
+    ((< food_days 4) (set! greenhouse_alloc 0.55) (set! isru_alloc 0.20) (set! heating_alloc 0.25))
+    ((< power_kwh 30) (set! heating_alloc 0.60) (set! isru_alloc 0.20) (set! greenhouse_alloc 0.20)))
+
+  ;; ═══ METAMORPHOSIS RATIONING STRATEGY ═══
+  ;; Phase-specific rationing with infrastructure support
+  (define phase_base_ration
+    (cond
+      ((= mission_phase "EARLY_GROWTH") 0.70)    ;; Aggressive rationing for growth
+      ((= mission_phase "STABILIZATION") 0.90)   ;; Near-normal rationing
+      ((= mission_phase "CRISIS_DEFENSE") 0.40)  ;; Survival rationing
+      ((= mission_phase "TRANSCENDENCE") 1.00)   ;; Full rations when possible
+      (true 0.85)))
+
+  ;; Adjust rationing based on infrastructure strength and threat
+  (define infrastructure_ration_support (max 0 (min 0.30 (- infrastructure_efficiency_bonus 1))))
+  (define threat_ration_penalty
+    (cond
+      ((= threat_classification "EXTINCTION") -0.40)
+      ((= threat_classification "CRITICAL") -0.25)
+      ((= threat_classification "SEVERE") -0.15)
+      (true 0)))
+
+  (set! food_ration (max 0.15 (min 1.15 (+ phase_base_ration infrastructure_ration_support threat_ration_penalty))))
+
+  ;; Emergency rationing overrides
+  (cond
+    (emergency_override (set! food_ration 0.25))
+    ((< food_days 3) (set! food_ration 0.30))
+    ((< food_days 6) (set! food_ration 0.50)))
+
+  ;; ═══ STATUS VISUALIZATION ═══
+  (define phase_icon
+    (cond
+      ((= mission_phase "EARLY_GROWTH") "🌱")
+      ((= mission_phase "STABILIZATION") "⚖️")
+      ((= mission_phase "CRISIS_DEFENSE") "🛡️")
+      ((= mission_phase "TRANSCENDENCE") "🚀")
+      (true "⚡")))
+
+  (define threat_icon
+    (cond
+      ((= threat_classification "EXTINCTION") "💀")
+      ((= threat_classification "CRITICAL") "☠️")
+      ((= threat_classification "SEVERE") "🔴")
+      ((= threat_classification "HIGH") "🟠")
+      ((= threat_classification "MODERATE") "🟡")
+      (true "🟢")))
+
+  (log (concat "  Status: " phase_icon " " mission_phase " + " threat_icon " " threat_classification))
+  (log (concat "  Allocation — I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Ration: " (string (round (* food_ration 100))) "% | Infrastructure:" (string (round (* infrastructure_resilience 100))) "%"))
+
+  ;; ═══ STRATEGIC SUMMARY ═══
+  (concat "Metamorphosis Sol " (string sol) " — " phase_icon " " mission_phase
+    " | " threat_icon " " threat_classification
+    " | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | Inf:" (string (round (* infrastructure_resilience 100)))
+    "%"))

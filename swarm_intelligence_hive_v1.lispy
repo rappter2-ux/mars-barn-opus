@@ -1,0 +1,206 @@
+;; SWARM INTELLIGENCE HIVE V1 - MULTI-AGENT COLLECTIVE
+;; Strategy: Multiple specialized sub-agents with collective decision making
+;; Innovation: Resource allocation by committee + emergent behavior optimization
+;; Goal: Achieve perfect survival through distributed intelligence and specialization
+
+(begin
+  (define _agent_name "Swarm Intelligence Hive v1.0")
+  (define _agent_desc "Multi-agent swarm strategy: specialized agents for O2, Food, Power, and Defense with collective optimization")
+
+  (log (concat "🐝 Swarm Hive — Sol " (string sol)))
+
+  ;; ═══ AGENT SPECIALIZATION SYSTEM ═══
+  ;; Four specialized agents with different priorities and expertise
+
+  ;; OXYGEN SPECIALIST AGENT
+  (define oxygen_agent_assessment
+    (let* ((o2_criticality (max 0.1 (min 1.0 (/ 15 (max o2_days 1)))))
+           (o2_efficiency (/ power_kwh 120))  ;; Power affects ISRU efficiency
+           (o2_priority (* o2_criticality (- 2.0 o2_efficiency))))
+      (list 
+        o2_priority                     ;; Urgency score
+        (min 0.50 (max 0.15 o2_priority))  ;; Recommended ISRU allocation
+        o2_criticality)))               ;; Crisis level
+
+  ;; FOOD SPECIALIST AGENT  
+  (define food_agent_assessment
+    (let* ((food_criticality (max 0.1 (min 1.0 (/ 20 (max food_days 1)))))
+           (food_growth_rate 0.8)      ;; Greenhouse efficiency factor
+           (food_priority (* food_criticality (- 2.0 food_growth_rate))))
+      (list
+        food_priority                   ;; Urgency score
+        (min 0.45 (max 0.20 food_priority))  ;; Recommended greenhouse allocation
+        food_criticality)))             ;; Crisis level
+
+  ;; POWER SPECIALIST AGENT
+  (define power_agent_assessment
+    (let* ((power_ratio (/ power_kwh 150))  ;; Target 150 kWh reserve
+           (power_deficit (max 0.1 (- 1.0 power_ratio)))
+           (power_priority (* power_deficit 1.5)))  ;; Power affects everything
+      (list
+        power_priority                  ;; Urgency score
+        (min 0.65 (max 0.25 power_priority))  ;; Recommended heating allocation
+        power_deficit)))                ;; Crisis level
+
+  ;; DEFENSE SPECIALIST AGENT
+  (define defense_agent_assessment
+    (let* ((threat_level (/ colony_risk_index 100))
+           (infrastructure_strength (/ modules_built 15))
+           (defense_gap (- threat_level infrastructure_strength))
+           (defense_priority (* defense_gap 2.0)))
+      (list
+        defense_priority                ;; Urgency score
+        infrastructure_strength         ;; Current defensive strength
+        threat_level)))                 ;; Threat assessment
+
+  (log (concat "  Agent Priorities — O2:" (string (round (* (car oxygen_agent_assessment) 100))) 
+    "% Food:" (string (round (* (car food_agent_assessment) 100)))
+    "% Power:" (string (round (* (car power_agent_assessment) 100)))
+    "% Defense:" (string (round (* (car defense_agent_assessment) 100))) "%"))
+
+  ;; ═══ SWARM DECISION WEIGHTING ═══
+  ;; Each agent votes on allocation based on their expertise
+  (define total_agent_urgency (+ (car oxygen_agent_assessment)
+                                (car food_agent_assessment)  
+                                (car power_agent_assessment)
+                                (car defense_agent_assessment)))
+
+  ;; Agent influence based on urgency (most urgent agent gets more say)
+  (define oxygen_agent_influence (/ (car oxygen_agent_assessment) total_agent_urgency))
+  (define food_agent_influence (/ (car food_agent_assessment) total_agent_urgency))
+  (define power_agent_influence (/ (car power_agent_assessment) total_agent_urgency))
+  (define defense_agent_influence (/ (car defense_agent_assessment) total_agent_urgency))
+
+  ;; Each agent proposes allocations based on their specialty
+  (define oxygen_agent_proposal (list (second oxygen_agent_assessment) 0.25 0.30))  ;; ISRU, Greenhouse, Heating
+  (define food_agent_proposal (list 0.25 (second food_agent_assessment) 0.30))      ;; Prioritizes food
+  (define power_agent_proposal (list 0.20 0.25 (second power_agent_assessment)))   ;; Prioritizes power
+  (define defense_balanced_proposal (list 0.28 0.32 0.40))                        ;; Defensive balance
+
+  ;; Collective decision by weighted voting
+  (define swarm_isru_vote (+ (* oxygen_agent_influence (car oxygen_agent_proposal))
+                            (* food_agent_influence (car food_agent_proposal))
+                            (* power_agent_influence (car power_agent_proposal))
+                            (* defense_agent_influence (car defense_balanced_proposal))))
+
+  (define swarm_greenhouse_vote (+ (* oxygen_agent_influence (second oxygen_agent_proposal))
+                                  (* food_agent_influence (second food_agent_proposal))
+                                  (* power_agent_influence (second power_agent_proposal))
+                                  (* defense_agent_influence (second defense_balanced_proposal))))
+
+  (define swarm_heating_vote (+ (* oxygen_agent_influence (third oxygen_agent_proposal))
+                               (* food_agent_influence (third food_agent_proposal))
+                               (* power_agent_influence (third power_agent_proposal))
+                               (* defense_agent_influence (third defense_balanced_proposal))))
+
+  (log (concat "  Agent Influence — O2:" (string (round (* oxygen_agent_influence 100)))
+    "% Food:" (string (round (* food_agent_influence 100)))
+    "% Power:" (string (round (* power_agent_influence 100)))
+    "% Defense:" (string (round (* defense_agent_influence 100))) "%"))
+
+  ;; ═══ SWARM OPTIMIZATION ═══
+  ;; Apply swarm intelligence corrections and emergent behaviors
+
+  ;; Collective threat assessment
+  (define swarm_threat_consensus (/ (+ (third oxygen_agent_assessment)
+                                      (third food_agent_assessment)
+                                      (third power_agent_assessment)
+                                      (third defense_agent_assessment)) 4))
+
+  ;; Emergent behavior: swarm becomes more coordinated under threat
+  (define swarm_coordination (+ 0.5 (* swarm_threat_consensus 0.5)))
+  
+  ;; Collective infrastructure assessment
+  (define estimated_solar (max 3 (round (* modules_built 0.44))))
+  (define estimated_repair (max 2 (round (* modules_built 0.31))))
+  (define estimated_greenhouse (max 1 (round (* modules_built 0.25))))
+
+  ;; Swarm resilience through collective defense
+  (define swarm_exponential_base (+ 2.0 (* swarm_coordination 0.3)))
+  (define swarm_defense_multiplier (pow swarm_exponential_base estimated_repair))
+  (define swarm_collective_strength (* swarm_defense_multiplier swarm_coordination (second defense_agent_assessment)))
+
+  ;; Emergency collective override protocols
+  (define swarm_crisis_score 0)
+  (if (< o2_days 4) (set! swarm_crisis_score (+ swarm_crisis_score 4)))
+  (if (< food_days 6) (set! swarm_crisis_score (+ swarm_crisis_score 3)))
+  (if (< power_kwh 50) (set! swarm_crisis_score (+ swarm_crisis_score 3)))
+  (if (> colony_risk_index 60) (set! swarm_crisis_score (+ swarm_crisis_score 2)))
+
+  (define swarm_emergency_state (>= swarm_crisis_score 7))
+
+  ;; Apply swarm efficiency bonuses
+  (define swarm_efficiency_multiplier (+ 1.0 (* swarm_coordination 0.2)))
+
+  ;; Final allocation through swarm consensus with efficiency bonuses
+  (define allocation_sum (+ swarm_isru_vote swarm_greenhouse_vote swarm_heating_vote))
+  (define swarm_normalization (/ swarm_efficiency_multiplier allocation_sum))
+
+  (set! isru_alloc (* swarm_isru_vote swarm_normalization))
+  (set! greenhouse_alloc (* swarm_greenhouse_vote swarm_normalization))
+  (set! heating_alloc (* swarm_heating_vote swarm_normalization))
+
+  ;; Emergency swarm protocols override individual agents
+  (cond
+    (swarm_emergency_state
+      (set! isru_alloc 0.20) (set! greenhouse_alloc 0.25) (set! heating_alloc 0.55))
+    ((< o2_days 3)  ;; Oxygen crisis override
+      (set! isru_alloc 0.55) (set! greenhouse_alloc 0.20) (set! heating_alloc 0.25))
+    ((< food_days 4)  ;; Food crisis override
+      (set! greenhouse_alloc 0.50) (set! isru_alloc 0.25) (set! heating_alloc 0.25)))
+
+  (log (concat "  Swarm Collective: " (string estimated_solar) "S/" (string estimated_repair) "R/" (string estimated_greenhouse) "G | Strength:" (string (round (* swarm_collective_strength 100))) "%"))
+
+  ;; ═══ SWARM RATIONING CONSENSUS ═══
+  ;; Multiple agents vote on rationing strategy
+
+  ;; Agent-specific rationing recommendations
+  (define oxygen_ration_rec (if (< o2_days 6) 0.50 0.85))    ;; Conservative when O2 is low
+  (define food_ration_rec (if (< food_days 8) 0.60 0.90))    ;; Food specialist knows when to ration
+  (define power_ration_rec (if (< power_kwh 60) 0.45 0.95))  ;; Power shortage = strict rationing
+  (define defense_ration_rec (if (> colony_risk_index 55) 0.55 0.90))  ;; Threat = survival mode
+
+  ;; Weighted consensus based on agent influence
+  (define swarm_ration_consensus (+ (* oxygen_agent_influence oxygen_ration_rec)
+                                   (* food_agent_influence food_ration_rec)
+                                   (* power_agent_influence power_ration_rec)
+                                   (* defense_agent_influence defense_ration_rec)))
+
+  ;; Apply swarm collective benefits to rationing
+  (define swarm_ration_bonus (max 0 (min 0.20 (- swarm_collective_strength 2))))
+  (set! food_ration (max 0.20 (min 1.05 (+ swarm_ration_consensus swarm_ration_bonus))))
+
+  ;; Emergency rations override consensus
+  (cond
+    (swarm_emergency_state (set! food_ration 0.30))
+    ((< food_days 3) (set! food_ration 0.35))
+    ((< food_days 5) (set! food_ration 0.55)))
+
+  ;; ═══ SWARM STATUS VISUALIZATION ═══
+  (define dominant_agent
+    (cond
+      ((= oxygen_agent_influence (max oxygen_agent_influence food_agent_influence power_agent_influence defense_agent_influence)) "O2")
+      ((= food_agent_influence (max oxygen_agent_influence food_agent_influence power_agent_influence defense_agent_influence)) "FOOD")
+      ((= power_agent_influence (max oxygen_agent_influence food_agent_influence power_agent_influence defense_agent_influence)) "POWER")
+      (true "DEFENSE")))
+
+  (define swarm_state_icon
+    (cond
+      (swarm_emergency_state "🚨")
+      ((> swarm_threat_consensus 0.7) "⚡")
+      ((> swarm_coordination 0.8) "🎯")
+      (true "🐝")))
+
+  (log (concat "  Swarm Status: " swarm_state_icon " " dominant_agent " dominant | Coordination:" (string (round (* swarm_coordination 100))) "%"))
+  (log (concat "  Final Allocation — I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "%"))
+  (log (concat "  Collective Ration: " (string (round (* food_ration 100))) "% | Swarm Strength:" (string (round (* swarm_collective_strength 100))) "%"))
+
+  ;; ═══ SWARM STRATEGIC SUMMARY ═══
+  (concat "Swarm Sol " (string sol) " — " swarm_state_icon " " dominant_agent " lead"
+    " | Coord:" (string (round (* swarm_coordination 100)))
+    "% | I:" (string (round (* isru_alloc 100)))
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% H:" (string (round (* heating_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | Strength:" (string (round (* swarm_collective_strength 100)))
+    "% | Crisis:" (string swarm_crisis_score)))
