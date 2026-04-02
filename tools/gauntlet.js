@@ -56,6 +56,40 @@ function tick(st, sol, frame, R){
       if(h.type==='thermal_fatigue') st.power=Math.max(0,st.power-5);
       if(h.type==='radiation_seu'){const alive2=st.crew.filter(c=>c.a&&c.hp>0);if(alive2.length)alive2[0].hp-=3}
       if(h.type==='battery_degradation') st.power*=0.98;
+      
+      // v4 Module Overload hazards (Sol 678+)
+      const totalModules = st.mod.length;
+      const aliveCrew = ac.length;
+      
+      if(h.type==='module_cascade_failure' && totalModules >= (h.min_modules||4)){
+        // Cascade failure increases systemic risk - affects multiple systems
+        const excessModules = totalModules - (h.min_modules||4);
+        const cascadeDamage = (h.severity_per_module||0.005) * excessModules;
+        st.se = Math.max(0.1, st.se - cascadeDamage);
+        st.ie = Math.max(0.1, st.ie - cascadeDamage);
+        st.power = Math.max(0, st.power - (cascadeDamage * 100));
+      }
+      
+      if(h.type==='power_grid_overload' && totalModules >= (h.min_modules||5)){
+        // Power grid overload drains power per excess module
+        const excessModules = totalModules - (h.min_modules||5);
+        const powerDrain = (h.power_drain_per_module||3.0) * excessModules;
+        st.power = Math.max(0, st.power - powerDrain);
+      }
+      
+      if(h.type==='dust_infiltration' && h.targets_all_modules){
+        // Dust infiltration affects ALL modules - degrades efficiency
+        const totalDegradation = (h.degradation_per_module||0.002) * totalModules;
+        st.se = Math.max(0.1, st.se - totalDegradation);
+        st.ie = Math.max(0.1, st.ie - totalDegradation);
+      }
+      
+      if(h.type==='supply_chain_bottleneck' && aliveCrew >= (h.min_crew||3) && totalModules >= (h.min_modules||3)){
+        // Supply chain bottleneck reduces efficiency when too many modules for crew
+        const efficiencyLoss = h.efficiency_penalty||0.015;
+        st.se = Math.max(0.1, st.se - efficiencyLoss);
+        st.ie = Math.max(0.1, st.ie - efficiencyLoss);
+      }
     }
   }
   st.ev=st.ev.filter(e=>{e.r--;return e.r>0});
