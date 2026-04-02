@@ -28,6 +28,19 @@ function rng32(s){let t=s&0xFFFFFFFF;return()=>{t=(t*1664525+1013904223)&0xFFFFF
 function solIrr(sol,dust){const y=sol%669,a=2*Math.PI*(y-445)/669;return 589*(1+0.09*Math.cos(a))*Math.max(0.3,Math.cos(2*Math.PI*y/669)*0.5+0.5)*(dust?0.25:1)}
 
 function loadFrames(){
+  // Try bundle first (frames.json), fall back to manifest + individual files
+  const bundlePath = path.join(FRAMES_DIR, 'frames.json');
+  if(fs.existsSync(bundlePath)){
+    const bundle = JSON.parse(fs.readFileSync(bundlePath));
+    const frames = {};
+    const raw = bundle.frames || bundle;
+    for(const [sol, data] of Object.entries(raw)){
+      if(sol.startsWith('_') || sol === 'frames') continue;
+      frames[parseInt(sol)] = data;
+    }
+    const totalSols = Math.max(...Object.keys(frames).map(Number));
+    return {frames, totalSols};
+  }
   const mn = JSON.parse(fs.readFileSync(path.join(FRAMES_DIR,'manifest.json')));
   const frames = {};
   for(const e of mn.frames){
@@ -95,9 +108,9 @@ function tick(st, sol, frame, R){
       
       if(h.type==='complacency_drift'){
         // Punishes static allocations: if governor hasn't changed allocs recently, crew gets sloppy
-        // Check allocation variance (compare to previous sol's allocs)
         const prevAlloc = st._prevAlloc || {h:0,i:0,g:0};
-        const allocDelta = Math.abs(a.h-prevAlloc.h) + Math.abs(a.i-prevAlloc.i) + Math.abs(a.g-prevAlloc.g);
+        const curAlloc = st.alloc;
+        const allocDelta = Math.abs(curAlloc.h-prevAlloc.h) + Math.abs(curAlloc.i-prevAlloc.i) + Math.abs(curAlloc.g-prevAlloc.g);
         if(allocDelta < (h.allocation_variance_threshold||0.02)){
           st.morale = Math.max(0, st.morale - (h.morale_penalty||5));
           st.se = Math.max(0.1, st.se - (h.efficiency_penalty||0.02));

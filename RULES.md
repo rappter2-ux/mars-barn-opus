@@ -75,13 +75,23 @@ runs ALL versions sequentially. State carries forward. Damage accumulates.
 | v1 Foundation | 1-161 | Dust storms, equipment failure, micrometeorites |
 | v2 Robot Killers | 162-502 | Perchlorate, abrasion, radiation, battery, thermal fatigue |
 | v3 Skeleton Crew | 503-602 | Workload wear, concurrent maintenance, solo failure |
-| v4 Module Overload | 678+ | Cascade failures, power grid overload, dust infiltration |
+| v4 Module Overload | 678-727 | Cascade failures, power grid overload, dust infiltration |
+| v5 Entropy Collapse | 728-777 | Complacency drift, resource decay, maintenance avalanche, crew isolation, solar degradation, habitat entropy |
 
 ### Retroactive echo enrichment:
 - Past frames get richer data layers WITHOUT changing (additive overlay files)
 - v3 enrichment: cumulative perchlorate, radiation, thermal stress from Sol 1
 - v4 enrichment: module maintenance debt, grid complexity, seal degradation from Sol 1
+- v5 enrichment: cumulative food decay, solar degradation, crew isolation index, system entropy, maintenance debt from Sol 1
 - These are ALWAYS applied — you can't opt out of enrichment
+
+### v5 Entropy Collapse — what it counters:
+- **Complacency Drift**: Static allocations (same every sol) cause morale + efficiency loss. Crew needs variety.
+- **Resource Decay**: Hoarded food rots, O2 tanks leak, water gets contaminated. Buffers cost maintenance.
+- **Maintenance Avalanche**: Module upkeep scales as N^1.5 (ISS data). More modules = exponentially more crew-hours.
+- **Crew Isolation Syndrome**: Below 4 crew, psychological decline accelerates (HI-SEAS analog data).
+- **Solar Degradation**: Cumulative panel efficiency loss — irreversible (Spirit/Opportunity data).
+- **Habitat Entropy**: All systems degrade every sol without active maintenance allocation.
 
 ---
 

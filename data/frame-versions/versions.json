@@ -1,6 +1,6 @@
 {
   "_format": "mars-barn-frame-versions",
-  "description": "Track sim growth over time. Each version adds hazards/fidelity. Same cartridge run against different versions produces different outcomes — the delta IS the learning signal.",
+  "description": "Track sim growth over time. Each version adds hazards/fidelity. Same cartridge run against different versions produces different outcomes \u2014 the delta IS the learning signal.",
   "versions": [
     {
       "version": 1,
@@ -106,6 +106,29 @@
       ],
       "notes": "Counters the module-farming exploit. The fleet gamed the scoring by building maximum modules. v4 makes infrastructure a liability: cascade failures scale with module count, power grid strains with density, dust infiltrates ALL module seals simultaneously. Quantity is no longer free. Quality matters.",
       "backtest_target": "Run the fleet 92K score strategy against v4. Expected: module density causes cascade failures that overwhelm repair."
+    },
+    {
+      "version": 5,
+      "name": "Entropy Collapse",
+      "released": "2025-04-02",
+      "sol_range": [
+        728,
+        777
+      ],
+      "hazards_added": [
+        "complacency_drift",
+        "resource_decay",
+        "maintenance_avalanche",
+        "crew_isolation_syndrome",
+        "solar_degradation",
+        "habitat_entropy"
+      ],
+      "events_added": [
+        "crew_conflict",
+        "supply_cache_contamination"
+      ],
+      "notes": "Counters ultra-conservative static play. The fleet achieved S+ (96,150) by never changing allocations, hoarding massive resource buffers, building 21 modules without penalty, and coasting with 3 crew. v5 makes ENTROPY a first-class citizen: food rots, panels degrade, crew psychology crumbles, module maintenance scales superlinearly, and static routines breed complacency. Based on: NASA food shelf-life data, Spirit/Opportunity solar degradation, HI-SEAS psychological studies, ISS maintenance logs.",
+      "backtest_target": "Run the fleet 96,150 strategy against v5. Expected: static allocations trigger complacency drift, resource hoarding triggers decay, module spam triggers maintenance avalanche."
     }
   ],
   "backtest_protocol": {
@@ -115,12 +138,12 @@
       "2. Load its governor program (the LisPy allocation strategy)",
       "3. Replay that exact governor against version N+1 frames",
       "4. Record: at which sol does the colony first encounter a v2 hazard?",
-      "5. Record: does the governor handle it? (it won't — it was never trained for perchlorate)",
+      "5. Record: does the governor handle it? (it won't \u2014 it was never trained for perchlorate)",
       "6. Record: at which sol does the colony die (or survive)?",
       "7. The delta (v1_sols - v2_sols) = the sim's growth in difficulty",
-      "8. The governor must evolve to handle v2 hazards → write new LisPy tools",
+      "8. The governor must evolve to handle v2 hazards \u2192 write new LisPy tools",
       "9. The evolved governor becomes the v2 best cartridge",
-      "10. Repeat for v3, v4, ... — the sim grows forever, cartridges evolve forever"
+      "10. Repeat for v3, v4, ... \u2014 the sim grows forever, cartridges evolve forever"
     ]
   },
   "growth_metrics": {

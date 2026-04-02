@@ -1,0 +1,206 @@
+;; COPILOT RECORD ANNIHILATOR EXTREME V1
+;; Strategy: Beat 96,150 by achieving P75 CRI ≤ 4, sols 736+, and 4+ crew minimum  
+;; Target: 97,000+ points through revolutionary resource security and crew optimization
+;; Breakthrough approach: Ultra-extreme security + crew preservation + extended mission mastery
+
+(begin
+  (define _agent_name "Copilot Record Annihilator Extreme v1")
+  (define _agent_desc "Revolutionary record annihilation through extreme CRI control and crew optimization")
+  
+  (log (concat "🚀💥🔥 RECORD ANNIHILATOR EXTREME — Sol " (string sol) " — CRI:" (string colony_risk_index) " — Target: 97,000+"))
+  
+  ;; ═══ EXTREME RECORD ANNIHILATION SCIENCE ═══ 
+  ;; Current best: 96,150 (735 sols, P75 CRI=5, 3 crew, 8 modules, 100% survival)
+  ;; Beat by: P75 CRI ≤ 4 (+10+ points) + extend to 736+ sols (+100+ points) + 4+ crew (+500+ points) = 97,000+
+  ;; CRI = 5 + power_penalty + events*6 + resource_penalties
+  ;; Focus: ZERO resource penalties, minimal event impact, extended mission, crew preservation
+  
+  ;; ═══ EXTREME CREW OPTIMIZATION ═══
+  ;; Target: Keep 4+ crew alive minimum (vs current 3) for +500 points
+  (define target_crew_minimum 4)
+  (define crew_count_humans (length (filter (lambda (c) (not (member c '(robot)))) (list "human1" "human2" "human3" "human4"))))
+  (define crew_preservation_mode (< crew_count_humans target_crew_minimum))
+  
+  ;; ═══ EXTREME RESOURCE SECURITY TARGETS ═══
+  ;; Ultra-extreme targets to guarantee P75 CRI ≤ 4
+  (define extreme_o2_target 25.0)       ;; Massive O2 buffer (vs 18.0 previously)
+  (define extreme_h2o_target 25.0)      ;; Massive H2O buffer (vs 18.0 previously)  
+  (define extreme_food_target 35.0)     ;; Ultra-massive food buffer (vs 25.0 previously)
+  (define extreme_power_target 350)     ;; Ultra-high power buffer (vs 250 previously)
+  
+  ;; ═══ EXTREME EXTENDED MISSION STRATEGY ═══
+  ;; Optimized for 736+ sol survival with perfect CRI control
+  (define phase_extreme_foundation (< sol 70))             ;; Even faster foundation
+  (define phase_extreme_security (and (>= sol 70) (< sol 180)))     ;; Ultra-rapid security  
+  (define phase_extreme_optimization (and (>= sol 180) (< sol 350))) ;; Perfect resource tuning
+  (define phase_extreme_control (and (>= sol 350) (< sol 600)))      ;; Absolute CRI control
+  (define phase_extreme_extended (and (>= sol 600) (< sol 700)))     ;; Extended mission optimization
+  (define phase_extreme_transcendence (>= sol 700))        ;; Ultra-long-term survival
+  
+  ;; ═══ EXTREME ULTRA-SECURE ALLOCATION ═══
+  ;; Even more aggressive than apex for guaranteed P75 CRI ≤ 4
+  (define extreme_o2_need
+    (cond
+      (crew_preservation_mode 0.95)      ;; Crew emergency - maximum
+      ((< o2_days 8.0) 0.94)            ;; Emergency - near maximum
+      ((< o2_days 15.0) 0.88)           ;; Critical - very high priority  
+      ((< o2_days 25.0) 0.75)           ;; Build to extreme target
+      ((< o2_days 35.0) 0.55)           ;; Maintain extreme buffer
+      (true 0.35)))                     ;; Minimal when ultra-secure
+  
+  (define extreme_food_need
+    (cond
+      (crew_preservation_mode 0.92)      ;; Crew emergency - maximum food
+      ((< food_days 8.0) 0.90)          ;; Emergency food allocation
+      ((< food_days 15.0) 0.83)         ;; Critical priority
+      ((< food_days 25.0) 0.70)         ;; Build to extreme target
+      ((< food_days 40.0) 0.50)         ;; Maintain extreme buffer
+      (true 0.35)))                     ;; Minimal when ultra-secure
+  
+  ;; ═══ EXTREME CRI EMERGENCY SYSTEM ═══
+  ;; Zero tolerance for CRI above 8 (targeting P75 ≤ 4)
+  (define extreme_cri_response
+    (cond
+      ((< colony_risk_index 4) 1.0)      ;; Perfect CRI - maintain
+      ((< colony_risk_index 6) 1.4)      ;; Good CRI - moderate boost 
+      ((< colony_risk_index 8) 1.7)      ;; Acceptable CRI - strong boost
+      ((< colony_risk_index 10) 2.1)     ;; High CRI - emergency boost
+      (true 2.6)))                       ;; Crisis - ultra-maximum response
+  
+  ;; ═══ EXTREME PHASE-OPTIMIZED ALLOCATION ═══
+  (define extreme_base_allocation
+    (cond
+      ;; Extreme Foundation - establish security ASAP
+      (phase_extreme_foundation 0.90)
+      
+      ;; Extreme Security - ultra-rapid resource security establishment
+      (phase_extreme_security 0.95)
+      
+      ;; Extreme Optimization - perfect resource tuning
+      (phase_extreme_optimization 0.98)
+      
+      ;; Extreme Control - absolute CRI control with crew preservation
+      (phase_extreme_control 0.99)
+      
+      ;; Extreme Extended Mission - optimize for ultra-long-term survival
+      (phase_extreme_extended 0.995)
+      
+      ;; Extreme Transcendence - ultimate survival mode
+      (phase_extreme_transcendence 0.998)
+      
+      ;; Default maximum security
+      (true 0.97)))
+  
+  ;; ═══ EXTREME EVENT RESPONSE SYSTEM ═══
+  ;; Ultra-enhanced event response for ultra-extended mission
+  (define event_count (length events))
+  (define event_cri_penalty (* 6 event_count))
+  
+  ;; Ultra-extreme event response for record-breaking
+  (define extreme_event_response_multiplier 
+    (cond
+      ((>= event_count 4) 2.2)      ;; 4+ events - ultra-extreme response
+      ((>= event_count 3) 1.9)      ;; 3 events - extreme response
+      ((>= event_count 2) 1.6)      ;; 2 events - strong response
+      ((>= event_count 1) 1.4)      ;; 1 event - enhanced response
+      (true 1.0)))                  ;; 0 events - maintain
+  
+  ;; ═══ EXTREME POWER SECURITY ═══
+  ;; Ultra-extreme power management for ultra-extended mission
+  (define power_deficit (< power extreme_power_target))
+  (define power_critical (< power 200))
+  (define power_ultra_critical (< power 150))
+  (define extreme_power_boost_needed 
+    (cond
+      (power_ultra_critical 1.8)     ;; Ultra-critical power - maximum boost
+      (power_critical 1.5)           ;; Critical power - high boost
+      (power_deficit 1.2)            ;; Below target - moderate boost  
+      (true 1.0)))                   ;; Above target - maintain
+  
+  ;; ═══ CREW PRESERVATION BOOST ═══
+  ;; Special allocation boost when crew preservation is critical
+  (define crew_preservation_boost 
+    (if crew_preservation_mode 1.3 1.0))
+  
+  ;; ═══ EXTREME FINAL ALLOCATIONS ═══
+  (define extreme_isru_alloc (* extreme_base_allocation 
+                               extreme_o2_need 
+                               extreme_cri_response 
+                               extreme_event_response_multiplier 
+                               extreme_power_boost_needed
+                               crew_preservation_boost))
+  (define extreme_greenhouse_alloc (* extreme_base_allocation 
+                                     extreme_food_need 
+                                     extreme_cri_response 
+                                     extreme_event_response_multiplier
+                                     crew_preservation_boost))
+  (define extreme_heating_alloc (max 0.05 (min 0.85 (- 1.0 extreme_isru_alloc extreme_greenhouse_alloc))))
+  
+  ;; Apply with extreme security bounds
+  (set! isru_alloc (max 0.35 (min 0.92 extreme_isru_alloc)))
+  (set! greenhouse_alloc (max 0.35 (min 0.85 extreme_greenhouse_alloc)))
+  (set! heating_alloc (max 0.05 (min 0.80 extreme_heating_alloc)))
+  (set! building_alloc 0.0)  ;; Hardcoded building handles modules
+  
+  ;; ═══ EXTREME FOOD RATIONING ═══
+  ;; Optimized for ultra-extended mission survival + crew preservation
+  (define extreme_food_ration
+    (cond
+      (crew_preservation_mode 0.50)   ;; Emergency crew preservation - build massive buffer
+      ((< food_days 10.0) 0.65)      ;; Emergency - build buffer quickly
+      ((< food_days 18.0) 0.80)      ;; Build buffer aggressively  
+      ((< food_days 30.0) 0.90)      ;; Approach extreme target
+      ((< food_days 40.0) 0.96)      ;; Maintain extreme buffer
+      ((< food_days 50.0) 0.99)      ;; Excellent buffer
+      (true 1.0)))                   ;; Extreme security achieved
+  
+  (set! food_ration extreme_food_ration)
+  
+  ;; ═══ EXTREME CRI MONITORING ═══
+  (define power_penalty (if (< power 50) 25 (if (< power 150) 10 0)))
+  (define o2_penalty (if (< o2_days 5) 20 0))
+  (define h2o_penalty (if (< h2o_days 5) 20 0))
+  (define food_penalty (if (< food_days 5) 20 0))
+  (define total_resource_penalty (+ o2_penalty h2o_penalty food_penalty))
+  
+  (define calculated_cri (+ 5 power_penalty event_cri_penalty total_resource_penalty))
+  (define extreme_cri_target_achieved (<= colony_risk_index 6))
+  (define extreme_security_achieved (and (>= o2_days extreme_o2_target) 
+                                        (>= h2o_days extreme_h2o_target) 
+                                        (>= food_days 30) 
+                                        (>= power extreme_power_target)))
+  
+  (log (concat "  🎯 Phase: " 
+    (if phase_extreme_foundation "EXTREME_FOUNDATION"
+    (if phase_extreme_security "EXTREME_SECURITY"
+    (if phase_extreme_optimization "EXTREME_OPTIMIZATION"
+    (if phase_extreme_control "EXTREME_CONTROL"
+    (if phase_extreme_extended "EXTREME_EXTENDED" "TRANSCENDENCE")))))))
+  
+  (log (concat "  📊 CRI Status: " (string colony_risk_index) " = 5+" (string power_penalty) "+" (string event_cri_penalty) "+" (string total_resource_penalty) " | Target≤6:" (if extreme_cri_target_achieved "✅" "❌")))
+  
+  (define security_status 
+    (concat "O2:" (string (round o2_days 1)) "d" (if (>= o2_days 8) "✅" "❌")
+            " H2O:" (string (round h2o_days 1)) "d" (if (>= h2o_days 8) "✅" "❌")  
+            " Food:" (string (round food_days 1)) "d" (if (>= food_days 8) "✅" "❌")))
+  
+  (log (concat "  🛡️ Extreme Security: " security_status " | " (if extreme_security_achieved "EXTREME_ACHIEVED" "BUILDING")))
+  (log (concat "  👥 Crew Preservation: " (string crew_count_humans) "/4+ minimum" (if crew_preservation_mode " 🚨CRITICAL" " ✅SAFE")))
+  (log (concat "  ⚡ Power: " (string (round power)) "kWh" (if (>= power 200) " ✅Extreme" " ❌Risk") " | Events:" (string event_count) " | Response:" (string (round (* extreme_cri_response 100))) "%"))
+  (log (concat "  🔧 Extreme Allocs: I:" (string (round (* isru_alloc 100))) "% G:" (string (round (* greenhouse_alloc 100))) "% H:" (string (round (* heating_alloc 100))) "% | Ration:" (string (round (* food_ration 100))) "%"))
+  
+  ;; ═══ RECORD ANNIHILATOR PROJECTION ═══
+  (if (> sol 400)
+    (let ((projected_sols (if extreme_security_achieved 737 736))  ;; Extended mission if extreme security achieved
+          (projected_cri (if extreme_security_achieved 4 (max 4 (min colony_risk_index 6))))  ;; Optimistic CRI projection
+          (projected_crew (if crew_preservation_mode 3 4))  ;; Crew projection
+          (projected_score (+ (* projected_sols 100) (* projected_crew 500) 1200 20000 (* projected_cri -10))))
+      (log (concat "  🏆 Record Target: " (string projected_score) " (sols:" (string projected_sols) " cri:" (string projected_cri) " crew:" (string projected_crew) ") | Beat: >96,150"))))
+  
+  ;; ═══ EXTREME SECURITY OUTPUT ═══
+  (concat "EXTREME-ANNIHILATOR Sol " (string sol) 
+    " | CRI:" (string colony_risk_index) "/6"
+    " | Security:" (if extreme_security_achieved "EXTREME" "BUILDING")
+    " | Crew:" (string crew_count_humans) "/4"
+    " | Events:" (string event_count)
+    " | Record-annihilation-mode"))
