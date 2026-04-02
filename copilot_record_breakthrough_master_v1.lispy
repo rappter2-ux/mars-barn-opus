@@ -1,0 +1,218 @@
+;; COPILOT RECORD BREAKTHROUGH MASTER v1
+;; Innovation: Balanced Sol 30 farming with robust survival mechanisms  
+;; Target: Beat 91,100 record with breakthrough-evolution gauntlet's governor-controlled modules
+;; Strategy: 30-sol early start + robust resource management + adaptive optimization
+
+(begin
+  (define _agent_name "Copilot Record Breakthrough Master v1")
+  (define _agent_desc "Balanced Sol 30 mega-early farming with robust survival and adaptive optimization")
+
+  (log (concat "🏆⚡🎯🌟💎 BREAKTHROUGH MASTER — Sol " (string sol) " — Balanced Excellence"))
+
+  ;; ═══ ADAPTIVE MISSION PHASES ═══
+  ;; Optimized phase timing for breakthrough gauntlet
+  (define mission_progress (/ sol 665))
+  (define phase_cycle (mod sol 30))
+  
+  ;; Enhanced phase detection with adaptive boundaries
+  (define mega_early_phase (and (>= sol 30) (< sol 90)))       ;; 60-sol mega advantage window
+  (define ultra_early_phase (and (>= sol 90) (< sol 160)))     ;; Extended ultra farming
+  (define early_phase (and (>= sol 160) (< sol 250)))          ;; Early consolidation
+  (define mid_phase (and (>= sol 250) (< sol 380)))            ;; Mid-mission optimization
+  (define late_phase (and (>= sol 380) (< sol 520)))           ;; Late game management
+  (define endgame_phase (>= sol 520))                          ;; Endgame survival
+
+  ;; ═══ ENHANCED CRI PREDICTION SYSTEM ═══
+  ;; Advanced threat modeling with 30-sol prediction horizon
+  (define cri_current colony_risk_index)
+  (define cri_prediction_horizon 30)
+  
+  ;; Phase-adaptive CRI growth modeling
+  (define adaptive_cri_growth_rate
+    (cond
+      ((< sol 100) 0.08)     ;; Ultra-early controlled growth  
+      ((< sol 200) 0.12)     ;; Early mission acceleration
+      ((< sol 350) 0.16)     ;; Mid-mission peak challenge
+      ((< sol 500) 0.14)     ;; Late mission stabilization
+      (true 0.10)))          ;; Endgame management
+
+  ;; Advanced infrastructure protection calculation
+  (define repair_bay_effectiveness (max 1 (round (* modules_built 0.42))))
+  (define infrastructure_protection (* 1.3 (pow 1.7 repair_bay_effectiveness)))
+  
+  ;; Robust resource adequacy calculation  
+  (define resource_safety_factor
+    (- 2.6 (+ (max 0 (/ 3.5 (max 1 o2_days)))
+              (max 0 (/ 4.0 (max 1 food_days))) 
+              (max 0 (/ 3.5 (max 1 water_days))))))
+
+  ;; Predictive CRI modeling
+  (define predicted_cri_change
+    (- adaptive_cri_growth_rate
+       (/ infrastructure_protection 9.2)
+       (max 0 resource_safety_factor)))
+
+  (define predicted_cri (+ cri_current (* predicted_cri_change cri_prediction_horizon)))
+  (define cri_target (+ 3.0 (* mission_progress 2.8)))
+  (define cri_error (- predicted_cri cri_target))
+
+  ;; ═══ BALANCED RESOURCE STRATEGY ═══
+  ;; Conservative but efficient resource margins for survival
+  (define safe_o2_minimum (+ 2.5 (* mission_progress 1.0)))
+  (define safe_food_minimum (+ 2.8 (* mission_progress 1.2)))
+  (define safe_water_minimum (+ 2.5 (* mission_progress 1.0)))
+  
+  ;; Resource deficit calculation
+  (define resource_deficit
+    (+ (max 0 (- safe_o2_minimum o2_days))
+       (max 0 (- safe_food_minimum food_days))
+       (max 0 (- safe_water_minimum water_days))))
+
+  ;; Crew health monitoring
+  (define crew_health_ratio (/ crew_hp (max 1 (* crew_alive 100))))
+  (define crew_safety_factor (max 0.5 crew_health_ratio))
+
+  ;; ═══ BALANCED BREAKTHROUGH ALLOCATION MATRIX ═══
+  ;; High-performance allocation with survival safety margins
+  (define breakthrough_allocation
+    (cond
+      ;; MEGA-EARLY FARMING + SAFETY BALANCE
+      ((and mega_early_phase (<= cri_error 0) (< resource_deficit 1.5) (> crew_safety_factor 0.75))
+        (list 0.05 0.08 0.87 0.7))     ;; 87% building - balanced breakthrough
+      
+      ((and mega_early_phase (<= cri_error 1.0) (< resource_deficit 2.5) (> crew_safety_factor 0.65))
+        (list 0.08 0.12 0.80 0.8))     ;; 80% building - safe mega farming
+      
+      ((and mega_early_phase (< resource_deficit 4.0))
+        (list 0.12 0.18 0.70 0.9))     ;; 70% building - conservative mega
+
+      ;; ULTRA-EARLY FARMING + ROBUST MANAGEMENT
+      ((and ultra_early_phase (<= cri_error 0.5) (< resource_deficit 2.0) (> crew_safety_factor 0.7))
+        (list 0.06 0.10 0.84 0.75))    ;; 84% building - ultra advantage
+      
+      ((and ultra_early_phase (<= cri_error 1.5) (< resource_deficit 3.0))
+        (list 0.10 0.15 0.75 0.85))    ;; 75% building - safe ultra
+      
+      ;; EARLY PHASE + BALANCED OPTIMIZATION  
+      ((and early_phase (<= cri_error 1.0) (< resource_deficit 2.5) (> crew_safety_factor 0.65))
+        (list 0.08 0.14 0.78 0.8))     ;; 78% building - early advantage
+      
+      ((and early_phase (<= cri_error 2.0) (< resource_deficit 4.0))
+        (list 0.12 0.20 0.68 0.9))     ;; 68% building - safe early
+      
+      ;; MID PHASE + STRATEGIC BUILDING
+      ((and mid_phase (<= cri_error 1.5) (< resource_deficit 3.0) (> crew_safety_factor 0.6))
+        (list 0.10 0.16 0.74 0.85))    ;; 74% building - mid optimization
+      
+      ((and mid_phase (<= cri_error 2.5) (< resource_deficit 5.0))
+        (list 0.15 0.25 0.60 0.95))    ;; 60% building - safe mid
+
+      ;; LATE PHASE + CONSOLIDATION
+      ((and late_phase (<= cri_error 2.0) (< resource_deficit 4.0))
+        (list 0.12 0.20 0.68 0.9))     ;; 68% building - late optimization
+      
+      ;; ENDGAME SURVIVAL FOCUS
+      ((and endgame_phase (< resource_deficit 6.0))
+        (list 0.18 0.28 0.54 1.0))     ;; 54% building - endgame survival
+
+      ;; CRISIS MANAGEMENT PROTOCOLS
+      ((> cri_error 3.0)
+        (list 0.25 0.35 0.40 1.2))     ;; Crisis CRI response
+      
+      ((> resource_deficit 8.0)
+        (list 0.30 0.40 0.30 1.4))     ;; Resource emergency
+      
+      ((< crew_safety_factor 0.4)
+        (list 0.20 0.30 0.50 1.6))     ;; Crew health emergency
+      
+      ;; ADAPTIVE FALLBACK
+      (true
+        (list 0.15 0.22 0.63 0.95))))  ;; Balanced fallback
+
+  ;; Apply allocation with safety bounds
+  (set! heating_alloc (max 0.02 (min 0.35 (nth breakthrough_allocation 0))))
+  (set! isru_alloc (max 0.05 (min 0.45 (nth breakthrough_allocation 1))))
+  (set! greenhouse_alloc (max 0.25 (min 0.90 (nth breakthrough_allocation 2))))
+  
+  ;; ═══ ADAPTIVE NUTRITION OPTIMIZATION ═══
+  ;; Balanced nutrition that prioritizes survival and performance
+  (define base_nutrition_target (nth breakthrough_allocation 3))
+  
+  ;; Health-responsive nutrition multiplier
+  (define health_nutrition_multiplier
+    (cond
+      ((< crew_health_ratio 0.55) 2.0)     ;; Critical health recovery
+      ((< crew_health_ratio 0.70) 1.6)     ;; Major health boost
+      ((< crew_health_ratio 0.82) 1.3)     ;; Health recovery
+      ((< crew_health_ratio 0.92) 1.05)    ;; Health maintenance
+      (true 0.95)))                        ;; Health efficiency mode
+
+  ;; CRI-responsive nutrition adjustment
+  (define cri_nutrition_multiplier
+    (cond
+      ((> cri_error 2.5) 1.4)              ;; High CRI nutrition boost
+      ((> cri_error 1.5) 1.2)              ;; Moderate CRI boost
+      ((> cri_error 0.5) 1.05)             ;; Slight CRI boost
+      (true 0.98)))                        ;; Efficiency mode
+
+  ;; Phase-specific farming efficiency bonus
+  (define phase_farming_bonus
+    (cond
+      (mega_early_phase 0.85)              ;; Mega farming efficiency
+      (ultra_early_phase 0.88)             ;; Ultra farming efficiency
+      (early_phase 0.92)                   ;; Early farming efficiency
+      (mid_phase 0.95)                     ;; Mid efficiency
+      (late_phase 0.97)                    ;; Late efficiency
+      (endgame_phase 1.0)))                ;; Endgame normal nutrition
+
+  ;; Resource-based safety nutrition multiplier
+  (define resource_safety_nutrition
+    (cond
+      ((> resource_deficit 6.0) 1.5)       ;; High resource deficit boost
+      ((> resource_deficit 4.0) 1.3)       ;; Moderate deficit boost
+      ((> resource_deficit 2.0) 1.1)       ;; Minor deficit boost
+      (true 1.0)))                         ;; Normal resource levels
+
+  (set! food_ration 
+    (max 0.2 (min 2.5 (* base_nutrition_target
+                         health_nutrition_multiplier
+                         cri_nutrition_multiplier
+                         phase_farming_bonus
+                         resource_safety_nutrition))))
+
+  ;; ═══ ENHANCED STATUS LOGGING ═══
+  (log (concat "🎯 Phase:" (cond (mega_early_phase "MEGA") (ultra_early_phase "ULTRA") 
+                                 (early_phase "EARLY") (mid_phase "MID") 
+                                 (late_phase "LATE") (endgame_phase "END") (true "BOOT"))
+               " | Progress:" (string (round (* mission_progress 100))) 
+               "% | Safety:" (string (round (* crew_safety_factor 100))) "%"))
+  
+  (log (concat "⚡ CRI Management: Error=" (string (round cri_error)) 
+               " | Current=" (string (round cri_current))
+               " | Target=" (string (round cri_target))
+               " | Predicted=" (string (round predicted_cri))))
+  
+  (log (concat "🛡️ Resource Status: Deficit=" (string (round resource_deficit)) 
+               " | O2=" (string o2_days) "d" 
+               " | Food=" (string food_days) "d"
+               " | Water=" (string water_days) "d"))
+  
+  (log (concat "🏗️ Allocation — H:" (string (round (* heating_alloc 100))) 
+               "% I:" (string (round (* isru_alloc 100)))
+               "% G:" (string (round (* greenhouse_alloc 100)))
+               "% | R:" (string (round (* food_ration 100)))
+               "% | Modules:" (string modules_built)))
+
+  ;; ═══ OUTPUT SUMMARY ═══
+  (concat "Breakthrough Sol " (string sol)
+    " — " (cond (mega_early_phase "MEGA") (ultra_early_phase "ULTRA") 
+                (early_phase "EARLY") (mid_phase "MID") 
+                (late_phase "LATE") (endgame_phase "END") (true "BOOT"))
+    " | H:" (string (round (* heating_alloc 100)))
+    "% I:" (string (round (* isru_alloc 100))) 
+    "% G:" (string (round (* greenhouse_alloc 100)))
+    "% | R:" (string (round (* food_ration 100)))
+    "% | O2:" (string o2_days)
+    "d F:" (string food_days)
+    "d | M:" (string modules_built)
+    " | CRI:" (string (round cri_current))))
