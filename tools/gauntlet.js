@@ -168,8 +168,6 @@ function tick(st, sol, frame, R){
       }
     }
   }
-  // Track previous allocation for complacency detection
-  st._prevAlloc = {h:a.h, i:a.i, g:a.g};
   st.ev=st.ev.filter(e=>{e.r--;return e.r>0});
 
   // Random equipment events (CRI-weighted)
@@ -178,6 +176,8 @@ function tick(st, sol, frame, R){
   // ADAPTIVE CRI-BASED GOVERNOR - the original challenge requirement!
   const o2d=nh>0?st.o2/(OP*nh):999, hd=nh>0?st.h2o/(HP*nh):999, fd=nh>0?st.food/(FP*nh):999;
   const a=st.alloc;
+  // Track previous allocation for complacency detection
+  st._prevAlloc = {h:a.h, i:a.i, g:a.g};
   
   // Adaptive allocation based on CRI (the challenge's key insight)
   if(st.power<20)       {a.h=0.85;a.i=0.10;a.g=0.05;a.r=0.2}
